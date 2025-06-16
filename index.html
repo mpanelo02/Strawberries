@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Farm Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+</head>
+<body>
+
+    <div id="experience">
+        <canvas id="experience-canvas"></canvas>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <button class="enter-button">Enter Farm Lab!</button>
+    </div>
+    
+    <div class="modal hidden">
+        <div class="modal-wrapper">
+            <div class="modal-header">
+                <h1 class="modal-title">Dashboard</h1>
+                <button class="modal-exit-button">Exit</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-content-wrapper">
+                    <a href="#" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="modal-visit-button hidden">View Link</a>
+                    <div class="modal-project-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum magnam unde deserunt quaerat minus repellat natus nobis qui tenetur ducimus fuga quo corrupti nam similique sint at suscipit, assumenda ipsa?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // async function getData() {
+    //   try {
+    //     const response = await fetch("http://localhost:3000/api/data");
+    //     const data = await response.json();
+        
+    //     // Extract temperature and humidity from the readings array
+    //     const temperatureReading = data.readings.find(r => r.metric === "1");
+    //     const humidityReading = data.readings.find(r => r.metric === "2");
+    //     const moistureReading = data.readings.find(r => r.metric === "8");
+        
+    //     if (temperatureReading) {
+    //       // Round to 1 decimal place
+    //       const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
+    //       document.getElementById('temperature').textContent = roundedTemp;
+    //     }
+    //     if (humidityReading) {
+    //       // Round to 1 decimal place
+    //       const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
+    //       document.getElementById('humidity').textContent = roundedHumidity;
+    //     }
+    //     if (moistureReading) {
+    //       // Round to 1 decimal place
+    //       const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
+    //       document.getElementById('moisture').textContent = roundedMoisture;
+    //     }
+        
+    //     console.log('Temperature:', temperatureReading?.value, 'Humidity:', humidityReading?.value, 'Moisture:', moistureReading?.value);
+    //   } catch (err) {
+    //     console.error("Fetch error:", err);
+    //   }
+    // }
+
+    async function getData() {
+        try {
+            // const response = await fetch("http://192.168.1.100:3000/api/data");
+            const response = await fetch("http://localhost:3000/api/data");
+            const data = await response.json();
+    
+            // Access data from sensor1 (1061612) - likely has temperature and humidity
+            const tempHumidityData = data.sensor1.readings || [];
+            // Access data from sensor2 (6305245) - likely has moisture
+            const moistureData = data.sensor2.readings || [];
+    
+            // Extract values
+            const temperatureReading = tempHumidityData.find(r => r.metric === "1");
+            const humidityReading = tempHumidityData.find(r => r.metric === "2");
+            const moistureReading = moistureData.find(r => r.metric === "8");
+    
+            if (temperatureReading) {
+            const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
+            document.getElementById('temperature').textContent = roundedTemp;
+            }
+            if (humidityReading) {
+            const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
+            document.getElementById('humidity').textContent = roundedHumidity;
+            }
+            if (moistureReading) {
+            const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
+            document.getElementById('moisture').textContent = roundedMoisture;
+            }
+    
+            console.log('Data:', data);
+            console.log('Temperature:', temperatureReading?.value, 
+                        'Humidity:', humidityReading?.value, 
+                        'Moisture:', moistureReading?.value);
+        } catch (err) {
+            console.error("Fetch error:", err);
+        }
+    }
+
+    // Call immediately and then every 30 seconds
+    getData();
+    setInterval(getData, 30000); // 30000 ms = 30 seconds
+    </script>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
+          }
+        }
+        
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+        
+    <script type="module" src="./main.js"></script>
+        
+    <!-- Place these first so the elements are available -->
+    <div id="mainContent" style="display: none;">
+        <!-- Date -->
+        <div id="vantaa-date-container" style="position: fixed; top: 20px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif; text-align: right;">
+            <div id="vantaa-date">Loading date...</div>
+        </div>
+
+        <!-- Time -->
+        <div id="vantaa-time-container" style="position: fixed; top: 50px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif; text-align: right;">
+            <div id="vantaa-clock">Loading time...</div>
+        </div>
+
+        <!-- Temperature -->
+        <div id="temperature-container" style="position: fixed; top: 80px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            🌡️T: <span id="temperature">--</span> °C
+        </div>
+  
+        <!-- Humidity -->
+        <div id="humidity-container" style="position: fixed; top: 110px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            🫧H: <span id="humidity">--</span> %
+        </div>
+
+        <!-- Moisture -->
+        <div id="moisture-container" style="position: fixed; top: 140px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            🌱M: <span id="moisture">--</span> %
+        </div>
+
+        <!-- Water Level -->
+        <div id="water-container" style="position: fixed; top: 170px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            💧lvl: <span id="waterLevel-value">--</span> cm
+        </div>
+
+        <!-- Motion Detect -->
+        <!-- <div id="motion-container" style="position: fixed; top: 200px; left: 60px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            <span id="motion-value">- -</span>
+        </div> -->
+        <div id="light" class="bright"></div>
+        <button id="sunToggleButton" class="sunPin">🌞</button>
+        
+        <button id="fanToggleButton" class="fanPin">🥵OFF</button>
+
+        <button id="plantLightToggleButton" class="bulbLedPin">🕯️OFF</button>
+
+        <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
+
+        <!-- <button id="doorToggleButton" class="doorPin">🔓 🚪</button> -->
+
+    </div>
+  
+</body>
+</html>
