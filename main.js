@@ -777,3 +777,19 @@ enterButton.addEventListener("click", () => {
 });
 
 
+// In your main JS file (where you set up the 3D scene)
+let cameraZoom; // Your Three.js camera
+let isZoomed = false;
+const defaultCameraPosition = { x: 0, y: 0, z: 5 }; // Adjust based on your setup
+
+// Detect double-tap to zoom in/out
+document.getElementById('experience-canvas').addEventListener('dblclick', (e) => {
+    if (isZoomed) {
+        // Zoom out
+        cameraZoom.position.set(defaultCameraPosition.x, defaultCameraPosition.y, defaultCameraPosition.z);
+    } else {
+        // Zoom in (adjust values as needed)
+        cameraZoom.position.z *= 0.5; // Move camera closer
+    }
+    isZoomed = !isZoomed;
+});
