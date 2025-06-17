@@ -31,6 +31,33 @@ const modalContent = {
     //     content: "This is a monitor.",
     //     link:"https://www.youtube.com",
     // },
+    Thermometer: {
+        title: "Thermometer",
+    },
+    Pump: {
+        title: "Pump",
+    },
+    WaterTank: {
+        title: "Water Tank",
+    },
+    Filter: {
+        title: "Filter",
+    },
+    AirCon: {
+        title: "Air Conditioning",
+    },
+    Container: {
+        title: "Container",
+    },
+    StrawBerries1: {
+        title: "Strawberry",
+    },
+    StrawBerries2: {
+        title: "Strawberry",
+    },
+    StrawBerries3: {
+        title: "Strawberry",
+    },
     Plate01: {
         title: "LinkedIn",
         content: "Bio.",
@@ -75,25 +102,25 @@ function hideModal(){
 let intersectObject = "";
 const intersectObjects = [];
 const intersectObjectsNames = [
-    "CCTV",
-    "Chain",
-    "ExhaustFan",
-    "FCU",
-    "Holder",
-    "Monitor",
-    "PipeDrain",
-    "PipeSupply",
-    "PlantBase",
+
+    // "Monitor",
+    // "Clock",
+    "AirCon",
+    // "ExhaustFan",
+    "Container",
+    "WaterTank",
+    "Filter",
+    "Pump",
+    // "WS",
+    // "Racks",
+    // "DrainPipe",
+    // "PlantBase",
     "Plate01",
     "Plate02",
     "Thermometer",
-    "WaterCon",
-    "WaterCon2",
-    "Clock",
-    "PlantLight",
-    "Outlet",
-    "Plant01",
-    "StrawBerry",
+    "StrawBerries1",
+    "StrawBerries2",
+    "StrawBerries3",
 ];
 
 // Loading screen and loading manager
@@ -369,75 +396,66 @@ function onResize() {
     renderer.setPixelRatio(Math.min( window.devicePixelRatio, 2));
 }
 
-function jumpPlants(meshID) {
-    const mesh = scene.getObjectByName(meshID);
-    if (!mesh) return;
+// function jumpPlants(meshID) {
+//     const mesh = scene.getObjectByName(meshID);
+//     if (!mesh) return;
   
-    const jumpHeight = 2;
-    const jumpDuration = 0.5;
+//     const jumpHeight = 2;
+//     const jumpDuration = 0.5;
   
-    const startY = mesh.position.y; // <- SAVE the original Y
+//     const startY = mesh.position.y; // <- SAVE the original Y
   
-    const t1 = gsap.timeline();
+//     const t1 = gsap.timeline();
   
-    t1.to(mesh.scale, {
-      x: 1,
-      y: 0.8,
-      z: 1.2,
-      duration: jumpDuration * 0.3,
-      ease: "power2.out",
-    });
+//     t1.to(mesh.scale, {
+//       x: 1,
+//       y: 0.8,
+//       z: 1.2,
+//       duration: jumpDuration * 0.3,
+//       ease: "power2.out",
+//     });
   
-    t1.to(mesh.position, {
-      y: startY + jumpHeight,
-      duration: jumpDuration * 0.3,
-      ease: "power2.out",
-    }, "<");
+//     t1.to(mesh.position, {
+//       y: startY + jumpHeight,
+//       duration: jumpDuration * 0.3,
+//       ease: "power2.out",
+//     }, "<");
   
-    t1.to(mesh.position, {
-      y: startY, // <- use the saved Y
-      duration: jumpDuration * 0.5,
-      ease: "bounce.out",
-    });
+//     t1.to(mesh.position, {
+//       y: startY, // <- use the saved Y
+//       duration: jumpDuration * 0.5,
+//       ease: "bounce.out",
+//     });
   
-    t1.to(mesh.scale, {
-      x: 1,
-      y: 1,
-      z: 1,
-      duration: jumpDuration * 0.5,
-      ease: "elastic.out(1, 0.3)",
-    });
-  }
+//     t1.to(mesh.scale, {
+//       x: 1,
+//       y: 1,
+//       z: 1,
+//       duration: jumpDuration * 0.5,
+//       ease: "elastic.out(1, 0.3)",
+//     });
+//   }
 
-  function onClick() {
+function onClick() {
     if(intersectObject !== ""){
-      if([
-    // "CCTV",
-    // "Chain",
-    // "ExhaustFan",
-    // "FCU",
-    // "Holder",
-    // "Monitor",
-    // "PipeDrain",
-    // "PipeSupply",
-    // "PlantBase",
-    // "Plate01",
-    // "Plate02",
-    // "Thermometer",
-    // "WaterCon",
-    // "WaterCon2",
-    // "Clock",
-    // "PlantLight",
-    // "Outlet",
-    "Plant01",
-    "StrawBerry"].includes(intersectObject)){
-        jumpPlants(intersectObject);
-      } else {
+    //   if([
+    // // "ExhaustFan",
+    // // "Monitor",
+    // // "PlantBase",
+    // // "Plate01",
+    // // "Plate02",
+    // // "Thermometer",
+    // // "Clock",
+    // "StrawBerries1",
+    // "StrawBerries2",
+    // "StrawBerries3"].includes(intersectObject)){
+    //     jumpPlants(intersectObject);
+    //   } else 
+      {
         showModal(intersectObject);
       }
     }
-  }
-
+}
 
 
 function onPointerMove( event ) {
