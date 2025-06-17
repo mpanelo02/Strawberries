@@ -264,7 +264,26 @@
     color: white;
 }
 
+/* For Mobile Devices */
+
 @media (max-width: 600px) {
+
+
+    .enter-button {
+        font-size: 25px;
+    }
+    .modal {
+        max-width: 250px;
+        font-size: 12px;
+    }
+    .modal-header{
+        font-size: 16px; 
+    }
+
+    .modal-exit-button {
+        padding: 2px 4px;
+    }
+
     .datePin {
         font-size: 16px;
         top: 10px;
@@ -305,7 +324,7 @@
     .fanPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 530px;
+        top: 525px;
         right: 10px;
     }
     .bulbLedPin {
@@ -317,9 +336,10 @@
     .pumpPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 600px;
+        top: 605px;
         right: 10px;
     }
+
 
 }
 

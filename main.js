@@ -509,7 +509,7 @@ setInterval(fetchAranetTemperature, 60000); // Update every minute
 function animate() {
   controls.enablePan = false;
 
-  controls.maxDistance = 25; // or whatever feels right
+  controls.maxDistance = 35; // or whatever feels right
   controls.minDistance = 10;
 
 
