@@ -267,18 +267,7 @@
 /* For Mobile Devices */
 
 @media (max-width: 600px) {
-    #experience {
-        touch-action: none; /* Disable browser touch gestures (like scrolling) */
-        overflow: hidden;
-        position: fixed;
-        width: 100%;
-        height: 100%;
-    }
 
-    #experience-canvas {
-        width: 100%;
-        height: 100%;
-    }
 
     .enter-button {
         font-size: 25px;
