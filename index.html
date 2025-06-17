@@ -42,37 +42,7 @@
     </div>
 
     <script>
-    // async function getData() {
-    //   try {
-    //     const response = await fetch("http://localhost:3000/api/data");
-    //     const data = await response.json();
-        
-    //     // Extract temperature and humidity from the readings array
-    //     const temperatureReading = data.readings.find(r => r.metric === "1");
-    //     const humidityReading = data.readings.find(r => r.metric === "2");
-    //     const moistureReading = data.readings.find(r => r.metric === "8");
-        
-    //     if (temperatureReading) {
-    //       // Round to 1 decimal place
-    //       const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
-    //       document.getElementById('temperature').textContent = roundedTemp;
-    //     }
-    //     if (humidityReading) {
-    //       // Round to 1 decimal place
-    //       const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
-    //       document.getElementById('humidity').textContent = roundedHumidity;
-    //     }
-    //     if (moistureReading) {
-    //       // Round to 1 decimal place
-    //       const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
-    //       document.getElementById('moisture').textContent = roundedMoisture;
-    //     }
-        
-    //     console.log('Temperature:', temperatureReading?.value, 'Humidity:', humidityReading?.value, 'Moisture:', moistureReading?.value);
-    //   } catch (err) {
-    //     console.error("Fetch error:", err);
-    //   }
-    // }
+
 
     async function getData() {
         try {
@@ -140,32 +110,50 @@
     <!-- Place these first so the elements are available -->
     <div id="mainContent" style="display: none;">
         <!-- Date -->
-        <div id="vantaa-date-container" style="position: fixed; top: 20px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif; text-align: right;">
+        <!-- <div id="vantaa-date-container" class="datePin" style="position: fixed; top: 20px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif; text-align: right;">
             <div id="vantaa-date">Loading date...</div>
-        </div>
+        </div>  -->
+        <div id="vantaa-date-container" class="datePin">
+            <div id="vantaa-date">Loading date...</div>
+        </div> 
 
         <!-- Time -->
-        <div id="vantaa-time-container" style="position: fixed; top: 50px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif; text-align: right;">
+        <!-- <div id="vantaa-time-container" class="timePin" style="position: fixed; top: 50px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif; text-align: right;">
+            <div id="vantaa-clock">Loading time...</div>
+        </div> -->
+        <div id="vantaa-time-container" class="timePin">
             <div id="vantaa-clock">Loading time...</div>
         </div>
 
         <!-- Temperature -->
-        <div id="temperature-container" style="position: fixed; top: 80px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+        <!-- <div id="temperature-container" class="tempPin" style="position: fixed; top: 80px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            🌡️T: <span id="temperature">--</span> °C
+        </div> -->
+        <div id="temperature-container" class="tempPin">
             🌡️T: <span id="temperature">--</span> °C
         </div>
   
         <!-- Humidity -->
-        <div id="humidity-container" style="position: fixed; top: 110px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+        <!-- <div id="humidity-container" class="humidPin" style="position: fixed; top: 110px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            🫧H: <span id="humidity">--</span> %
+        </div> -->
+        <div id="humidity-container" class="humidPin">
             🫧H: <span id="humidity">--</span> %
         </div>
 
         <!-- Moisture -->
-        <div id="moisture-container" style="position: fixed; top: 140px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+        <!-- <div id="moisture-container" class="moistPin" style="position: fixed; top: 140px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            💧M: <span id="moisture">--</span> %
+        </div> -->
+        <div id="moisture-container" class="moistPin">
             💧M: <span id="moisture">--</span> %
         </div>
 
         <!-- Water Level -->
-        <div id="water-container" style="position: fixed; top: 170px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+        <!-- <div id="water-container" class="soilECPin" style="position: fixed; top: 170px; left: 30px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
+            ⚡S: <span id="soilEC">--</span> mS/cm
+        </div> -->
+        <div id="water-container" class="soilECPin">
             ⚡S: <span id="soilEC">--</span> mS/cm
         </div>
 

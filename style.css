@@ -100,6 +100,80 @@
   cursor: pointer;
 }
 
+/* Texts and Buttons */
+
+.datePin {
+    position: fixed;
+    top: 20px;
+    left: 30px;
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
+
+.timePin {
+    position: fixed;
+    top: 50px;
+    left: 30px;
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
+.tempPin {
+    position: fixed;
+    top: 80px;
+    left: 30px;
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
+.humidPin {
+    position: fixed;
+    top: 110px;
+    left: 30px;
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
+
+.moistPin {
+    position: fixed;
+    top: 140px;
+    left: 30px;
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
+
+.soilECPin {
+    position: fixed;
+    top: 170px;
+    left: 30px;
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
+
+
+
 .sunPin {
     position: fixed;
     top: 20px;
@@ -189,3 +263,64 @@
     background-color: #4caf50;
     color: white;
 }
+
+@media (max-width: 600px) {
+    .datePin {
+        font-size: 16px;
+        top: 10px;
+        left: 10px;
+    }
+    .timePin {
+        font-size: 16px;
+        top: 35px;
+        left: 10px;
+    }
+    .tempPin {
+        font-size: 16px;
+        top: 535px;
+        left: 10px;
+    }
+    .humidPin {
+        font-size: 16px;
+        top: 560px;
+        left: 10px;
+    }
+    .moistPin {
+        font-size: 16px;
+        top: 585px;
+        left: 10px;
+    }
+    .soilECPin {
+        font-size: 16px;
+        top: 610px;
+        left: 10px;
+    }
+
+    .sunPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 10px;
+        right: 10px;
+    }
+    .fanPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 530px;
+        right: 10px;
+    }
+    .bulbLedPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 565px;
+        right: 10px;
+    }
+    .pumpPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 600px;
+        right: 10px;
+    }
+
+}
+
+
