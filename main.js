@@ -727,6 +727,8 @@ sunToggleButton.addEventListener('click', () => {
   document.getElementById('vantaa-time-container'),
   document.getElementById('temperature-container'),
   document.getElementById('humidity-container'),
+  document.getElementById('co2-container'),
+  document.getElementById('atmosphericPress-container'),
   document.getElementById('moisture-container'),
   document.getElementById('water-container')
 ];
