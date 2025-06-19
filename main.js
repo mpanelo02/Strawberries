@@ -507,20 +507,32 @@ setInterval(fetchAranetTemperature, 60000); // Update every minute
 
 
 function animate() {
-  controls.enablePan = false;
+  // controls.enablePan = true;
 
   controls.maxDistance = 35; // or whatever feels right
   controls.minDistance = 10;
-
 
   // Vertical limits (up/down)
   controls.minPolarAngle = THREE.MathUtils.degToRad(35); // 35° down
   controls.maxPolarAngle = THREE.MathUtils.degToRad(90); // 90° up
 
   // Horizontal limits (left/right)
-  controls.minAzimuthAngle = THREE.MathUtils.degToRad(-5); // 5° left
-  controls.maxAzimuthAngle = THREE.MathUtils.degToRad(93);  // 85° right
+  controls.minAzimuthAngle = THREE.MathUtils.degToRad(5); // 5° left
+  controls.maxAzimuthAngle = THREE.MathUtils.degToRad(80);  // 85° right
 
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+
+  if (controls.target.x > 5) controls.target.x = 5;    // 3m right limit
+  if (controls.target.x < -4.5) controls.target.x = -4.5;  // 3m left limit
+
+  if (controls.target.z > 5) controls.target.z = 5;    // 3m right limit
+  if (controls.target.z < -4.5) controls.target.z = -4.5;  // 3m left limit
+
+  if (controls.target.y > 8) controls.target.y = 8;    // 3m right limit
+  if (controls.target.y < 2) controls.target.y = 2;  // 3m left limit
+
+  controls.update();
 
   raycaster.setFromCamera( pointer, camera );
 
@@ -582,7 +594,7 @@ const plantLightToggleButton = document.getElementById("plantLightToggleButton")
 // const doorToggleButton = document.getElementById("doorToggleButton");
 
 let isFanOn = false;
-let isBulbOn = false;
+// let isBulbOn = false;
 let isPumpOn = false;
 let isPlantLightOn = false;
 // let isDoorOn = false;
@@ -622,7 +634,7 @@ function updatePlantLightButton(state) {
   updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
 
   const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
-  const plantLights2 = [rectLight7, rectLight8];
+  // const plantLights2 = [rectLight7, rectLight8];
   
 
   plantLights.forEach(light => {
@@ -633,13 +645,13 @@ function updatePlantLightButton(state) {
     light.visible = isPlantLightOn;
   });
 
-  plantLights2.forEach(light => {
-    gsap.to(light, {
-      intensity: isPlantLightOn ? 5 : 0, // match initial intensity
-      duration: 1
-    });
-    light.visible = isPlantLightOn;
-  });
+  // plantLights2.forEach(light => {
+  //   gsap.to(light, {
+  //     intensity: isPlantLightOn ? 5 : 0, // match initial intensity
+  //     duration: 1
+  //   });
+  //   light.visible = isPlantLightOn;
+  // });
 }
 
 
@@ -722,6 +734,23 @@ let isBright = true;
 
 
 sunToggleButton.addEventListener('click', () => {
+
+  isBright = !isBright;
+  sunToggleButton.textContent = isBright ? '🌞' : '🌚';
+
+  // Control rectLight7 and rectLight8 (INVERSE LOGIC)
+  const lightsOn = !isBright; // Lights on when sun is off
+  const targetIntensity = lightsOn ? 5 : 0; // Adjust intensity as needed
+  gsap.to(rectLight7, {intensity: targetIntensity,duration: 1});
+  gsap.to(rectLight8, {intensity: targetIntensity,duration: 1});
+    // Ensure lights are visible when needed
+  rectLight7.visible = lightsOn;
+  rectLight8.visible = lightsOn;
+
+  gsap.to(light, { intensity: isBright ? 4 : 1, duration: 1 });
+  gsap.to(sun, { intensity: isBright ? 1 : 0, duration: 1 });
+  renderer.setClearColor(isBright ? 0xeeeeee : 0x111111, 1);
+
   const containers = [
   document.getElementById('vantaa-date-container'),
   document.getElementById('vantaa-time-container'),
@@ -731,24 +760,24 @@ sunToggleButton.addEventListener('click', () => {
   document.getElementById('atmosphericPress-container'),
   document.getElementById('moisture-container'),
   document.getElementById('water-container')
-];
+  ];
 
-const newFontColor = isBright ? 'white' : 'black';
 
-containers.forEach(container => {
-  if (container) {
-    container.style.color = newFontColor;
-  }
+  const newFontColor = isBright ? 'black' : 'white';
+
+  containers.forEach(container => {
+    if (container) {
+      container.style.color = newFontColor;
+    }
+  });
+
 });
 
-  isBright = !isBright;
-  sunToggleButton.textContent = isBright ? '🌞' : '🌚';
-
-  gsap.to(light, { intensity: isBright ? 4 : 1, duration: 1 });
-  gsap.to(sun, { intensity: isBright ? 1 : 0, duration: 1 });
-  renderer.setClearColor(isBright ? 0xeeeeee : 0x111111, 1);
-});
-
+// Initialize lights to correct state
+rectLight7.intensity = isBright ? 0 : 1;
+rectLight8.intensity = isBright ? 0 : 1;
+rectLight7.visible = !isBright;
+rectLight8.visible = !isBright;
 
 
 // Button click events to toggle and publish new state
