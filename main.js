@@ -67,6 +67,7 @@ const modalContent = {
         title: "Strawberry Room",
         content: "is a Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above.",
         link:"https://www.metropolia.fi/en/rdi/collaboration-platforms/urbanfarmlab",
+        // image: "https://via.placeholder.com/400x200",
     },
 };
 
@@ -78,9 +79,20 @@ const modalVisitButton = document.querySelector(".modal-visit-button");
 
 function showModal(id){
     const content = modalContent[id];
+    // const modalImage = document.querySelector(".modal-image");
+
     if (content) {
         modalTitle.textContent = content.title;
         modalProjectDescription.textContent = content.content;
+
+        // Show image if available
+        // if (content.image) {
+        //   modalImage.src = content.image;
+        //   modalImage.classList.remove("hidden");
+        // } else {
+        //   modalImage.classList.add("hidden");
+        //   modalImage.src = ""; // clear previous image
+        // }
 
         if (content.link) {
             modalVisitButton.href = content.link;
@@ -159,6 +171,11 @@ let clockHandShort = null;
 let clockHandLong = null;
 let videoMesh = null;
 
+let smokerObject = null;
+let smokeParticles = [];
+let smokeMaterial = null;
+
+
 const loader = new GLTFLoader();
 
 // loader.setDecoderPath( './FarmLab_WhiteRoom03_Trial.glb', function ( glb ) {
@@ -179,9 +196,39 @@ loader.load( './FarmLab_WhiteRoom03_Trial.glb', function ( glb ) {
   videoTexture.minFilter = THREE.LinearFilter;
   videoTexture.magFilter = THREE.LinearFilter;
   videoTexture.format = THREE.RGBAFormat;
+
+  // Create smoke emitters for Smoker1, Smoker2, Smoker3
+  const smokerNames = ["Smoker1", "Smoker2", "Smoker3"];
+  const smokeTexture = new THREE.TextureLoader().load('Smoke5.gif');
+  smokeMaterial = new THREE.SpriteMaterial({
+    map: smokeTexture,
+    transparent: true,
+    opacity: 0.4,
+    depthWrite: false,
+  });
   
   glb.scene.traverse((child) => {
+    
+    // Emit Smoke from Smoker1 - Smoker3
+    if (smokerNames.includes(child.name)) {
+      const smoker = child;
 
+      for (let i = 0; i < 25; i++) {
+        const sprite = new THREE.Sprite(smokeMaterial.clone());
+        sprite.scale.set(0.6, 0.8, 0.6); // Adjust size as needed
+        sprite.position.set(
+          smoker.position.x + (Math.random() - 0.5) * 0.5,
+          smoker.position.y + Math.random() * -1,
+          smoker.position.z + (Math.random() - 0.5) * 0.5
+        );
+        sprite.userData.origin = smoker.position.clone();
+        sprite.visible = false;
+        scene.add(sprite);
+        smokeParticles.push(sprite);
+      }
+    }
+
+    // Plays Video on Screen object
     if (child.name === "Screen") {
       child.material = new THREE.MeshBasicMaterial({ map: videoTexture });
       videoMesh = child;
@@ -469,42 +516,6 @@ window.addEventListener("resize", onResize);
 window.addEventListener("click", onClick);
 window.addEventListener( "pointermove", onPointerMove );
 
-// Add this near the top of your script, before the animate function
-async function fetchAranetTemperature() {
-    try {
-        const response = await fetch('https://aranet.cloud/api/v2/sensors/latest', {
-            headers: {
-                'Authorization': 'Bearer k7muwjwzgzmjgx6ahqu29jkjhetq7swe',
-                'Accept': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Assuming the API returns an array of sensors and we want the first one
-        if (data.data && data.data.length > 0) {
-            const sensorData = data.data[0];
-            if (sensorData.temperature) {
-                document.getElementById("temperature-value").textContent = sensorData.temperature.toFixed(1);
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching Aranet temperature:', error);
-        // You might want to display an error or fallback value
-        document.getElementById("temperature-value").textContent = "--";
-    }
-}
-
-// Call the function initially and then set up an interval to refresh
-fetchAranetTemperature();
-setInterval(fetchAranetTemperature, 60000); // Update every minute
-
-// The rest of your existing script remains the same...
-
 
 function animate() {
   // controls.enablePan = true;
@@ -534,6 +545,33 @@ function animate() {
 
   controls.update();
 
+  // Update smoke particles (falling + spreading)
+  if (isFanOn && smokeParticles.length > 0) {
+    smokeParticles.forEach(p => {
+      p.visible = true;
+      p.position.y -= 0.02; // go downward instead of up
+      p.position.x += (Math.random() - 0.5) * 0.002; // slight horizontal spread
+      p.position.z += (Math.random() - 0.5) * 0.002;
+      p.material.opacity -= 0.0015;
+
+      if (p.material.opacity <= 0) {
+        const origin = p.userData.origin;
+        p.position.set(
+          origin.x + (Math.random() - 0.5) * 0.5,
+          origin.y - 1.5 + Math.random() * 2,
+          origin.z + (Math.random() - 0.5) * 0.5
+        );
+        p.material.opacity = 0.2;
+      }
+    });
+  } else {
+    smokeParticles.forEach(p => {
+      p.visible = false;
+    });
+  }
+
+
+
   raycaster.setFromCamera( pointer, camera );
 
 	const intersects = raycaster.intersectObjects(intersectObjects);
@@ -560,10 +598,11 @@ function animate() {
   }
 
     renderer.render( scene, camera );
-  }
+}
+
   renderer.setAnimationLoop( animate );
 
-// Codes for Display of Time and Date
+  // Codes for Display of Time and Date
   function updateDateTime() {
     const now = new Date();
 
