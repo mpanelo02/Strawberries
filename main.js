@@ -23,8 +23,12 @@ const closeChartButton = document.getElementById("closeChartButton");
 const ctx = document.getElementById("dataChart").getContext("2d");
 
 
+// Reading counter and auto-save interval
+let readingCount = 0;
+const AUTO_SAVE_INTERVAL = 2880; // Save after every 2880 readings
+
 // Chart The Data    
-// Sensor history for the last 30 minutes
+// Sensor history for the last day (2880 readings)
 const sensorHistory = {
     temperature: [],
     humidity: [],
@@ -57,43 +61,51 @@ async function getData() {
         const atmosphericPressReading = AtmosphereCO2Data.find(r => r.metric === "4");
 
         
-        // Add new readings to history (keeping last 30 readings)
+        // Add new readings to history (keeping last 120 readings)
         if (temperatureReading) {
             const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
             document.getElementById('temperature').textContent = roundedTemp;
             sensorHistory.temperature.push(roundedTemp);
-            if (sensorHistory.temperature.length > 2880) sensorHistory.temperature.shift();
+            if (sensorHistory.temperature.length > 120) sensorHistory.temperature.shift();
         }
-        // Repeat for other sensors...
         if (humidityReading) {
             const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
             document.getElementById('humidity').textContent = roundedHumidity;
             sensorHistory.humidity.push(roundedHumidity);
-            if (sensorHistory.humidity.length > 2880) sensorHistory.humidity.shift();
+            if (sensorHistory.humidity.length > 120) sensorHistory.humidity.shift();
         }
         if (moistureReading) {
             const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
             document.getElementById('moisture').textContent = roundedMoisture;
             sensorHistory.moisture.push(roundedMoisture);
-            if (sensorHistory.moisture.length > 2880) sensorHistory.moisture.shift();
+            if (sensorHistory.moisture.length > 120) sensorHistory.moisture.shift();
         }
         if (soilECReading) {
             const roundedSoilEC = parseFloat(soilECReading.value).toFixed(3);
             document.getElementById('soilEC').textContent = roundedSoilEC;
             sensorHistory.soilEC.push(roundedSoilEC);
-            if (sensorHistory.soilEC.length > 2880) sensorHistory.soilEC.shift();
+            if (sensorHistory.soilEC.length > 120) sensorHistory.soilEC.shift();
         }
         if (co2Reading) {
             const roundedCO2 = parseFloat(co2Reading.value).toFixed(0);
             document.getElementById('co2').textContent = roundedCO2;
             sensorHistory.co2.push(roundedCO2);
-            if (sensorHistory.co2.length > 2880) sensorHistory.co2.shift();
+            if (sensorHistory.co2.length > 120) sensorHistory.co2.shift();
         }
         if (atmosphericPressReading) {
             const roundedAtmosphericPress = parseFloat(atmosphericPressReading.value).toFixed(0);
             document.getElementById('atmosphericPress').textContent = roundedAtmosphericPress;
             sensorHistory.atmosphericPress.push(roundedAtmosphericPress);
-            if (sensorHistory.atmosphericPress.length > 2880) sensorHistory.atmosphericPress.shift();
+            if (sensorHistory.atmosphericPress.length > 120) sensorHistory.atmosphericPress.shift();
+        }
+
+        // Increment the reading count
+        readingCount++;
+        
+        // Check if it's time to auto-save
+        if (readingCount >= AUTO_SAVE_INTERVAL) {
+            readingCount = 0; // Reset counter
+            downloadData(); // Trigger the download
         }
 
         // If chart is visible, update it
@@ -108,9 +120,9 @@ async function getData() {
     }
 }
 
-// Call immediately and then every 30 seconds
+// Call immediately and then every 60 seconds
 getData();
-setInterval(getData, 30000); // 30000 ms = 30 seconds
+setInterval(getData, 60000); // 60000 ms = 60 seconds
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setSize( sizes.width, sizes.height );
@@ -267,7 +279,7 @@ let clockHandShort = null;
 let clockHandLong = null;
 let videoMesh = null;
 
-let smokerObject = null;
+// let smokerObject = null;
 let smokeParticles = [];
 let smokeMaterial = null;
 
@@ -992,11 +1004,11 @@ function showChart(dataType) {
             break;
     }
 
-    // Generate time labels based on the data length (each point represents 30 seconds)
+    // Generate time labels based on the data length (each point represents 60 seconds)
     const dataLength = sensorHistory[dataType].length;
     const labels = Array.from({length: dataLength}, (_, i) => {
-        const minutes = Math.floor(i * 0.5); // Each data point is 30 seconds apart
-        return `${minutes} min`;
+        const minutes = Math.floor(i * 1); // Each data point is 60 seconds apart
+        return `${minutes} m`;
     });
 
     // Create the chart
@@ -1031,7 +1043,7 @@ function showChart(dataType) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Time (minutes)'
+                        text: 'Time'
                     }
                 },
                 y: {
@@ -1054,6 +1066,27 @@ const downloadToggleButton = document.getElementById("downloadToggleButton");
 
 // Function to convert data to Excel and trigger download
 function downloadData() {
+
+    // Show a brief notification
+    const notification = document.createElement('div');
+    notification.textContent = 'Auto-saving data...';
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.right = '20px';
+    notification.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    notification.style.color = 'white';
+    notification.style.padding = '10px';
+    notification.style.borderRadius = '5px';
+    notification.style.zIndex = '10000';
+    document.body.appendChild(notification);
+    
+    // Remove the notification after 3 seconds
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+    
+    // Rest of your downloadData function...
+ 
     // Get current timestamp for filename
     const now = new Date();
     const timestamp = now.toISOString().replace(/[:.]/g, "-").split('.')[0] + 'Z';
@@ -1085,8 +1118,8 @@ function downloadData() {
     
     // Add data rows with timestamps
     for (let i = 0; i < maxLength; i++) {
-        // Calculate timestamp for this row (each data point is 30 seconds apart)
-        const rowTime = new Date(now.getTime() - (maxLength - i - 1) * 30000);
+        // Calculate timestamp for this row (each data point is 60 seconds apart)
+        const rowTime = new Date(now.getTime() - (maxLength - i - 1) * 60000);
         
         // Format timestamp without milliseconds, matching your display
         const formattedTime = formatDateTimeForExcel(rowTime);
