@@ -324,7 +324,7 @@
     margin-top: 5px;
     padding: 8px;
     width: 200px;
-    font-size: 15px;
+    font-size: 17px;
     /* font-weight: bold; */
     color: black;
     background-color: #a8ffb0; /* Light green background */
@@ -507,7 +507,7 @@
     }
     .graph-container { /* Drop Down display*/
         position: fixed;
-        top: 46px;
+        top: 45px;
         right: 80px;
         z-index: 9999;
     }
