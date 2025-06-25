@@ -16,6 +16,102 @@ const sizes = {
     height: window.innerHeight
 }
 
+// Initialize chart variables
+let dataChart = null;
+const chartContainer = document.getElementById("chartContainer");
+const closeChartButton = document.getElementById("closeChartButton");
+const ctx = document.getElementById("dataChart").getContext("2d");
+
+
+// Chart The Data    
+// Sensor history for the last 30 minutes
+const sensorHistory = {
+    temperature: [],
+    humidity: [],
+    moisture: [],
+    soilEC: [],
+    co2: [],
+    atmosphericPress: []
+};
+
+// Then modify your getData() function to store history
+async function getData() {
+    try {
+        const response = await fetch("https://valk-huone-1.onrender.com/api/data");
+        const data = await response.json();
+        
+          
+        // Access data from sensor1 (1061612) - likely has temperature and humidity
+        const tempHumidityData = data.sensor1.readings || [];
+        // Access data from sensor2 (6305245) - likely has moisture
+        const moistureSoilECData = data.sensor2.readings || [];
+        // Access data from sensor3 (3147479) - likely has moisture
+        const AtmosphereCO2Data = data.sensor3.readings || [];
+    
+        // Extract values
+        const temperatureReading = tempHumidityData.find(r => r.metric === "1");
+        const humidityReading = tempHumidityData.find(r => r.metric === "2");
+        const moistureReading = moistureSoilECData.find(r => r.metric === "8");
+        const soilECReading = moistureSoilECData.find(r => r.metric === "10");
+        const co2Reading = AtmosphereCO2Data.find(r => r.metric === "3");
+        const atmosphericPressReading = AtmosphereCO2Data.find(r => r.metric === "4");
+
+        
+        // Add new readings to history (keeping last 30 readings)
+        if (temperatureReading) {
+            const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
+            document.getElementById('temperature').textContent = roundedTemp;
+            sensorHistory.temperature.push(roundedTemp);
+            if (sensorHistory.temperature.length > 2880) sensorHistory.temperature.shift();
+        }
+        // Repeat for other sensors...
+        if (humidityReading) {
+            const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
+            document.getElementById('humidity').textContent = roundedHumidity;
+            sensorHistory.humidity.push(roundedHumidity);
+            if (sensorHistory.humidity.length > 2880) sensorHistory.humidity.shift();
+        }
+        if (moistureReading) {
+            const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
+            document.getElementById('moisture').textContent = roundedMoisture;
+            sensorHistory.moisture.push(roundedMoisture);
+            if (sensorHistory.moisture.length > 2880) sensorHistory.moisture.shift();
+        }
+        if (soilECReading) {
+            const roundedSoilEC = parseFloat(soilECReading.value).toFixed(3);
+            document.getElementById('soilEC').textContent = roundedSoilEC;
+            sensorHistory.soilEC.push(roundedSoilEC);
+            if (sensorHistory.soilEC.length > 2880) sensorHistory.soilEC.shift();
+        }
+        if (co2Reading) {
+            const roundedCO2 = parseFloat(co2Reading.value).toFixed(0);
+            document.getElementById('co2').textContent = roundedCO2;
+            sensorHistory.co2.push(roundedCO2);
+            if (sensorHistory.co2.length > 2880) sensorHistory.co2.shift();
+        }
+        if (atmosphericPressReading) {
+            const roundedAtmosphericPress = parseFloat(atmosphericPressReading.value).toFixed(0);
+            document.getElementById('atmosphericPress').textContent = roundedAtmosphericPress;
+            sensorHistory.atmosphericPress.push(roundedAtmosphericPress);
+            if (sensorHistory.atmosphericPress.length > 2880) sensorHistory.atmosphericPress.shift();
+        }
+
+        // If chart is visible, update it
+        if (dataChart && !chartContainer.classList.contains("hidden")) {
+            const currentDataType = graphDataDropdown.value;
+            if (currentDataType) {
+                showChart(currentDataType);
+            }
+        }
+    } catch (err) {
+        console.error("Fetch error:", err);
+    }
+}
+
+// Call immediately and then every 30 seconds
+getData();
+setInterval(getData, 30000); // 30000 ms = 30 seconds
+
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setSize( sizes.width, sizes.height );
 renderer.setPixelRatio(Math.min( window.devicePixelRatio, 2));
@@ -798,7 +894,7 @@ sunToggleButton.addEventListener('click', () => {
   document.getElementById('co2-container'),
   document.getElementById('atmosphericPress-container'),
   document.getElementById('moisture-container'),
-  document.getElementById('water-container')
+  document.getElementById('soilElectroConductivity-container')
   ];
 
 
@@ -839,6 +935,195 @@ pumpToggleButton.addEventListener("click", () => {
   client.publish("trial/pump", newState);
   updatePumpButton(newState);
 })
+
+// Toggle dropdown visibility
+graphDataButton.addEventListener("click", () => {
+    graphDataDropdown.classList.toggle("hidden");
+});
+
+
+// Update the dropdown event listener
+graphDataDropdown.addEventListener("change", (event) => {
+    const selectedValue = event.target.value;
+    if (selectedValue) {
+        showChart(selectedValue);
+        graphDataDropdown.classList.add("hidden");
+    }
+});
+
+// Close chart button
+closeChartButton.addEventListener("click", () => {
+    chartContainer.classList.add("hidden");
+});
+
+function showChart(dataType) {
+    // Destroy previous chart if it exists
+    if (dataChart) {
+        dataChart.destroy();
+    }
+
+    // Get the appropriate label and unit based on data type
+    let label, unit;
+    
+    switch(dataType) {
+        case "temperature":
+            label = "Temperature";
+            unit = "°C";
+            break;
+        case "humidity":
+            label = "Humidity";
+            unit = "%";
+            break;
+        case "moisture":
+            label = "Soil Moisture";
+            unit = "%";
+            break;
+        case "soilEC":
+            label = "Soil EC";
+            unit = "mS/cm";
+            break;
+        case "co2":
+            label = "CO2";
+            unit = "ppm";
+            break;
+        case "atmosphericPress":
+            label = "Atmospheric Pressure";
+            unit = "hPa";
+            break;
+    }
+
+    // Generate time labels based on the data length (each point represents 30 seconds)
+    const dataLength = sensorHistory[dataType].length;
+    const labels = Array.from({length: dataLength}, (_, i) => {
+        const minutes = Math.floor(i * 0.5); // Each data point is 30 seconds apart
+        return `${minutes} min`;
+    });
+
+    // Create the chart
+    dataChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `${label} (${unit})`,
+                data: sensorHistory[dataType],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${label}: ${context.parsed.y}${unit}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time (minutes)'
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: `${label} (${unit})`
+                    }
+                }
+            }
+        }
+    });
+
+    // Show the chart container
+    chartContainer.classList.remove("hidden");
+}
+
+// Add this near your other button declarations
+const downloadToggleButton = document.getElementById("downloadToggleButton");
+
+// Function to convert data to Excel and trigger download
+function downloadData() {
+    // Get current timestamp for filename
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/[:.]/g, "-").split('.')[0] + 'Z';
+    const filename = `sensor_data_${timestamp}.xlsx`;
+    
+    // Prepare the data array
+    const data = [];
+    
+    // Add headers
+    data.push([
+        "Timestamp",
+        "Temperature (°C)",
+        "Humidity (%)",
+        "CO2 (ppm)",
+        "Atmospheric Pressure (hPa)",
+        "Soil Moisture (%)",
+        "Soil EC (mS/cm)"
+    ]);
+    
+    // Determine the maximum length of any sensor array
+    const maxLength = Math.max(
+        sensorHistory.temperature.length,
+        sensorHistory.humidity.length,
+        sensorHistory.co2.length,
+        sensorHistory.atmosphericPress.length,
+        sensorHistory.moisture.length,
+        sensorHistory.soilEC.length
+    );
+    
+    // Add data rows with timestamps
+    for (let i = 0; i < maxLength; i++) {
+        // Calculate timestamp for this row (each data point is 30 seconds apart)
+        const rowTime = new Date(now.getTime() - (maxLength - i - 1) * 30000);
+        
+        // Format timestamp without milliseconds, matching your display
+        const formattedTime = formatDateTimeForExcel(rowTime);
+        
+        data.push([
+            formattedTime,
+            sensorHistory.temperature[i] || "",
+            sensorHistory.humidity[i] || "",
+            sensorHistory.co2[i] || "",
+            sensorHistory.atmosphericPress[i] || "",
+            sensorHistory.moisture[i] || "",
+            sensorHistory.soilEC[i] || ""
+        ]);
+    }
+    
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sensor Data");
+    
+    // Generate Excel file and trigger download
+    XLSX.writeFile(wb, filename);
+}
+
+// Helper function to format date/time consistently with your display
+function formatDateTimeForExcel(date) {
+    // Format as YYYY-MM-DD HH:MM:SS to match your display
+    const pad = num => num.toString().padStart(2, '0');
+    
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+           `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+// Add event listener to the download button
+downloadToggleButton.addEventListener("click", downloadData);
 
 enterButton.addEventListener("click", () => {
   video.muted = false;

@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 
 </head>
 <body>
@@ -27,6 +29,7 @@
         <div class="modal-wrapper">
             <div class="modal-header">
                 <h1 class="modal-title">Dashboard</h1>
+                <!-- <img id="modal-image" class="hidden" style="max-width: 100%; margin-top: 10px;" /> -->
                 <button class="modal-exit-button">Exit</button>
             </div>
             <div class="modal-content">
@@ -41,72 +44,6 @@
         </div>
     </div>
 
-    <script>
-
-
-    async function getData() {
-        try {
-            // const response = await fetch("http://192.168.1.100:3000/api/data");
-            const response = await fetch("https://valk-huone-1.onrender.com/api/data");
-            // const response = await fetch("http://localhost:3000/api/data");
-            const data = await response.json();
-    
-            // Access data from sensor1 (1061612) - likely has temperature and humidity
-            const tempHumidityData = data.sensor1.readings || [];
-            // Access data from sensor2 (6305245) - likely has moisture
-            const moistureSoilECData = data.sensor2.readings || [];
-            // Access data from sensor3 (3147479) - likely has moisture
-            const AtmosphereCO2Data = data.sensor3.readings || [];
-    
-            // Extract values
-            const temperatureReading = tempHumidityData.find(r => r.metric === "1");
-            const humidityReading = tempHumidityData.find(r => r.metric === "2");
-            const moistureReading = moistureSoilECData.find(r => r.metric === "8");
-            const soilECReading = moistureSoilECData.find(r => r.metric === "10");
-            const co2Reading = AtmosphereCO2Data.find(r => r.metric === "3");
-            const atmosphericPressReading = AtmosphereCO2Data.find(r => r.metric === "4");
-
-            if (temperatureReading) {
-            const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
-            document.getElementById('temperature').textContent = roundedTemp;
-            }
-            if (humidityReading) {
-            const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
-            document.getElementById('humidity').textContent = roundedHumidity;
-            }
-            if (moistureReading) {
-            const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
-            document.getElementById('moisture').textContent = roundedMoisture;
-            }
-            if (soilECReading) {
-            const roundedSoilEC = parseFloat(soilECReading.value).toFixed(3);
-            document.getElementById('soilEC').textContent = roundedSoilEC;
-            }
-            if (co2Reading) {
-            const roundedco2 = parseFloat(co2Reading.value).toFixed(0);
-            document.getElementById('co2').textContent = roundedco2;
-            }
-            if (atmosphericPressReading) {
-            const roundedAtmosphericPress = parseFloat(atmosphericPressReading.value).toFixed(1);
-            document.getElementById('atmosphericPress').textContent = roundedAtmosphericPress;
-            }
-
-            console.log('Data:', data);
-            console.log('Temperature:', temperatureReading?.value, 
-                        'Humidity:', humidityReading?.value, 
-                        'Moisture:', moistureReading?.value,
-                        'SoilEC:', soilECReading?.value,
-                        'CO2:', co2Reading?.value,
-                        'AtmosphericPressure:', atmosphericPressReading?.value);
-        } catch (err) {
-            console.error("Fetch error:", err);
-        }
-    }
-
-    // Call immediately and then every 30 seconds
-    getData();
-    setInterval(getData, 30000); // 30000 ms = 30 seconds
-    </script>
 
     <script type="importmap">
         {
@@ -162,9 +99,10 @@
         </div>
 
         <!-- Water Level -->
-        <div id="water-container" class="soilECPin">
+        <div id="soilElectroConductivity-container" class="soilECPin">
             ⚡S: <span id="soilEC">--</span> mS/cm
         </div>
+
 
         <!-- Motion Detect -->
         <!-- <div id="motion-container" style="position: fixed; top: 200px; left: 60px; font-size: 20px; color: black; font-weight: bold; z-index: 9999; font-family: Arial, sans-serif;">
@@ -180,6 +118,28 @@
         <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
 
         <!-- <button id="doorToggleButton" class="doorPin">🔓 🚪</button> -->
+
+
+        <div class="graph-container">
+            <button id="graphDataButton" class="graphPin">📊 Graph</button>
+            <select id="graphDataDropdown" class="hidden">
+                <option value="">Select Data</option>
+                <option value="temperature">Temperature</option>
+                <option value="humidity">Humidity</option>
+                <option value="co2">CO2</option>
+                <option value="atmosphericPress">Atmospheric Pressure</option>
+                <option value="moisture">Soil Moisture</option>
+                <option value="soilEC">Electrical Conductivity</option>
+                
+            </select>
+        </div>
+
+        <div id="chartContainer" class="chart-container hidden">
+            <canvas id="dataChart"></canvas>
+            <button id="closeChartButton" class="close-chart">✕ Close</button>
+        </div>
+
+        <button id="downloadToggleButton" class="downloadPin">Download</button>
 
     </div>
   

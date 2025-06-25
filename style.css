@@ -288,6 +288,150 @@
     color: white;
 }
 
+.graphPin {
+    position: fixed;
+    top: 220px;
+    right: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.graphPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+.graph-container { /* Drop Down display*/
+    position: fixed;
+    top: 215px;
+    right: 130px;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+}
+
+
+#graphDataDropdown {
+    margin-top: 5px;
+    padding: 8px;
+    width: 200px;
+    font-size: 15px;
+    /* font-weight: bold; */
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.hidden {
+    display: none;
+}
+
+.chart-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    width: 500px;
+    height: 300px;
+}
+
+.chart-container {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    width: 700px;
+    height: 400px;
+    /* display: flex; ERROR */
+    flex-direction: column;
+    align-items: center;
+}
+
+.close-chart {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+}
+
+#dataChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Dark mode adjustments */
+.dark-mode .chart-container {
+    background: rgba(40, 40, 40, 0.9);
+    color: white;
+}
+
+.dark-mode .close-chart {
+    color: #ccc;
+}
+
+.downloadPin {
+    position: fixed;
+    top: 260px;
+    right: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.downloadPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+.downloadPin:active {
+    transform: scale(0.95);
+    background-color: #3e8e41;
+}
+
+.downloadPin.loading {
+    background-color: #4caf50;
+    color: white;
+    cursor: wait;
+}
+
 /* For Mobile Devices */
 
 @media (max-width: 600px) {
@@ -355,6 +499,33 @@
         top: 10px;
         right: 10px;
     }
+    .graphPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 50px;
+        right: 10px;
+    }
+    .graph-container { /* Drop Down display*/
+        position: fixed;
+        top: 46px;
+        right: 80px;
+        z-index: 9999;
+    }
+    .chart-container {
+        position: fixed;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        height: 300px;
+    }
+    .downloadPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 90px;
+        right: 10px;
+    }
+
     .fanPin {
         font-size: 16px;
         padding: 4px 8px;
