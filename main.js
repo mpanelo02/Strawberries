@@ -1004,11 +1004,13 @@ function showChart(dataType) {
             break;
     }
 
-    // Generate time labels based on the data length (each point represents 60 seconds)
+    // Generate timestamp labels based on the current time and data length
     const dataLength = sensorHistory[dataType].length;
+    const now = new Date();
     const labels = Array.from({length: dataLength}, (_, i) => {
-        const minutes = Math.floor(i * 1); // Each data point is 60 seconds apart
-        return `${minutes} m`;
+        // Calculate timestamp for each data point (each point is 60 seconds apart)
+        const dataTime = new Date(now.getTime() - (dataLength - i - 1) * 60000);
+        return formatTimeForChart(dataTime);
     });
 
     // Create the chart
@@ -1044,6 +1046,12 @@ function showChart(dataType) {
                     title: {
                         display: true,
                         text: 'Time'
+                    },
+                    ticks: {
+                        // Auto-rotate labels if needed
+                        autoSkip: true,
+                        maxRotation: 45,
+                        minRotation: 45
                     }
                 },
                 y: {
@@ -1059,6 +1067,13 @@ function showChart(dataType) {
 
     // Show the chart container
     chartContainer.classList.remove("hidden");
+}
+
+// Helper function to format time for chart display
+function formatTimeForChart(date) {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
 }
 
 // Add this near your other button declarations
@@ -1084,8 +1099,6 @@ function downloadData() {
     setTimeout(() => {
         document.body.removeChild(notification);
     }, 3000);
-    
-    // Rest of your downloadData function...
  
     // Get current timestamp for filename
     const now = new Date();
@@ -1144,6 +1157,17 @@ function downloadData() {
     
     // Generate Excel file and trigger download
     XLSX.writeFile(wb, filename);
+
+    // Clear the sensor history after saving
+    sensorHistory.temperature = [];
+    sensorHistory.humidity = [];
+    sensorHistory.co2 = [];
+    sensorHistory.atmosphericPress = [];
+    sensorHistory.moisture = [];
+    sensorHistory.soilEC = [];
+    
+    // Reset the reading count
+    readingCount = 0;
 }
 
 // Helper function to format date/time consistently with your display
