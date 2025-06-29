@@ -283,13 +283,15 @@ let videoMesh = null;
 let smokeParticles = [];
 let smokeMaterial = null;
 
+let video;
+
 
 const loader = new GLTFLoader();
 
 // loader.setDecoderPath( './FarmLab_WhiteRoom03_Trial.glb', function ( glb ) {
 
 loader.load( './FarmLab_WhiteRoom03_Trial.glb', function ( glb ) {
-  const video = document.createElement('video');
+  video = document.createElement('video');
   video.src = 'DigitalTwins2.mp4';
   video.crossOrigin = 'anonymous';
   video.loop = true;
@@ -875,10 +877,18 @@ client.on("message", (topic, message) => {
 
 });
 
+// Button click events to toggle and publish new state
+const soundToggleButton = document.getElementById("soundToggleButton");
+let isSoundOn = true;
+soundToggleButton.addEventListener("click", () => {
+  isSoundOn = !isSoundOn;
+  soundToggleButton.textContent = isSoundOn ? '🔊' : '🔇';
+  video.muted = !isSoundOn;
+});
+
 const sunToggleButton = document.getElementById('sunToggleButton');
 
 let isBright = true;
-
 
 sunToggleButton.addEventListener('click', () => {
 

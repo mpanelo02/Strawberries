@@ -198,18 +198,41 @@
 
 
 
-.sunPin {
+.soundPin {
     position: fixed;
     top: 20px;
-    right: 30px;
+    right: 83px;
     font-size: 20px;
-    font-weight: bold;
+    /* font-weight: bold; */
     color: black;
     background-color: #a8ffb0; /* Light green background */
     border: 2px solid #4caf50;
     padding: 5px 10px;
     border-radius: 10px;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.soundPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+.sunPin {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    font-size: 20px;
+    /* font-weight: bold; */
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    /* font-family: Arial, sans-serif; */
     z-index: 9999;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -493,6 +516,12 @@
         left: 10px;
     }
 
+    .soundPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 10px;
+        right: 53px;
+    }
     .sunPin {
         font-size: 16px;
         padding: 4px 8px;
