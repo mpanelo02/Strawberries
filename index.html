@@ -88,19 +88,20 @@
             🚬C: <span id="co2">--</span> ppm
         </div>
 
-        <!-- Atmospheric Pressure -->
         <div id="atmosphericPress-container" class="pressurePin">
             ☁️P: <span id="atmosphericPress">--</span> hPa
         </div>
 
-        <!-- Moisture -->
         <div id="moisture-container" class="moistPin">
             💧S: <span id="moisture">--</span> %
         </div>
 
-        <!-- Water Level -->
         <div id="soilElectroConductivity-container" class="soilECPin">
             ⚡S: <span id="soilEC">--</span> mS/cm
+        </div>
+
+        <div id="poreElectroConductivity-container" class="poreECPin">
+            ⚡P: <span id="poreEC">--</span> mS/cm
         </div>
 
 
@@ -120,6 +121,9 @@
 
         <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
 
+        <button id="cameraToggleButton" class="cameraPin">🔥 Camera</button>
+
+
         <!-- <button id="doorToggleButton" class="doorPin">🔓 🚪</button> -->
 
 
@@ -132,8 +136,9 @@
                 <option value="co2">CO2</option>
                 <option value="atmosphericPress">Atmospheric Pressure</option>
                 <option value="moisture">Soil Moisture</option>
-                <option value="soilEC">Electrical Conductivity</option>
-                
+                <option value="soilEC">Soil ⚡ Conductivity</option>
+                <option value="poreEC">Pore ⚡ Conductivity</option>
+
             </select>
         </div>
 
@@ -142,9 +147,10 @@
             <button id="closeChartButton" class="close-chart">✕ Close</button>
         </div>
 
-        <button id="downloadToggleButton" class="downloadPin">Download</button>
+        <button id="downloadToggleButton" class="downloadPin">💾 History</button>
 
     </div>
+
   
 </body>
 </html>

@@ -35,7 +35,8 @@ const sensorHistory = {
     moisture: [],
     soilEC: [],
     co2: [],
-    atmosphericPress: []
+    atmosphericPress: [],
+    poreEC: []
 };
 
 // Then modify your getData() function to store history
@@ -43,8 +44,58 @@ async function getData() {
     try {
         const response = await fetch("https://valk-huone-1.onrender.com/api/data");
         const data = await response.json();
-        
-          
+
+        // Access historical data arrays
+        if (data.tempHistory) {
+            const tempValues = data.tempHistory.map(r => ({ time: r.time, value: r.value }));
+            console.log("Temperature History:", tempValues);
+            
+            // You can store this in your sensorHistory if needed
+            sensorHistory.temperature = tempValues; // Keep all readings
+        }
+        if (data.humidityHistory) {
+            const humidityValues = data.humidityHistory.map(r => ({ time: r.time, value: r.value }));
+            console.log("Humidity History:", humidityValues);
+            
+            // Store in sensorHistory
+            sensorHistory.humidity = humidityValues;
+        }
+        if (data.co2History) {
+            const co2Values = data.co2History.map(r => ({ time: r.time, value: r.value }));
+            console.log("CO2 History:", co2Values);
+            
+            // Store in sensorHistory
+            sensorHistory.co2 = co2Values;
+        }
+        if (data.atmosphericPressHistory) {
+            const atmosphericPressValues = data.atmosphericPressHistory.map(r => ({ time: r.time, value: r.value }));
+            console.log("Atmospheric Pressure History:", atmosphericPressValues);
+
+            // Store in sensorHistory
+            sensorHistory.atmosphericPress = atmosphericPressValues;
+        }
+        if (data.moistureHistory) {
+            const moistureValues = data.moistureHistory.map(r => ({ time: r.time, value: r.value }));
+            console.log("Moisture History:", moistureValues);
+
+            // Store in sensorHistory
+            sensorHistory.moisture = moistureValues;
+        }
+        if (data.soilECHistory) {
+            const soilECValues = data.soilECHistory.map(r => ({ time: r.time, value: r.value }));
+            console.log("Soil EC History:", soilECValues);
+
+            // Store in sensorHistory
+            sensorHistory.soilEC = soilECValues;
+        }
+        if (data.poreECHistory) {
+            const poreECValues = data.poreECHistory.map(r => ({ time: r.time, value: r.value }));
+            console.log("Pore EC History:", poreECValues);
+
+            // Store in sensorHistory
+            sensorHistory.poreEC = poreECValues;
+        }
+
         // Access data from sensor1 (1061612) - likely has temperature and humidity
         const tempHumidityData = data.sensor1.readings || [];
         // Access data from sensor2 (6305245) - likely has moisture
@@ -55,10 +106,12 @@ async function getData() {
         // Extract values
         const temperatureReading = tempHumidityData.find(r => r.metric === "1");
         const humidityReading = tempHumidityData.find(r => r.metric === "2");
-        const moistureReading = moistureSoilECData.find(r => r.metric === "8");
-        const soilECReading = moistureSoilECData.find(r => r.metric === "10");
         const co2Reading = AtmosphereCO2Data.find(r => r.metric === "3");
         const atmosphericPressReading = AtmosphereCO2Data.find(r => r.metric === "4");
+        const moistureReading = moistureSoilECData.find(r => r.metric === "8");
+        const soilECReading = moistureSoilECData.find(r => r.metric === "10");
+        const poreECReading = moistureSoilECData.find(r => r.metric === "11");
+
 
         
         // Add new readings to history (keeping last 120 readings)
@@ -97,6 +150,12 @@ async function getData() {
             document.getElementById('atmosphericPress').textContent = roundedAtmosphericPress;
             sensorHistory.atmosphericPress.push(roundedAtmosphericPress);
             if (sensorHistory.atmosphericPress.length > 120) sensorHistory.atmosphericPress.shift();
+        }
+        if (poreECReading) {
+            const roundedPoreEC = parseFloat(poreECReading.value).toFixed(3);
+            document.getElementById('poreEC').textContent = roundedPoreEC;
+            sensorHistory.poreEC.push(roundedPoreEC);
+            if (sensorHistory.poreEC.length > 120) sensorHistory.poreEC.shift();
         }
 
         // Increment the reading count
@@ -272,8 +331,6 @@ enterButton.addEventListener("click", () => {
 });
 
 
-
-
 let exhaustFan = null;
 let clockHandShort = null;
 let clockHandLong = null;
@@ -284,7 +341,6 @@ let smokeParticles = [];
 let smokeMaterial = null;
 
 let video;
-
 
 const loader = new GLTFLoader();
 
@@ -916,7 +972,8 @@ sunToggleButton.addEventListener('click', () => {
   document.getElementById('co2-container'),
   document.getElementById('atmosphericPress-container'),
   document.getElementById('moisture-container'),
-  document.getElementById('soilElectroConductivity-container')
+  document.getElementById('soilElectroConductivity-container'),
+  document.getElementById('poreElectroConductivity-container')
   ];
 
 
@@ -1015,13 +1072,10 @@ function showChart(dataType) {
     }
 
     // Generate timestamp labels based on the current time and data length
-    const dataLength = sensorHistory[dataType].length;
-    const now = new Date();
-    const labels = Array.from({length: dataLength}, (_, i) => {
-        // Calculate timestamp for each data point (each point is 60 seconds apart)
-        const dataTime = new Date(now.getTime() - (dataLength - i - 1) * 60000);
-        return formatTimeForChart(dataTime);
-    });
+    // const dataLength = sensorHistory[dataType].length;
+    // const now = new Date();
+    const labels = sensorHistory[dataType].map(entry => formatDateTimeForChart(new Date(entry.time)));
+
 
     // Create the chart
     dataChart = new Chart(ctx, {
@@ -1030,7 +1084,7 @@ function showChart(dataType) {
             labels: labels,
             datasets: [{
                 label: `${label} (${unit})`,
-                data: sensorHistory[dataType],
+                data: sensorHistory[dataType].map(d => d.value),
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
                 fill: false
@@ -1055,7 +1109,7 @@ function showChart(dataType) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Time'
+                        text: 'Date and Time'
                     },
                     ticks: {
                         // Auto-rotate labels if needed
@@ -1080,11 +1134,17 @@ function showChart(dataType) {
 }
 
 // Helper function to format time for chart display
-function formatTimeForChart(date) {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
+function formatDateTimeForChart(date) {
+    const pad = (num) => num.toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
+
 
 // Add this near your other button declarations
 const downloadToggleButton = document.getElementById("downloadToggleButton");
@@ -1094,7 +1154,7 @@ function downloadData() {
 
     // Show a brief notification
     const notification = document.createElement('div');
-    notification.textContent = 'Auto-saving data...';
+    notification.textContent = 'Saving data...';
     notification.style.position = 'fixed';
     notification.style.bottom = '20px';
     notification.style.right = '20px';
@@ -1126,7 +1186,8 @@ function downloadData() {
         "CO2 (ppm)",
         "Atmospheric Pressure (hPa)",
         "Soil Moisture (%)",
-        "Soil EC (mS/cm)"
+        "Soil EC (mS/cm)",
+        "Pore EC (mS/cm)"
     ]);
     
     // Determine the maximum length of any sensor array
@@ -1136,7 +1197,8 @@ function downloadData() {
         sensorHistory.co2.length,
         sensorHistory.atmosphericPress.length,
         sensorHistory.moisture.length,
-        sensorHistory.soilEC.length
+        sensorHistory.soilEC.length,
+        sensorHistory.poreEC.length
     );
     
     // Add data rows with timestamps
@@ -1147,15 +1209,25 @@ function downloadData() {
         // Format timestamp without milliseconds, matching your display
         const formattedTime = formatDateTimeForExcel(rowTime);
         
+        const temp = sensorHistory.temperature[i] || {};
+        const humid = sensorHistory.humidity[i] || {};
+        const co2 = sensorHistory.co2[i] || {};
+        const press = sensorHistory.atmosphericPress[i] || {};
+        const moist = sensorHistory.moisture[i] || {};
+        const soilEC = sensorHistory.soilEC[i] || {};
+        const poreEC = sensorHistory.poreEC[i] || {};
+
         data.push([
-            formattedTime,
-            sensorHistory.temperature[i] || "",
-            sensorHistory.humidity[i] || "",
-            sensorHistory.co2[i] || "",
-            sensorHistory.atmosphericPress[i] || "",
-            sensorHistory.moisture[i] || "",
-            sensorHistory.soilEC[i] || ""
+            temp.time || humid.time || co2.time || press.time || moist.time || soilEC.time || poreEC.time || "",
+            temp.value ?? "",
+            humid.value ?? "",
+            co2.value ?? "",
+            press.value ?? "",
+            moist.value ?? "",
+            soilEC.value ?? "",
+            poreEC.value ?? ""
         ]);
+
     }
     
     // Create worksheet
@@ -1175,7 +1247,8 @@ function downloadData() {
     sensorHistory.atmosphericPress = [];
     sensorHistory.moisture = [];
     sensorHistory.soilEC = [];
-    
+    sensorHistory.poreEC = [];
+  
     // Reset the reading count
     readingCount = 0;
 }
