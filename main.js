@@ -45,6 +45,17 @@ async function getData() {
         const response = await fetch("https://valk-huone-1.onrender.com/api/data");
         const data = await response.json();
 
+        // Log camera data if available
+        if (data.lastCameraShot) {
+            console.log('Received camera data:', {
+                id: data.lastCameraShot.id,
+                timestamp: data.lastCameraShot.timestamp,
+                imageUrl: data.lastCameraShot.imageUrl ? 'Available' : 'Not available'
+            });
+        } else {
+            console.log('No camera data in response');
+        }
+
         // Access historical data arrays
         if (data.tempHistory) {
             const tempValues = data.tempHistory.map(r => ({ time: r.time, value: r.value }));
@@ -1265,9 +1276,95 @@ function formatDateTimeForExcel(date) {
 // Add event listener to the download button
 downloadToggleButton.addEventListener("click", downloadData);
 
+// Add this near your other button declarations
+const cameraToggleButton = document.getElementById("cameraToggleButton");
+
+// Create a camera modal container (add this to your HTML or create dynamically)
+const cameraModal = document.createElement('div');
+cameraModal.className = 'modal hidden';
+cameraModal.innerHTML = `
+  <div class="modal-wrapper">
+    <div class="modal-header">
+      <h1 class="modal-title">Thermal Camera View</h1>
+      <button class="modal-exit-button">Exit</button>
+    </div>
+    <div class="modal-content">
+      <div class="camera-container">
+        <img id="camera-image" style="max-width: 100%;" />
+        <div class="camera-info">
+          <p>Timestamp: <span id="camera-timestamp">${new Date().toLocaleString()}</span></p>
+          <p>Temperature: <span id="camera-temperature"></span> °C</p>
+          <p>Humidity: <span id="camera-humidity"></span> %</p>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+document.body.appendChild(cameraModal);
+
+function formatCurrentTime() {
+  const now = new Date();
+  return now.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+}
+
+// In your camera button click handler:
+cameraToggleButton.addEventListener("click", async () => {
+  try {
+    // Update timestamp immediately when button is clicked
+    document.getElementById('camera-timestamp').textContent = formatCurrentTime();
+    
+    cameraToggleButton.classList.add('loading');
+    cameraToggleButton.textContent = 'Loading...';
+    
+    const response = await fetch("https://valk-huone-1.onrender.com/api/data");
+    const data = await response.json();
+    
+    if (data.lastCameraShot && data.lastCameraShot.imageUrl) {
+      document.getElementById('camera-image').src = data.lastCameraShot.imageUrl;
+      
+      // Update temperature and humidity if available
+      if (data.sensor1 && data.sensor1.readings) {
+        const tempReading = data.sensor1.readings.find(r => r.metric === "1");
+        const humidReading = data.sensor1.readings.find(r => r.metric === "2");
+        
+        if (tempReading) {
+          document.getElementById('camera-temperature').textContent = 
+            parseFloat(tempReading.value).toFixed(1);
+        }
+        if (humidReading) {
+          document.getElementById('camera-humidity').textContent = 
+            parseFloat(humidReading.value).toFixed(1);
+        }
+      }
+      
+      cameraModal.classList.remove('hidden');
+    } else {
+      alert('No camera image available');
+    }
+  } catch (error) {
+    console.error('Error fetching camera image:', error);
+    alert('Failed to load camera image');
+  } finally {
+    cameraToggleButton.classList.remove('loading');
+    cameraToggleButton.textContent = '🔥 Camera';
+  }
+});
+
+// Add event listener to close the camera modal
+cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => {
+  cameraModal.classList.add('hidden');
+});
+
 enterButton.addEventListener("click", () => {
   video.muted = false;
   video.volume = 0.2; // Set volume to a very low value
   video.play(); // in case it needs to be triggered by user action
 });
-

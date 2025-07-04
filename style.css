@@ -72,7 +72,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     background-color: #ce75d1;
     border: 2px solid #fff;
     color: #fff;
@@ -213,7 +213,7 @@
 .soundPin {
     position: fixed;
     top: 20px;
-    right: 83px;
+    right: 85px;
     font-size: 20px;
     /* font-weight: bold; */
     color: black;
@@ -258,7 +258,7 @@
 
 .fanPin {
     position: fixed;
-    top: 70px;
+    top: 80px;
     right: 30px;
     font-size: 20px;
     font-weight: bold;
@@ -280,7 +280,7 @@
 }
 .bulbLedPin {
     position: fixed;
-    top: 120px;
+    top: 140px;
     right: 30px;
     font-size: 20px;
     font-weight: bold;
@@ -302,7 +302,7 @@
 }
 .pumpPin {
     position: fixed;
-    top: 170px;
+    top: 200px;
     right: 30px;
     font-size: 20px;
     font-weight: bold;
@@ -322,32 +322,10 @@
     background-color: #4caf50;
     color: white;
 }
-.cameraPin {
-    position: fixed;
-    top: 315px;
-    right: 30px;
-    font-size: 15px;
-    font-weight: bold;
-    color: black;
-    background-color: #a8ffb0; /* Light green background */
-    border: 2px solid #4caf50;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.cameraPin:hover {
-    background-color: #4caf50;
-    color: white;
-}
 
 .graphPin {
     position: fixed;
-    top: 220px;
+    top: 260px;
     right: 30px;
     font-size: 15px;
     font-weight: bold;
@@ -370,7 +348,7 @@
 
 .graph-container { /* Drop Down display*/
     position: fixed;
-    top: 215px;
+    top: 255px;
     right: 130px;
     z-index: 9999;
     font-family: Arial, sans-serif;
@@ -444,7 +422,7 @@
 
 .downloadPin {
     position: fixed;
-    top: 265px;
+    top: 315px;
     right: 30px;
     font-size: 15px;
     font-weight: bold;
@@ -476,6 +454,69 @@
     cursor: wait;
 }
 
+.cameraPin {
+    position: fixed;
+    top: 370px;
+    right: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.cameraPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+/* Add to your style.css */
+.camera-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 100%;
+}
+
+#camera-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 2px solid white;
+}
+
+.camera-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.camera-info p {
+    margin: 4px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.camera-info span {
+    font-weight: bold;
+}
+
+/* Loading state for camera button */
+.cameraPin.loading {
+    background-color: #4caf50;
+    color: white;
+    cursor: wait;
+}
+
+
 /* For Mobile Devices */
 
 @media (max-width: 600px) {
@@ -485,7 +526,7 @@
         font-size: 25px;
     }
     .modal {
-        max-width: 250px;
+        max-width: 300px;
         font-size: 12px;
     }
     .modal-header{
@@ -581,19 +622,26 @@
         right: 10px;
     }
 
+ 
     .fanPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 525px;
+        top: 485px;
         right: 10px;
     }
     .bulbLedPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 565px;
+        top: 525px;
         right: 10px;
     }
     .pumpPin {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 565px;
+        right: 10px;
+    }
+    .cameraPin {
         font-size: 16px;
         padding: 4px 8px;
         top: 605px;
