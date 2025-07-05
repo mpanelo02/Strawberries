@@ -512,7 +512,7 @@
 /* Loading state for camera button */
 .cameraPin.loading {
     background-color: #4caf50;
-    color: white;
+    /* color: white; */
     cursor: wait;
 }
 
@@ -632,19 +632,19 @@
     .bulbLedPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 525px;
+        top: 528px;
         right: 10px;
     }
     .pumpPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 565px;
+        top: 571px;
         right: 10px;
     }
     .cameraPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 605px;
+        top: 614px;
         right: 10px;
     }
 
