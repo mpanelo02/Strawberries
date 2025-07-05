@@ -5,8 +5,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 
-
-
 const scene = new THREE.Scene();
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -21,7 +19,6 @@ let dataChart = null;
 const chartContainer = document.getElementById("chartContainer");
 const closeChartButton = document.getElementById("closeChartButton");
 const ctx = document.getElementById("dataChart").getContext("2d");
-
 
 // Reading counter and auto-save interval
 let readingCount = 0;
@@ -123,8 +120,6 @@ async function getData() {
         const soilECReading = moistureSoilECData.find(r => r.metric === "10");
         const poreECReading = moistureSoilECData.find(r => r.metric === "11");
 
-
-        
         // Add new readings to history (keeping last 120 readings)
         if (temperatureReading) {
             const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
@@ -202,13 +197,7 @@ renderer.shadowMap.enabled = true;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
-
 const modalContent = {
-    // Monitor: {
-    //     title: "Dashboard",
-    //     content: "This is a monitor.",
-    //     link:"https://www.youtube.com",
-    // },
     Thermometer: {
         title: "Thermometer",
     },
@@ -245,7 +234,6 @@ const modalContent = {
         title: "Strawberry Room",
         content: "is a Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above.",
         link:"https://www.metropolia.fi/en/rdi/collaboration-platforms/urbanfarmlab",
-        // image: "https://via.placeholder.com/400x200",
     },
 };
 
@@ -257,20 +245,9 @@ const modalVisitButton = document.querySelector(".modal-visit-button");
 
 function showModal(id){
     const content = modalContent[id];
-    // const modalImage = document.querySelector(".modal-image");
-
     if (content) {
         modalTitle.textContent = content.title;
         modalProjectDescription.textContent = content.content;
-
-        // Show image if available
-        // if (content.image) {
-        //   modalImage.src = content.image;
-        //   modalImage.classList.remove("hidden");
-        // } else {
-        //   modalImage.classList.add("hidden");
-        //   modalImage.src = ""; // clear previous image
-        // }
 
         if (content.link) {
             modalVisitButton.href = content.link;
@@ -278,7 +255,6 @@ function showModal(id){
         }else {
             modalVisitButton.classList.add("hidden");
         }
-
 
         modal.classList.toggle("hidden");
     }
@@ -288,23 +264,14 @@ function hideModal(){
     modal.classList.toggle("hidden");
 }
 
-
 let intersectObject = "";
 const intersectObjects = [];
 const intersectObjectsNames = [
-
-    // "Monitor",
-    // "Clock",
     "AirCon",
-    // "ExhaustFan",
     "Container",
     "WaterTank",
     "Filter",
     "Pump",
-    // "WS",
-    // "Racks",
-    // "DrainPipe",
-    // "PlantBase",
     "Plate01",
     "Plate02",
     "Thermometer",
@@ -314,7 +281,6 @@ const intersectObjectsNames = [
 ];
 
 // Loading screen and loading manager
-// See: https://threejs.org/docs/#api/en/loaders/managers/LoadingManager
 const loadingScreen = document.getElementById("loadingScreen");
 const enterButton = document.querySelector(".enter-button");
 
@@ -330,7 +296,6 @@ manager.onLoad = function () {
 };
 
 enterButton.addEventListener("click", () => {
-
   gsap.to(loadingScreen, {
     opacity: 0,
     duration: 2,
@@ -341,35 +306,28 @@ enterButton.addEventListener("click", () => {
   });
 });
 
-
 let exhaustFan = null;
 let clockHandShort = null;
 let clockHandLong = null;
 let videoMesh = null;
-
-// let smokerObject = null;
 let smokeParticles = [];
 let smokeMaterial = null;
-
 let video;
 
 const loader = new GLTFLoader();
-
-// loader.setDecoderPath( './FarmLab_WhiteRoom03_Trial.glb', function ( glb ) {
 
 loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
   video = document.createElement('video');
   video.src = 'DigitalTwins2.mp4';
   video.crossOrigin = 'anonymous';
   video.loop = true;
-  // video.muted = true;
   video.playsInline = true;
   video.autoplay = true;
-  video.volume = 0.2; // Set volume to a very low value
+  video.volume = 0.2;
   video.load();
 
   const videoTexture = new THREE.VideoTexture(video);
-  videoTexture.flipY = false; // Fixes the video texture orientation
+  videoTexture.flipY = false;
   videoTexture.minFilter = THREE.LinearFilter;
   videoTexture.magFilter = THREE.LinearFilter;
   videoTexture.format = THREE.RGBAFormat;
@@ -392,7 +350,7 @@ loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
 
       for (let i = 0; i < 25; i++) {
         const sprite = new THREE.Sprite(smokeMaterial.clone());
-        sprite.scale.set(0.6, 0.8, 0.6); // Adjust size as needed
+        sprite.scale.set(0.6, 0.8, 0.6);
         sprite.position.set(
           smoker.position.x + (Math.random() - 0.5) * 0.5,
           smoker.position.y + Math.random() * -1,
@@ -420,7 +378,6 @@ loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
       child.castShadow = true;
       child.receiveShadow = true;
     }
-
 
     if (intersectObjectsNames.includes(child.name)) {
         intersectObjects.push(child);
@@ -463,17 +420,12 @@ loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
     if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
-        
     }
-
-
   });
   scene.add( glb.scene );
 
 }, undefined, function ( error ) {
-
   console.error( error );
-
 } );
 
 loader.load('./Strawberries1.glb', function(gltf) {
@@ -579,13 +531,12 @@ scene.add(rectLight8);
 const rectLightHelper8 = new RectAreaLightHelper(rectLight8);
 rectLight8.add(rectLightHelper8);
 
-
 const sun = new THREE.DirectionalLight( 0xFFFFFF );
 sun.castShadow = true;
 sun.position.set( 40, 40, 20 );
 sun.target.position.set( 0, 0, 0 );
-sun.shadow.mapSize.width = 4096; // default
-sun.shadow.mapSize.height = 4096; // default
+sun.shadow.mapSize.width = 4096;
+sun.shadow.mapSize.height = 4096;
 sun.shadow.camera.left = -50;
 sun.shadow.camera.right = 50;
 sun.shadow.camera.top = 50;
@@ -593,20 +544,16 @@ sun.shadow.camera.bottom = -50;
 sun.shadow.normalBias = 0.2;
 scene.add( sun );
 
-
-const light = new THREE.AmbientLight( 0x404040, 4 ); // soft white light
+const light = new THREE.AmbientLight( 0x404040, 4 );
 scene.add( light );
 
-// const aspect = sizes.width / sizes.height;
-
 const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 1000 );
-camera.position.set(13.3, 5.4, 12.8);
-camera.lookAt(0, 4, 0);
+camera.position.set(22.3, 12.4, 21.8); // <-- Initial position (X, Y, Z)
+camera.lookAt(0, 4, 0); // <-- Where the camera is pointing (X, Y, Z)
 
 const controls = new OrbitControls( camera, canvas );
 controls.target.set(0, 4, 0);
 controls.update();
-
 
 function onResize() {
     sizes.width = window.innerWidth;
@@ -622,72 +569,15 @@ function onResize() {
     renderer.setPixelRatio(Math.min( window.devicePixelRatio, 2));
 }
 
-// function jumpPlants(meshID) {
-//     const mesh = scene.getObjectByName(meshID);
-//     if (!mesh) return;
-  
-//     const jumpHeight = 2;
-//     const jumpDuration = 0.5;
-  
-//     const startY = mesh.position.y; // <- SAVE the original Y
-  
-//     const t1 = gsap.timeline();
-  
-//     t1.to(mesh.scale, {
-//       x: 1,
-//       y: 0.8,
-//       z: 1.2,
-//       duration: jumpDuration * 0.3,
-//       ease: "power2.out",
-//     });
-  
-//     t1.to(mesh.position, {
-//       y: startY + jumpHeight,
-//       duration: jumpDuration * 0.3,
-//       ease: "power2.out",
-//     }, "<");
-  
-//     t1.to(mesh.position, {
-//       y: startY, // <- use the saved Y
-//       duration: jumpDuration * 0.5,
-//       ease: "bounce.out",
-//     });
-  
-//     t1.to(mesh.scale, {
-//       x: 1,
-//       y: 1,
-//       z: 1,
-//       duration: jumpDuration * 0.5,
-//       ease: "elastic.out(1, 0.3)",
-//     });
-//   }
-
 function onClick() {
     if(intersectObject !== ""){
-    //   if([
-    // // "ExhaustFan",
-    // // "Monitor",
-    // // "PlantBase",
-    // // "Plate01",
-    // // "Plate02",
-    // // "Thermometer",
-    // // "Clock",
-    // "StrawBerries1",
-    // "StrawBerries2",
-    // "StrawBerries3"].includes(intersectObject)){
-    //     jumpPlants(intersectObject);
-    //   } else 
-      {
         showModal(intersectObject);
-      }
     }
 }
-
 
 function onPointerMove( event ) {
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
 }
 
 modalExitButton.addEventListener("click", hideModal);
@@ -695,34 +585,22 @@ window.addEventListener("resize", onResize);
 window.addEventListener("click", onClick);
 window.addEventListener( "pointermove", onPointerMove );
 
-
 function animate() {
-  // controls.enablePan = true;
-
-  controls.maxDistance = 35; // or whatever feels right
+  controls.maxDistance = 35;
   controls.minDistance = 10;
-
-  // Vertical limits (up/down)
-  controls.minPolarAngle = THREE.MathUtils.degToRad(35); // 35° down
-  controls.maxPolarAngle = THREE.MathUtils.degToRad(90); // 90° up
-
-  // Horizontal limits (left/right)
-  controls.minAzimuthAngle = THREE.MathUtils.degToRad(5); // 5° left
-  controls.maxAzimuthAngle = THREE.MathUtils.degToRad(80);  // 85° right
-
+  controls.minPolarAngle = THREE.MathUtils.degToRad(35);
+  controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
+  controls.minAzimuthAngle = THREE.MathUtils.degToRad(5);
+  controls.maxAzimuthAngle = THREE.MathUtils.degToRad(80);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
 
-  if (controls.target.x > 5) controls.target.x = 5;    // 3m right limit
-  if (controls.target.x < -4.5) controls.target.x = -4.5;  // 3m left limit
-
-  if (controls.target.z > 5) controls.target.z = 5;    // 3m right limit
-  if (controls.target.z < -4.5) controls.target.z = -4.5;  // 3m left limit
-
-  if (controls.target.y > 8) controls.target.y = 8;    // 3m right limit
-  if (controls.target.y < 2) controls.target.y = 2;  // 3m left limit
-
-  controls.update();
+  if (controls.target.x > 5) controls.target.x = 5;
+  if (controls.target.x < -4.5) controls.target.x = -4.5;
+  if (controls.target.z > 5) controls.target.z = 5;
+  if (controls.target.z < -4.5) controls.target.z = -4.5;
+  if (controls.target.y > 8) controls.target.y = 8;
+  if (controls.target.y < 2) controls.target.y = 2;
 
   // Update smoke particles (falling + spreading)
   if (isFanOn && smokeParticles.length > 0) {
@@ -749,7 +627,7 @@ function animate() {
     });
   }
 
-
+  controls.update();
 
   raycaster.setFromCamera( pointer, camera );
 
@@ -767,25 +645,23 @@ function animate() {
 	}
 
   if (exhaustFan) {
-  exhaustFan.rotation.y += 0.08; // Adjust speed as needed
+    exhaustFan.rotation.y += 0.08;
   }
   if (clockHandShort) {
-  clockHandShort.rotation.y -= 0.00001; // Adjust speed as needed
+    clockHandShort.rotation.y -= 0.00001;
   }
   if (clockHandLong) {
-  clockHandLong.rotation.y -= 0.0003; // Adjust speed as needed
+    clockHandLong.rotation.y -= 0.0003;
   }
 
     renderer.render( scene, camera );
 }
 
-  renderer.setAnimationLoop( animate );
+renderer.setAnimationLoop( animate );
 
-  // Codes for Display of Time and Date
-  function updateDateTime() {
+// Codes for Display of Time and Date
+function updateDateTime() {
     const now = new Date();
-
-    // const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = now.toLocaleDateString(undefined, optionsDate);
 
@@ -797,38 +673,57 @@ function animate() {
 
     document.getElementById('vantaa-date').textContent = formattedDate;
     document.getElementById('vantaa-clock').textContent = formattedTime;
-    }
-
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-
-// Codes for Connection to Server and Buttons
-
-const client = mqtt.connect("wss://test.mosquitto.org:8081");
-
-const fanToggleButton = document.getElementById("fanToggleButton");
-const pumpToggleButton = document.getElementById("pumpToggleButton");
-const plantLightToggleButton = document.getElementById("plantLightToggleButton");
-// const doorToggleButton = document.getElementById("doorToggleButton");
-
-let isFanOn = false;
-// let isBulbOn = false;
-let isPumpOn = false;
-let isPlantLightOn = false;
-// let isDoorOn = false;
-
-function updateButtonState(button, isOn, onLabel, offLabel) {
-  button.textContent = isOn ? onLabel : offLabel;
 }
 
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+// Device control variables and functions
+let isFanOn = false;
+let isPumpOn = false;
+let isPlantLightOn = false;
 
 let coldWind1 = null;
 let coldWind2 = null;
 let coldWindToggleInterval = null;
-function updateFanButton(state) {
-  isFanOn = state === "ON";
-  updateButtonState(fanToggleButton, isFanOn, "🌀ON", "🥵OFF");
+let water1 = null;
+let water2 = null;
+let waterToggleInterval = null;
 
+let deviceStates = {
+  fan: "OFF",
+  plantLight: "OFF",
+  pump: "OFF"
+};
+
+async function fetchDeviceStates() {
+  try {
+    const response = await fetch("https://valk-huone-1.onrender.com/api/device-states");
+    const data = await response.json();
+    deviceStates = data;
+    
+    // Update button states based on fetched values
+    updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
+    updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
+    updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
+    
+    // Update actual device states
+    isFanOn = deviceStates.fan === "ON";
+    isPlantLightOn = deviceStates.plantLight === "ON";
+    isPumpOn = deviceStates.pump === "ON";
+    
+    // Update visual states
+    updateFanVisuals();
+    updatePlantLightVisuals();
+    updatePumpVisuals();
+    
+  } catch (err) {
+    console.error("Error fetching device states:", err);
+  }
+}
+
+// Add these helper functions
+function updateFanVisuals() {
   if (isFanOn) {
     let toggle = false;
     if (coldWindToggleInterval) clearInterval(coldWindToggleInterval);
@@ -847,41 +742,19 @@ function updateFanButton(state) {
   }
 }
 
-function updatePlantLightButton(state) {
-  isPlantLightOn = state === "ON";
-  updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-
+function updatePlantLightVisuals() {
   const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
-  // const plantLights2 = [rectLight7, rectLight8];
   
-
   plantLights.forEach(light => {
     gsap.to(light, {
-      intensity: isPlantLightOn ? 25 : 0, // match initial intensity
+      intensity: isPlantLightOn ? 25 : 0,
       duration: 1
     });
     light.visible = isPlantLightOn;
   });
-
-  // plantLights2.forEach(light => {
-  //   gsap.to(light, {
-  //     intensity: isPlantLightOn ? 5 : 0, // match initial intensity
-  //     duration: 1
-  //   });
-  //   light.visible = isPlantLightOn;
-  // });
 }
 
-
-
-
-let water1 = null;
-let water2 = null;
-let waterToggleInterval = null;
-function updatePumpButton(state) {
-  isPumpOn = state === "ON";
-  updateButtonState(pumpToggleButton, isPumpOn, "🌧️ON", "🌵OFF");
-
+function updatePumpVisuals() {
   if (isPumpOn) {
     let toggle = false;
     if (waterToggleInterval) clearInterval(waterToggleInterval);
@@ -900,53 +773,93 @@ function updatePumpButton(state) {
   }
 }
 
+const fanToggleButton = document.getElementById("fanToggleButton");
+const pumpToggleButton = document.getElementById("pumpToggleButton");
+const plantLightToggleButton = document.getElementById("plantLightToggleButton");
 
+function updateButtonState(button, isOn, onLabel, offLabel) {
+  button.textContent = isOn ? onLabel : offLabel;
+}
 
-client.on("connect", () => {
-  console.log("✅ Connected to MQTT broker");
-
-  // Subscribe to all topics
-  const topics = ["trial/fan", "trial/bulb", "trial/pump", "trial/plantLight", "trial/door"];
-
-  topics.forEach(topic => {
-    client.subscribe(topic, err => {
-      if (!err) {
-        console.log(`📡 Subscribed to topic: ${topic}`);
-        // Request the retained message
-        client.publish(topic, "", { qos: 0, retain: false });
-      }
-    });
-  });
-});
-
-// Handle incoming messages
-client.on("message", (topic, message) => {
-  const msg = message.toString().trim();
-  console.log(`📥 ${topic}: ${msg}`);
-
-  if (["trial/fan", "trial/bulb", "trial/pump", "trial/plantLight"].includes(topic)) {
-    if (msg !== "ON" && msg !== "OFF") return;
-
-    switch (topic) {
-      case "trial/fan":
-        updateFanButton(msg);
-        break;
-      case "trial/bulb":
-        updateBulbButton(msg);
-        break;
-      case "trial/pump":
-        updatePumpButton(msg);
-        break;
-      case "trial/plantLight":
-        updatePlantLightButton(msg);
-        break;
-
-    }
+async function toggleFan() {
+  isFanOn = !isFanOn;
+  const newState = isFanOn ? "ON" : "OFF";
+  updateButtonState(fanToggleButton, isFanOn, "🌀ON", "🥵OFF");
+  updateFanVisuals();
+  
+  try {
+    await updateDeviceStateOnServer('fan', newState);
+  } catch (err) {
+    console.error("Error updating fan state:", err);
+    // Revert if update fails
+    isFanOn = !isFanOn;
+    updateButtonState(fanToggleButton, isFanOn, "🌀ON", "🥵OFF");
+    updateFanVisuals();
   }
+}
 
+
+async function togglePlantLight() {
+  isPlantLightOn = !isPlantLightOn;
+  const newState = isPlantLightOn ? "ON" : "OFF";
+  updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+  updatePlantLightVisuals();
+  
+  try {
+    await updateDeviceStateOnServer('plantLight', newState);
+  } catch (err) {
+    console.error("Error updating plant light state:", err);
+    // Revert if update fails
+    isPlantLightOn = !isPlantLightOn;
+    updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+    updatePlantLightVisuals();
+  }
+}
+
+async function togglePump() {
+  isPumpOn = !isPumpOn;
+  const newState = isPumpOn ? "ON" : "OFF";
+  updateButtonState(pumpToggleButton, isPumpOn, "🌧️ON", "🌵OFF");
+  updatePumpVisuals();
+  
+  try {
+    await updateDeviceStateOnServer('pump', newState);
+  } catch (err) {
+    console.error("Error updating pump state:", err);
+    // Revert if update fails
+    isPumpOn = !isPumpOn;
+    updateButtonState(pumpToggleButton, isPumpOn, "🌧️ON", "🌵OFF");
+    updatePumpVisuals();
+  }
+}
+
+async function updateDeviceStateOnServer(device, state) {
+  const response = await fetch("https://valk-huone-1.onrender.com/api/update-device-state", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ device, state })
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to update device state');
+  }
+  
+  return response.json();
+}
+
+// Call fetchDeviceStates when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  fetchDeviceStates();
 });
 
-// Button click events to toggle and publish new state
+// Button event listeners
+fanToggleButton.addEventListener("click", toggleFan);
+plantLightToggleButton.addEventListener("click", togglePlantLight);
+pumpToggleButton.addEventListener("click", togglePump);
+
+// Sound toggle
 const soundToggleButton = document.getElementById("soundToggleButton");
 let isSoundOn = true;
 soundToggleButton.addEventListener("click", () => {
@@ -955,21 +868,19 @@ soundToggleButton.addEventListener("click", () => {
   video.muted = !isSoundOn;
 });
 
+// Sun/dark mode toggle
 const sunToggleButton = document.getElementById('sunToggleButton');
-
 let isBright = true;
 
 sunToggleButton.addEventListener('click', () => {
-
   isBright = !isBright;
   sunToggleButton.textContent = isBright ? '🌞' : '🌚';
 
   // Control rectLight7 and rectLight8 (INVERSE LOGIC)
-  const lightsOn = !isBright; // Lights on when sun is off
-  const targetIntensity = lightsOn ? 5 : 0; // Adjust intensity as needed
+  const lightsOn = !isBright;
+  const targetIntensity = lightsOn ? 5 : 0;
   gsap.to(rectLight7, {intensity: targetIntensity,duration: 1});
   gsap.to(rectLight8, {intensity: targetIntensity,duration: 1});
-    // Ensure lights are visible when needed
   rectLight7.visible = lightsOn;
   rectLight8.visible = lightsOn;
 
@@ -978,26 +889,23 @@ sunToggleButton.addEventListener('click', () => {
   renderer.setClearColor(isBright ? 0xeeeeee : 0x111111, 1);
 
   const containers = [
-  document.getElementById('vantaa-date-container'),
-  document.getElementById('vantaa-time-container'),
-  document.getElementById('temperature-container'),
-  document.getElementById('humidity-container'),
-  document.getElementById('co2-container'),
-  document.getElementById('atmosphericPress-container'),
-  document.getElementById('moisture-container'),
-  document.getElementById('soilElectroConductivity-container'),
-  document.getElementById('poreElectroConductivity-container')
+    document.getElementById('vantaa-date-container'),
+    document.getElementById('vantaa-time-container'),
+    document.getElementById('temperature-container'),
+    document.getElementById('humidity-container'),
+    document.getElementById('co2-container'),
+    document.getElementById('atmosphericPress-container'),
+    document.getElementById('moisture-container'),
+    document.getElementById('soilElectroConductivity-container'),
+    document.getElementById('poreElectroConductivity-container')
   ];
 
-
   const newFontColor = isBright ? 'black' : 'white';
-
   containers.forEach(container => {
     if (container) {
       container.style.color = newFontColor;
     }
   });
-
 });
 
 // Initialize lights to correct state
@@ -1006,33 +914,14 @@ rectLight8.intensity = isBright ? 0 : 1;
 rectLight7.visible = !isBright;
 rectLight8.visible = !isBright;
 
-
-// Button click events to toggle and publish new state
-fanToggleButton.addEventListener("click", () => {
-  const newState = isFanOn ? "OFF" : "ON";
-  client.publish("trial/fan", newState);
-  updateFanButton(newState);
-});
-
-
-plantLightToggleButton.addEventListener("click", () => {
-  const newState = isPlantLightOn ? "OFF" : "ON";
-  client.publish("trial/plantLight", newState);
-  updatePlantLightButton(newState);
-});
-
-
-pumpToggleButton.addEventListener("click", () => {
-  const newState = isPumpOn ? "OFF" : "ON";
-  client.publish("trial/pump", newState);
-  updatePumpButton(newState);
-})
+// Chart functionality
+const graphDataButton = document.getElementById("graphDataButton");
+const graphDataDropdown = document.getElementById("graphDataDropdown");
 
 // Toggle dropdown visibility
 graphDataButton.addEventListener("click", () => {
     graphDataDropdown.classList.toggle("hidden");
 });
-
 
 // Update the dropdown event listener
 graphDataDropdown.addEventListener("change", (event) => {
@@ -1049,12 +938,10 @@ closeChartButton.addEventListener("click", () => {
 });
 
 function showChart(dataType) {
-    // Destroy previous chart if it exists
     if (dataChart) {
         dataChart.destroy();
     }
 
-    // Get the appropriate label and unit based on data type
     let label, unit;
     
     switch(dataType) {
@@ -1084,13 +971,8 @@ function showChart(dataType) {
             break;
     }
 
-    // Generate timestamp labels based on the current time and data length
-    // const dataLength = sensorHistory[dataType].length;
-    // const now = new Date();
     const labels = sensorHistory[dataType].map(entry => formatDateTimeForChart(new Date(entry.time)));
 
-
-    // Create the chart
     dataChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -1125,7 +1007,6 @@ function showChart(dataType) {
                         text: 'Date and Time'
                     },
                     ticks: {
-                        // Auto-rotate labels if needed
                         autoSkip: true,
                         maxRotation: 45,
                         minRotation: 45
@@ -1142,11 +1023,9 @@ function showChart(dataType) {
         }
     });
 
-    // Show the chart container
     chartContainer.classList.remove("hidden");
 }
 
-// Helper function to format time for chart display
 function formatDateTimeForChart(date) {
     const pad = (num) => num.toString().padStart(2, '0');
     const year = date.getFullYear();
@@ -1158,40 +1037,19 @@ function formatDateTimeForChart(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-
-// Add this near your other button declarations
+// Data download functionality
 const downloadToggleButton = document.getElementById("downloadToggleButton");
 
-// Function to convert data to Excel and trigger download
 function downloadData() {
+    downloadToggleButton.classList.add('saving');
+    downloadToggleButton.textContent = 'Saving...';
 
-    // Show a brief notification
-    const notification = document.createElement('div');
-    notification.textContent = 'Saving data...';
-    notification.style.position = 'fixed';
-    notification.style.bottom = '20px';
-    notification.style.right = '20px';
-    notification.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    notification.style.color = 'white';
-    notification.style.padding = '10px';
-    notification.style.borderRadius = '5px';
-    notification.style.zIndex = '10000';
-    document.body.appendChild(notification);
-    
-    // Remove the notification after 3 seconds
-    setTimeout(() => {
-        document.body.removeChild(notification);
-    }, 3000);
- 
-    // Get current timestamp for filename
     const now = new Date();
     const timestamp = now.toISOString().replace(/[:.]/g, "-").split('.')[0] + 'Z';
     const filename = `sensor_data_${timestamp}.xlsx`;
     
-    // Prepare the data array
     const data = [];
     
-    // Add headers
     data.push([
         "Timestamp",
         "Temperature (°C)",
@@ -1203,7 +1061,6 @@ function downloadData() {
         "Pore EC (mS/cm)"
     ]);
     
-    // Determine the maximum length of any sensor array
     const maxLength = Math.max(
         sensorHistory.temperature.length,
         sensorHistory.humidity.length,
@@ -1214,12 +1071,8 @@ function downloadData() {
         sensorHistory.poreEC.length
     );
     
-    // Add data rows with timestamps
     for (let i = 0; i < maxLength; i++) {
-        // Calculate timestamp for this row (each data point is 60 seconds apart)
         const rowTime = new Date(now.getTime() - (maxLength - i - 1) * 60000);
-        
-        // Format timestamp without milliseconds, matching your display
         const formattedTime = formatDateTimeForExcel(rowTime);
         
         const temp = sensorHistory.temperature[i] || {};
@@ -1240,20 +1093,13 @@ function downloadData() {
             soilEC.value ?? "",
             poreEC.value ?? ""
         ]);
-
     }
     
-    // Create worksheet
     const ws = XLSX.utils.aoa_to_sheet(data);
-    
-    // Create workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sensor Data");
-    
-    // Generate Excel file and trigger download
     XLSX.writeFile(wb, filename);
 
-    // Clear the sensor history after saving
     sensorHistory.temperature = [];
     sensorHistory.humidity = [];
     sensorHistory.co2 = [];
@@ -1262,26 +1108,25 @@ function downloadData() {
     sensorHistory.soilEC = [];
     sensorHistory.poreEC = [];
   
-    // Reset the reading count
     readingCount = 0;
+
+    setTimeout(() => {
+        downloadToggleButton.classList.remove('saving');
+        downloadToggleButton.textContent = '💾 History';
+    }, 2000);
 }
 
-// Helper function to format date/time consistently with your display
 function formatDateTimeForExcel(date) {
-    // Format as YYYY-MM-DD HH:MM:SS to match your display
     const pad = num => num.toString().padStart(2, '0');
     
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
            `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 }
 
-// Add event listener to the download button
 downloadToggleButton.addEventListener("click", downloadData);
 
-// Add this near your other button declarations
+// Camera functionality
 const cameraToggleButton = document.getElementById("cameraToggleButton");
-
-// Create a camera modal container (add this to your HTML or create dynamically)
 const cameraModal = document.createElement('div');
 cameraModal.className = 'modal hidden';
 cameraModal.innerHTML = `
@@ -1294,7 +1139,7 @@ cameraModal.innerHTML = `
       <div class="camera-container">
         <img id="camera-image" style="max-width: 100%;" />
         <div class="camera-info">
-          <p>Timestamp: <span id="camera-timestamp">${new Date().toLocaleString()}</span></p>
+          <p>Time: <span id="camera-timestamp">${new Date().toLocaleString()}</span></p>
           <p>Temperature: <span id="camera-temperature"></span> °C</p>
           <p>Humidity: <span id="camera-humidity"></span> %</p>
         </div>
@@ -1317,10 +1162,8 @@ function formatCurrentTime() {
   });
 }
 
-// In your camera button click handler:
 cameraToggleButton.addEventListener("click", async () => {
   try {
-    // Update timestamp immediately when button is clicked
     document.getElementById('camera-timestamp').textContent = formatCurrentTime();
     
     cameraToggleButton.classList.add('loading');
@@ -1332,7 +1175,6 @@ cameraToggleButton.addEventListener("click", async () => {
     if (data.lastCameraShot && data.lastCameraShot.imageUrl) {
       document.getElementById('camera-image').src = data.lastCameraShot.imageUrl;
       
-      // Update temperature and humidity if available
       if (data.sensor1 && data.sensor1.readings) {
         const tempReading = data.sensor1.readings.find(r => r.metric === "1");
         const humidReading = data.sensor1.readings.find(r => r.metric === "2");
@@ -1360,13 +1202,12 @@ cameraToggleButton.addEventListener("click", async () => {
   }
 });
 
-// Add event listener to close the camera modal
 cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => {
   cameraModal.classList.add('hidden');
 });
 
 enterButton.addEventListener("click", () => {
   video.muted = false;
-  video.volume = 0.2; // Set volume to a very low value
-  video.play(); // in case it needs to be triggered by user action
+  video.volume = 0.2;
+  video.play();
 });
