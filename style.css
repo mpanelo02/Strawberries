@@ -602,56 +602,56 @@
     }
     .tempPin {
         font-size: 16px;
-        top: 470px;
+        top: 475px;
         left: 10px;
     }
     .humidPin {
         font-size: 16px;
-        top: 495px;
+        top: 500px;
         left: 10px;
     }
     .co2Pin {
         font-size: 16px;
-        top: 520px;
+        top: 525px;
         left: 10px;
     }
     .pressurePin {
         font-size: 16px;
-        top: 545px;
+        top: 550px;
         left: 10px;
     }
     .moistPin {
         font-size: 16px;
-        top: 570px;
+        top: 575px;
         left: 10px;
     }
     .soilECPin {
         font-size: 16px;
-        top: 595px;
+        top: 600px;
         left: 10px;
     }
     .poreECPin {
         font-size: 16px;
-        top: 620px;
+        top: 625px;
         left: 10px;
     }
 
 
     .soundPin {
         font-size: 16px;
-        padding: 4px 8px;
+        padding: 2px 8px;
         top: 10px;
         right: 53px;
     }
     .sunPin {
         font-size: 16px;
-        padding: 4px 8px;
+        padding: 2px 8px;
         top: 10px;
         right: 10px;
     }
     .graphPin {
         font-size: 16px;
-        padding: 4px 8px;
+        padding: 2px 8px;
         top: 50px;
         right: 10px;
     }
@@ -671,7 +671,7 @@
     }
     .downloadPin {
         font-size: 16px;
-        padding: 4px 8px;
+        padding: 2px 8px;
         top: 90px;
         right: 10px;
     }
@@ -686,26 +686,26 @@
  
     .fanPin {
         font-size: 16px;
-        padding: 4px 8px;
-        top: 488px;
+        padding: 2px 8px;
+        top: 495px;
         right: 10px;
     }
     .bulbLedPin {
         font-size: 16px;
-        padding: 4px 8px;
-        top: 531px;
+        padding: 2px 8px;
+        top: 535px;
         right: 10px;
     }
     .pumpPin {
         font-size: 16px;
-        padding: 4px 8px;
-        top: 574px;
+        padding: 2px 8px;
+        top: 575px;
         right: 10px;
     }
     .cameraPin {
         font-size: 16px;
-        padding: 4px 8px;
-        top: 617px;
+        padding: 2px 8px;
+        top: 615px;
         right: 10px;
     }
 
