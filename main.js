@@ -20,9 +20,6 @@ const chartContainer = document.getElementById("chartContainer");
 const closeChartButton = document.getElementById("closeChartButton");
 const ctx = document.getElementById("dataChart").getContext("2d");
 
-// Reading counter and auto-save interval
-let readingCount = 0;
-const AUTO_SAVE_INTERVAL = 2880; // Save after every 2880 readings
 
 // Chart The Data    
 // Sensor history for the last day (2880 readings)
@@ -162,15 +159,6 @@ async function getData() {
             document.getElementById('poreEC').textContent = roundedPoreEC;
             sensorHistory.poreEC.push(roundedPoreEC);
             if (sensorHistory.poreEC.length > 120) sensorHistory.poreEC.shift();
-        }
-
-        // Increment the reading count
-        readingCount++;
-        
-        // Check if it's time to auto-save
-        if (readingCount >= AUTO_SAVE_INTERVAL) {
-            readingCount = 0; // Reset counter
-            downloadData(); // Trigger the download
         }
 
         // If chart is visible, update it
@@ -548,7 +536,7 @@ const light = new THREE.AmbientLight( 0x404040, 4 );
 scene.add( light );
 
 const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 1000 );
-camera.position.set(22.3, 12.4, 21.8); // <-- Initial position (X, Y, Z)
+camera.position.set(30.3, 12.4, 29.8); // <-- Initial position (X, Y, Z)
 camera.lookAt(0, 4, 0); // <-- Where the camera is pointing (X, Y, Z)
 
 const controls = new OrbitControls( camera, canvas );
@@ -586,7 +574,7 @@ window.addEventListener("click", onClick);
 window.addEventListener( "pointermove", onPointerMove );
 
 function animate() {
-  controls.maxDistance = 35;
+  controls.maxDistance = 45;
   controls.minDistance = 10;
   controls.minPolarAngle = THREE.MathUtils.degToRad(35);
   controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
@@ -1038,82 +1026,94 @@ function formatDateTimeForChart(date) {
 }
 
 // Data download functionality
-const downloadToggleButton = document.getElementById("downloadToggleButton");
+// Replace the current downloadToggleButton event listener and downloadData function with this:
 
-function downloadData() {
+const downloadToggleButton = document.getElementById("downloadToggleButton");
+const downloadDataDropdown = document.getElementById("downloadDataDropdown");
+
+// Toggle dropdown visibility
+downloadToggleButton.addEventListener("click", () => {
+    downloadDataDropdown.classList.toggle("hidden");
+});
+
+// Handle dropdown selection
+downloadDataDropdown.addEventListener("change", (event) => {
+    const selectedValue = event.target.value;
+    if (selectedValue) {
+        downloadSelectedData(selectedValue);
+        downloadDataDropdown.classList.add("hidden");
+    }
+});
+
+function downloadSelectedData(dataType) {
     downloadToggleButton.classList.add('saving');
     downloadToggleButton.textContent = 'Saving...';
 
     const now = new Date();
     const timestamp = now.toISOString().replace(/[:.]/g, "-").split('.')[0] + 'Z';
-    const filename = `sensor_data_${timestamp}.xlsx`;
+    const filename = `${dataType}_data_${timestamp}.xlsx`;
     
-    const data = [];
+    // Get the selected data
+    const selectedData = sensorHistory[dataType];
     
-    data.push([
-        "Timestamp",
-        "Temperature (°C)",
-        "Humidity (%)",
-        "CO2 (ppm)",
-        "Atmospheric Pressure (hPa)",
-        "Soil Moisture (%)",
-        "Soil EC (mS/cm)",
-        "Pore EC (mS/cm)"
-    ]);
-    
-    const maxLength = Math.max(
-        sensorHistory.temperature.length,
-        sensorHistory.humidity.length,
-        sensorHistory.co2.length,
-        sensorHistory.atmosphericPress.length,
-        sensorHistory.moisture.length,
-        sensorHistory.soilEC.length,
-        sensorHistory.poreEC.length
-    );
-    
-    for (let i = 0; i < maxLength; i++) {
-        const rowTime = new Date(now.getTime() - (maxLength - i - 1) * 60000);
-        const formattedTime = formatDateTimeForExcel(rowTime);
-        
-        const temp = sensorHistory.temperature[i] || {};
-        const humid = sensorHistory.humidity[i] || {};
-        const co2 = sensorHistory.co2[i] || {};
-        const press = sensorHistory.atmosphericPress[i] || {};
-        const moist = sensorHistory.moisture[i] || {};
-        const soilEC = sensorHistory.soilEC[i] || {};
-        const poreEC = sensorHistory.poreEC[i] || {};
-
-        data.push([
-            temp.time || humid.time || co2.time || press.time || moist.time || soilEC.time || poreEC.time || "",
-            temp.value ?? "",
-            humid.value ?? "",
-            co2.value ?? "",
-            press.value ?? "",
-            moist.value ?? "",
-            soilEC.value ?? "",
-            poreEC.value ?? ""
-        ]);
+    if (!selectedData || selectedData.length === 0) {
+        alert('No data available for download');
+        downloadToggleButton.classList.remove('saving');
+        downloadToggleButton.textContent = '💾 History';
+        return;
     }
-    
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sensor Data");
-    XLSX.writeFile(wb, filename);
 
-    sensorHistory.temperature = [];
-    sensorHistory.humidity = [];
-    sensorHistory.co2 = [];
-    sensorHistory.atmosphericPress = [];
-    sensorHistory.moisture = [];
-    sensorHistory.soilEC = [];
-    sensorHistory.poreEC = [];
-  
-    readingCount = 0;
+    // Prepare headers based on data type
+    let headers = [["Timestamp", `${getDataTypeLabel(dataType)} (${getDataUnit(dataType)})`]];
+    
+    // Prepare data rows
+    const data = selectedData.map(entry => [
+        entry.time ? formatDateTimeForExcel(new Date(entry.time)) : "",
+        entry.value ?? ""
+    ]);
+
+    // Combine headers and data
+    const excelData = [...headers, ...data];
+    
+    // Create worksheet and workbook
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${dataType} Data`);
+    
+    // Download the file
+    XLSX.writeFile(wb, filename);
 
     setTimeout(() => {
         downloadToggleButton.classList.remove('saving');
         downloadToggleButton.textContent = '💾 History';
     }, 2000);
+}
+
+// Helper functions to get labels and units
+function getDataTypeLabel(dataType) {
+    switch(dataType) {
+        case "temperature": return "Temperature";
+        case "humidity": return "Humidity";
+        case "moisture": return "Soil Moisture";
+        case "soilEC": return "Soil EC";
+        case "co2": return "CO2";
+        case "atmosphericPress": return "Atmospheric Pressure";
+        case "poreEC": return "Pore EC";
+        default: return dataType;
+    }
+}
+
+function getDataUnit(dataType) {
+    switch(dataType) {
+        case "temperature": return "°C";
+        case "humidity": 
+        case "moisture": return "%";
+        case "soilEC": 
+        case "poreEC": return "mS/cm";
+        case "co2": return "ppm";
+        case "atmosphericPress": return "hPa";
+        default: return "";
+    }
 }
 
 function formatDateTimeForExcel(date) {
@@ -1123,7 +1123,6 @@ function formatDateTimeForExcel(date) {
            `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 }
 
-downloadToggleButton.addEventListener("click", downloadData);
 
 // Camera functionality
 const cameraToggleButton = document.getElementById("cameraToggleButton");
@@ -1205,6 +1204,57 @@ cameraToggleButton.addEventListener("click", async () => {
 cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => {
   cameraModal.classList.add('hidden');
 });
+
+// Add this near your other button declarations (around line 1200)
+const hideShowToggleButton = document.getElementById("hide-showToggleButton");
+const dataContainers = [
+    document.getElementById('vantaa-date-container'),
+    document.getElementById('vantaa-time-container'),
+    document.getElementById('temperature-container'),
+    document.getElementById('humidity-container'),
+    document.getElementById('co2-container'),
+    document.getElementById('atmosphericPress-container'),
+    document.getElementById('moisture-container'),
+    document.getElementById('soilElectroConductivity-container'),
+    document.getElementById('poreElectroConductivity-container')
+];
+
+const controlButtons = [
+  fanToggleButton,
+  pumpToggleButton,
+  plantLightToggleButton,
+  soundToggleButton,
+  sunToggleButton,
+  cameraToggleButton,
+  graphDataButton,
+  downloadToggleButton
+];
+
+let isDataVisible = true;
+
+hideShowToggleButton.addEventListener("click", () => {
+    isDataVisible = !isDataVisible;
+    
+    // Update toggle button text
+    hideShowToggleButton.textContent = isDataVisible ? '🙈 Hide' : '👀 Show';
+
+    // Toggle data containers
+    dataContainers.forEach(container => {
+        if (container) {
+            container.style.display = isDataVisible ? 'block' : 'none';
+        }
+    });
+
+    // Toggle control buttons (only on mobile)
+    if (window.innerWidth <= 768) { // You can adjust the width threshold
+        controlButtons.forEach(button => {
+            if (button) {
+                button.style.display = isDataVisible ? 'inline-block' : 'none';
+            }
+        });
+    }
+});
+
 
 enterButton.addEventListener("click", () => {
   video.muted = false;

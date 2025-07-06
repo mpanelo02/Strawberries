@@ -102,6 +102,7 @@
             ⚡P: <span id="poreEC">--</span> mS/cm
         </div>
 
+        <button id="hide-showToggleButton" class="hide-showPin">🙈 Data</button>
 
         
         <button id="soundToggleButton" class="soundPin">🔊</button>
@@ -126,7 +127,6 @@
                 <option value="moisture">Soil Moisture</option>
                 <option value="soilEC">Soil ⚡ Conductivity</option>
                 <option value="poreEC">Pore ⚡ Conductivity</option>
-
             </select>
         </div>
 
@@ -135,7 +135,20 @@
             <button id="closeChartButton" class="close-chart">✕ Close</button>
         </div>
 
-        <button id="downloadToggleButton" class="downloadPin">💾 History</button>
+        
+        <div class="download-container">
+            <button id="downloadToggleButton" class="downloadPin">💾 History</button>
+            <select id="downloadDataDropdown" class="hidden">
+                <option value="">Select Data</option>
+                <option value="temperature">Temperature</option>
+                <option value="humidity">Humidity</option>
+                <option value="co2">CO2</option>
+                <option value="atmosphericPress">Atmospheric Pressure</option>
+                <option value="moisture">Soil Moisture</option>
+                <option value="soilEC">Soil ⚡ Conductivity</option>
+                <option value="poreEC">Pore ⚡ Conductivity</option>
+            </select>
+        </div>
 
         <button id="cameraToggleButton" class="cameraPin">🔥 Camera</button>
 

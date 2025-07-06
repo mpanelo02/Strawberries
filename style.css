@@ -307,7 +307,7 @@
     font-size: 20px;
     font-weight: bold;
     color: black;
-    background-color: #a8ffb0; /* Light green background */
+    background-color: #a8ffb0;
     border: 2px solid #4caf50;
     padding: 5px 10px;
     border-radius: 10px;
@@ -349,7 +349,7 @@
 .graph-container { /* Drop Down display*/
     position: fixed;
     top: 255px;
-    right: 130px;
+    right: 135px;
     z-index: 9999;
     font-family: Arial, sans-serif;
 }
@@ -454,6 +454,37 @@
     cursor: wait;
 }
 
+.download-container { /* Drop Down display*/
+    position: fixed;
+    top: 310px;
+    right: 135px;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+}
+
+
+#downloadDataDropdown {
+    margin-top: 5px;
+    padding: 8px;
+    width: 200px;
+    font-size: 17px;
+    /* font-weight: bold; */
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.hidden {
+    display: none;
+}
+
 .cameraPin {
     position: fixed;
     top: 370px;
@@ -537,51 +568,74 @@
         padding: 2px 4px;
     }
 
+    .hide-showPin {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: black;
+        background-color: #a8ffb0;
+        border: 2px solid #4caf50;
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+        z-index: 9999;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: right;
+    }
+
+    .hide-showPin:hover {
+        background-color: #4caf50;
+        color: white;
+    }
     .datePin {
         font-size: 16px;
-        top: 10px;
+        top: 50px;
         left: 10px;
     }
     .timePin {
         font-size: 16px;
-        top: 35px;
+        top: 75px;
         left: 10px;
     }
     .tempPin {
         font-size: 16px;
-        top: 480px;
+        top: 470px;
         left: 10px;
     }
     .humidPin {
         font-size: 16px;
-        top: 505px;
+        top: 495px;
         left: 10px;
     }
     .co2Pin {
         font-size: 16px;
-        top: 530px;
+        top: 520px;
         left: 10px;
     }
     .pressurePin {
         font-size: 16px;
-        top: 555px;
+        top: 545px;
         left: 10px;
     }
     .moistPin {
         font-size: 16px;
-        top: 580px;
+        top: 570px;
         left: 10px;
     }
     .soilECPin {
         font-size: 16px;
-        top: 605px;
+        top: 595px;
         left: 10px;
     }
     .poreECPin {
         font-size: 16px;
-        top: 630px;
+        top: 620px;
         left: 10px;
     }
+
 
     .soundPin {
         font-size: 16px;
@@ -604,7 +658,7 @@
     .graph-container { /* Drop Down display*/
         position: fixed;
         top: 45px;
-        right: 100px;
+        right: 110px;
         z-index: 9999;
     }
     .chart-container {
@@ -621,34 +675,38 @@
         top: 90px;
         right: 10px;
     }
+    .download-container { /* Drop Down display*/
+        position: fixed;
+        top: 85px;
+        right: 110px;
+        z-index: 9999;
+        font-family: Arial, sans-serif;
+    }
 
  
     .fanPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 485px;
+        top: 488px;
         right: 10px;
     }
     .bulbLedPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 528px;
+        top: 531px;
         right: 10px;
     }
     .pumpPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 571px;
+        top: 574px;
         right: 10px;
     }
     .cameraPin {
         font-size: 16px;
         padding: 4px 8px;
-        top: 614px;
+        top: 617px;
         right: 10px;
     }
 
-
 }
-
-
