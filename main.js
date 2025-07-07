@@ -438,8 +438,8 @@ const height2 = 1.43;
 const intensity2 = 1;
 
 const rectLight1 = new THREE.RectAreaLight(0xff69b4, intensity, width, height);
-rectLight1.position.set(2.42, 5.61, .9);
-rectLight1.lookAt(2.42, 0, .9);
+rectLight1.position.set(2.72, 5.61, .6);
+rectLight1.lookAt(2.72, 0, .6);
 rectLight1.intensity = 0;
 rectLight1.visible = false;
 scene.add(rectLight1);
@@ -448,8 +448,8 @@ const rectLightHelper1 = new RectAreaLightHelper(rectLight1);
 rectLight1.add(rectLightHelper1);
 
 const rectLight2 = new THREE.RectAreaLight(0xff69b4, intensity, width, height);
-rectLight2.position.set(-1.75, 5.61, .9);
-rectLight2.lookAt(-1.75, 0, .9);
+rectLight2.position.set(-1.45, 5.61, .6);
+rectLight2.lookAt(-1.45, 0, .6);
 rectLight2.intensity = 0;
 rectLight2.visible = false;
 scene.add(rectLight2);
@@ -458,8 +458,8 @@ const rectLightHelper2 = new RectAreaLightHelper(rectLight2);
 rectLight2.add(rectLightHelper2);
 
 const rectLight3 = new THREE.RectAreaLight(0xff69b4, intensity, width, height);
-rectLight3.position.set(2.42, 7.61, .9);
-rectLight3.lookAt(2.42, 0, .9);
+rectLight3.position.set(2.72, 7.61, .6);
+rectLight3.lookAt(2.72, 0, .6);
 rectLight3.intensity = 0;
 rectLight3.visible = false;
 scene.add(rectLight3);
@@ -468,8 +468,8 @@ const rectLightHelper3 = new RectAreaLightHelper(rectLight3);
 rectLight3.add(rectLightHelper3);
 
 const rectLight4 = new THREE.RectAreaLight(0xff69b4, intensity, width, height);
-rectLight4.position.set(-1.75, 7.61, .9);
-rectLight4.lookAt(-1.75, 0, .9);
+rectLight4.position.set(-1.45, 7.61, .6);
+rectLight4.lookAt(-1.45, 0, .6);
 rectLight4.intensity = 0;
 rectLight4.visible = false;
 scene.add(rectLight4);
@@ -478,8 +478,8 @@ const rectLightHelper4 = new RectAreaLightHelper(rectLight4);
 rectLight4.add(rectLightHelper4);
 
 const rectLight5 = new THREE.RectAreaLight(0xff69b4, intensity, width, height);
-rectLight5.position.set(2.42, 3.61, .9);
-rectLight5.lookAt(2.42, 0, .9);
+rectLight5.position.set(2.72, 3.61, .6);
+rectLight5.lookAt(2.72, 0, .6);
 rectLight5.intensity = 0;
 rectLight5.visible = false;
 scene.add(rectLight5);
@@ -488,8 +488,8 @@ const rectLightHelper5 = new RectAreaLightHelper(rectLight5);
 rectLight5.add(rectLightHelper5);
 
 const rectLight6 = new THREE.RectAreaLight(0xff69b4, intensity, width, height);
-rectLight6.position.set(-1.75, 3.61, .9);
-rectLight6.lookAt(-1.75, 0, .9);
+rectLight6.position.set(-1.45, 3.61, .6);
+rectLight6.lookAt(-1.45, 0, .6);
 rectLight6.intensity = 0;
 rectLight6.visible = false;
 scene.add(rectLight6);
@@ -498,8 +498,8 @@ const rectLightHelper6 = new RectAreaLightHelper(rectLight6);
 rectLight6.add(rectLightHelper6);
 
 const rectLight7 = new THREE.RectAreaLight(0xffffff, intensity2, width2, height2);
-rectLight7.position.set(-3.95, 3.86, 5.5);
-rectLight7.lookAt(-3.72, 0, 5.5);
+rectLight7.position.set(-3.65, 3.86, 5.2);
+rectLight7.lookAt(-3.42, 0, 5.2);
 rectLight7.rotation.z = THREE.MathUtils.degToRad(-20);
 rectLight7.intensity = 0;
 rectLight7.visible = false;
@@ -509,8 +509,8 @@ const rectLightHelper7 = new RectAreaLightHelper(rectLight7);
 rectLight7.add(rectLightHelper7);
 
 const rectLight8 = new THREE.RectAreaLight(0xffffff, intensity2, width2, height2);
-rectLight8.position.set(-3.95, 2.57, 5.5);
-rectLight8.lookAt(-3.72, 0, 5.5);
+rectLight8.position.set(-3.65, 2.57, 5.2);
+rectLight8.lookAt(-3.42, 0, 5.2);
 rectLight8.rotation.z = THREE.MathUtils.degToRad(-20);
 rectLight8.intensity = 0;
 rectLight8.visible = false;
