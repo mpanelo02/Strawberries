@@ -186,24 +186,24 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
 const modalContent = {
-    Thermometer: {
-        title: "Thermometer",
-    },
-    Pump: {
-        title: "Pump",
-    },
-    WaterTank: {
-        title: "Water Tank",
-    },
-    Filter: {
-        title: "Filter",
-    },
-    AirCon: {
-        title: "Air Conditioning",
-    },
-    Container: {
-        title: "Container",
-    },
+    // Thermometer: {
+    //     title: "Thermometer",
+    // },
+    // Pump: {
+    //     title: "Pump",
+    // },
+    // WaterTank: {
+    //     title: "Water Tank",
+    // },
+    // Filter: {
+    //     title: "Filter",
+    // },
+    // AirCon: {
+    //     title: "Air Conditioning",
+    // },
+    // Container: {
+    //     title: "Container",
+    // },
     StrawBerries1: {
         title: "Strawberry",
     },
@@ -255,14 +255,14 @@ function hideModal(){
 let intersectObject = "";
 const intersectObjects = [];
 const intersectObjectsNames = [
-    "AirCon",
-    "Container",
-    "WaterTank",
-    "Filter",
-    "Pump",
+    // "AirCon",
+    // "Container",
+    // "WaterTank",
+    // "Filter",
+    // "Pump",
     "Plate01",
     "Plate02",
-    "Thermometer",
+    // "Thermometer",
     "StrawBerries1",
     "StrawBerries2",
     "StrawBerries3",
@@ -302,9 +302,22 @@ let smokeParticles = [];
 let smokeMaterial = null;
 let video;
 
+let pump = null;
+let racks = null;
+let plantBase = null;
+let waterPipe = null;
+let ccTV = null;
+let airCon = null;
+let strawBerries1 = null;
+let strawBerries2 = null;
+let strawBerries3 = null;
+let signHolder = null;
+let plate01 = null;
+let plate02 = null;
+
 const loader = new GLTFLoader();
 
-loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
+loader.load( './FarmLab_WhiteRoom05_Trial.glb', function ( glb ) {
   video = document.createElement('video');
   video.src = 'DigitalTwins2.mp4';
   video.crossOrigin = 'anonymous';
@@ -349,6 +362,53 @@ loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
         scene.add(sprite);
         smokeParticles.push(sprite);
       }
+    }
+
+    // For Intro  Animations
+    if (child.name === "SignHolder") {
+        signHolder = child;
+        signHolder.visible = false;
+        signHolder.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Plate01") {
+        plate01 = child;
+        plate01.visible = false;
+        plate01.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Plate02") {
+        plate02 = child;
+        plate02.visible = false;
+        plate02.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Pump") {
+        pump = child;
+        pump.visible = false;
+        pump.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Racks") {
+        racks = child;
+        racks.visible = false;
+        racks.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "PlantBase") {
+        plantBase = child;
+        plantBase.visible = false;
+        plantBase.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "WaterPipe") {
+        waterPipe = child;
+        waterPipe.visible = false;
+        waterPipe.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "CCTV") {
+        ccTV = child;
+        ccTV.visible = false;
+        ccTV.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "AirCon") {
+        airCon = child;
+        airCon.visible = false;
+        airCon.scale.set(0, 0, 0); // Start scaled down
     }
 
     // Plays Video on Screen object
@@ -418,16 +478,40 @@ loader.load( './FarmLab_WhiteRoom04_Trial.glb', function ( glb ) {
 
 loader.load('./Strawberries1.glb', function(gltf) {
   const model1 = gltf.scene;
+  model1.traverse((child) => {
+      if (child.name === "StrawBerries1") {
+        strawBerries1 = child;
+        strawBerries1.visible = false;
+        strawBerries1.scale.set(0, 0, 0); // Start scaled down
+    }
+  });
+
   scene.add(model1);
 });
 loader.load('./Strawberries2.glb', function(gltf) {
   const model2 = gltf.scene;
+  model2.traverse((child) => {
+      if (child.name === "StrawBerries2") {
+        strawBerries2 = child;
+        strawBerries2.visible = false;
+        strawBerries2.scale.set(0, 0, 0); // Start scaled down
+    }
+  });
   scene.add(model2);
 });
 loader.load('./Strawberries3.glb', function(gltf) {
   const model3 = gltf.scene;
+  model3.traverse((child) => {
+      if (child.name === "StrawBerries3") {
+        strawBerries3 = child;
+        strawBerries3.visible = false;
+        strawBerries3.scale.set(0, 0, 0); // Start scaled down
+    }
+  });
   scene.add(model3);
 });
+
+
 
 const width = .2;
 const height = 4.18;
@@ -542,6 +626,146 @@ camera.lookAt(0, 4, 0); // <-- Where the camera is pointing (X, Y, Z)
 const controls = new OrbitControls( camera, canvas );
 controls.target.set(0, 4, 0);
 controls.update();
+
+// Animate objects growth on load
+function animateObjectsGrowth() {
+    const duration = 2; // Animation duration in seconds
+    const ease = "elastic.out(1, 0.5)"; // Bouncy effect
+    
+    if (pump) {
+        pump.visible = true;
+        gsap.to(pump.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease
+        });
+    }
+    if (racks) {
+        racks.visible = true;
+        gsap.to(racks.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 0.5
+        });
+    }
+    if (plantBase) {
+        plantBase.visible = true;
+        gsap.to(plantBase.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 0.9
+        });
+    }
+    if (waterPipe) {
+        waterPipe.visible = true;
+        gsap.to(waterPipe.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 1.2
+        });
+    }
+    if (ccTV) {
+        ccTV.visible = true;
+        gsap.to(ccTV.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 1.5
+        });
+    }
+    if (airCon) {
+        airCon.visible = true;
+        gsap.to(airCon.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 1.8
+        });
+    }
+    if (strawBerries1) {
+        strawBerries1.visible = true;
+        gsap.to(strawBerries1.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.2
+        });
+    }
+    if (strawBerries2) {
+        strawBerries2.visible = true;
+        gsap.to(strawBerries2.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.5
+        });
+    }
+    if (strawBerries3) {
+        strawBerries3.visible = true;
+        gsap.to(strawBerries3.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.8
+        });
+    }
+    if (signHolder) {
+        signHolder.visible = true;
+        gsap.to(signHolder.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 3
+        });
+    }
+    
+    if (plate01) {
+        plate01.visible = true;
+        gsap.to(plate01.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 3.3 // Slight delay for staggered effect
+        });
+    }
+    
+    if (plate02) {
+        plate02.visible = true;
+        gsap.to(plate02.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 3.6 // Slight delay for staggered effect
+        });
+    }
+}
 
 function onResize() {
     sizes.width = window.innerWidth;
@@ -1257,7 +1481,20 @@ hideShowToggleButton.addEventListener("click", () => {
 
 
 enterButton.addEventListener("click", () => {
-  video.muted = false;
-  video.volume = 0.2;
-  video.play();
+    gsap.to(loadingScreen, {
+        opacity: 0,
+        duration: 1,
+        onComplete: () => {
+            loadingScreen.remove();
+            document.getElementById("mainContent").style.display = "block";
+
+            // Start growth animation after 1 second
+            setTimeout(() => {
+                animateObjectsGrowth();
+            }, 1000);
+        },
+    });
+    video.muted = false;
+    video.volume = 0.2;
+    video.play();
 });
