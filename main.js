@@ -308,6 +308,9 @@ let plantBase = null;
 let waterPipe = null;
 let ccTV = null;
 let airCon = null;
+let smoker1 = null;
+let smoker2 = null;
+let smoker3 = null;
 let strawBerries1 = null;
 let strawBerries2 = null;
 let strawBerries3 = null;
@@ -409,6 +412,21 @@ loader.load( './FarmLab_WhiteRoom05_Trial.glb', function ( glb ) {
         airCon = child;
         airCon.visible = false;
         airCon.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Smoker1") {
+        smoker1 = child;
+        smoker1.visible = false;
+        smoker1.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Smoker2") {
+        smoker2 = child;
+        smoker2.visible = false;
+        smoker2.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Smoker3") {
+        smoker3 = child;
+        smoker3.visible = false;
+        smoker3.scale.set(0, 0, 0); // Start scaled down
     }
 
     // Plays Video on Screen object
@@ -650,7 +668,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 0.5
+            delay: 0.4
         });
     }
     if (plantBase) {
@@ -661,7 +679,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 0.9
+            delay: 1
         });
     }
     if (waterPipe) {
@@ -672,7 +690,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 1.2
+            delay: 1.4
         });
     }
     if (ccTV) {
@@ -683,7 +701,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 1.5
+            delay: 1.7
         });
     }
     if (airCon) {
@@ -694,7 +712,40 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 1.8
+            delay: 1.9
+        });
+    }
+    if (smoker1) {
+        smoker1.visible = true;
+        gsap.to(smoker1.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.1
+        });
+    }
+    if (smoker2) {
+        smoker2.visible = true;
+        gsap.to(smoker2.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.1
+        });
+    }
+    if (smoker3) {
+        smoker3.visible = true;
+        gsap.to(smoker3.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.1
         });
     }
     if (strawBerries1) {
@@ -705,7 +756,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.2
+            delay: 2.3
         });
     }
     if (strawBerries2) {
@@ -716,7 +767,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.5
+            delay: 2.6
         });
     }
     if (strawBerries3) {
@@ -727,7 +778,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.8
+            delay: 2.9
         });
     }
     if (signHolder) {
@@ -738,7 +789,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3
+            delay: 3.3
         });
     }
     
@@ -750,7 +801,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.3 // Slight delay for staggered effect
+            delay: 3.6 // Slight delay for staggered effect
         });
     }
     
@@ -762,7 +813,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.6 // Slight delay for staggered effect
+            delay: 3.9 // Slight delay for staggered effect
         });
     }
 }
