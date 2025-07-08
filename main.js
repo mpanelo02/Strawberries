@@ -212,22 +212,6 @@ const modalProjectDescription = document.querySelector(".modal-project-descripti
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
 
-// function showModal(id){
-//     const content = modalContent[id];
-//     if (content) {
-//         modalTitle.textContent = content.title;
-//         modalProjectDescription.textContent = content.content;
-
-//         if (content.link) {
-//             modalVisitButton.href = content.link;
-//             modalVisitButton.classList.remove("hidden");
-//         }else {
-//             modalVisitButton.classList.add("hidden");
-//         }
-
-//         modal.classList.toggle("hidden");
-//     }
-// }
 
 function showModal(id) {
     const content = modalContent[id];
@@ -310,6 +294,7 @@ let pump = null;
 let ccTV = null;
 let monitor = null;
 let screen = null;
+let clock = null;
 let strawBerries1 = null;
 let strawBerries2 = null;
 let strawBerries3 = null;
@@ -392,6 +377,11 @@ loader.load( './FarmLab_WhiteRoom05_Trial.glb', function ( glb ) {
         screen.visible = false;
         screen.scale.set(0, 0, 0); // Start scaled down
     }
+    if (child.name === "Clock") {
+        clock = child;
+        clock.visible = false;
+        clock.scale.set(0, 0, 0); // Start scaled down
+    }
     if (child.name === "Pump") {
         pump = child;
         pump.visible = false;
@@ -448,12 +438,18 @@ loader.load( './FarmLab_WhiteRoom05_Trial.glb', function ( glb ) {
     // For the animation of Exhaust Fan and Clock
     if (child.name === "ExhaustFan") {
         exhaustFan = child;
+        exhaustFan.visible = true; // Show the fan
+        exhaustFan.scale.set(0, 0, 0); // Scale it down for better visibility
     }
     if (child.name === "ClockHandShort") {
         clockHandShort = child;
+        clockHandShort.visible = false; // Hide initially
+        clockHandShort.scale.set(0, 0, 0); // Start scaled down
     }
     if (child.name === "ClockHandLong") {
         clockHandLong = child;
+        clockHandLong.visible = false; // Hide initially
+        clockHandLong.scale.set(0, 0, 0); // Start scaled down
     }
 
     if (child.isMesh) {
@@ -655,9 +651,9 @@ function animateObjectsGrowth() {
             delay: 0.5
         });
     }
-        if (strawBerries1) {
-        strawBerries1.visible = true;
-        gsap.to(strawBerries1.scale, {
+    if (clock) {
+        clock.visible = true;
+        gsap.to(clock.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -666,26 +662,37 @@ function animateObjectsGrowth() {
             delay: 1
         });
     }
-    if (strawBerries2) {
-        strawBerries2.visible = true;
-        gsap.to(strawBerries2.scale, {
+    if (clockHandShort) {
+        clockHandShort.visible = true;
+        gsap.to(clockHandShort.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 1
+        });
+    }
+    if (clockHandLong) {
+        clockHandLong.visible = true;
+        gsap.to(clockHandLong.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 1
+        });
+    }
+    if (exhaustFan) {
+        exhaustFan.visible = true;
+        gsap.to(exhaustFan.scale, {
             x: 1,
             y: 1,
             z: 1,
             duration: duration,
             ease: ease,
             delay: 1.5
-        });
-    }
-    if (strawBerries3) {
-        strawBerries3.visible = true;
-        gsap.to(strawBerries3.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 2
         });
     }
     if (ccTV) {
@@ -696,7 +703,40 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
+            delay: 2
+        });
+    }
+    if (strawBerries1) {
+        strawBerries1.visible = true;
+        gsap.to(strawBerries1.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
             delay: 2.5
+        });
+    }
+    if (strawBerries2) {
+        strawBerries2.visible = true;
+        gsap.to(strawBerries2.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 3
+        });
+    }
+    if (strawBerries3) {
+        strawBerries3.visible = true;
+        gsap.to(strawBerries3.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 3.5
         });
     }
 
@@ -708,7 +748,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3
+            delay: 4
         });
     }
     
@@ -720,7 +760,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.5 // Slight delay for staggered effect
+            delay: 4.5 // Slight delay for staggered effect
         });
     }
     
@@ -732,7 +772,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 4 // Slight delay for staggered effect
+            delay: 5 // Slight delay for staggered effect
         });
     }
 }
