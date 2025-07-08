@@ -485,14 +485,14 @@
     display: none;
 }
 
-.cameraPin {
+/* .cameraPin {
     position: fixed;
     top: 370px;
     right: 30px;
     font-size: 15px;
     font-weight: bold;
     color: black;
-    background-color: #a8ffb0; /* Light green background */
+    background-color: #a8ffb0; 
     border: 2px solid #4caf50;
     padding: 5px 10px;
     border-radius: 10px;
@@ -501,7 +501,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: right;
-}
+} */
 
 .cameraPin:hover {
     background-color: #4caf50;
@@ -702,11 +702,29 @@
         top: 575px;
         right: 10px;
     }
-    .cameraPin {
+    /* .cameraPin {
         font-size: 16px;
         padding: 2px 8px;
         top: 615px;
         right: 10px;
+    } */
+    .cameraPin {
+        position: fixed;
+        top: 615px;
+        right: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: black;
+        background-color: #a8ffb0; 
+        border: 2px solid #4caf50;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+        z-index: 9999;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: right;
     }
+    
 
 }

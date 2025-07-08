@@ -186,32 +186,13 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
 const modalContent = {
-    // Thermometer: {
-    //     title: "Thermometer",
-    // },
-    // Pump: {
-    //     title: "Pump",
-    // },
-    // WaterTank: {
-    //     title: "Water Tank",
-    // },
-    // Filter: {
-    //     title: "Filter",
-    // },
-    // AirCon: {
-    //     title: "Air Conditioning",
-    // },
-    // Container: {
-    //     title: "Container",
-    // },
-    StrawBerries1: {
-        title: "Strawberry",
+    CCTV: {
+      title: "Thermal Camera View",
+      content: "Live feed from the thermal camera",
+      isCamera: true // Add this flag to identify camera modals
     },
-    StrawBerries2: {
-        title: "Strawberry",
-    },
-    StrawBerries3: {
-        title: "Strawberry",
+    Pump: {
+        title: "Pump",
     },
     Plate01: {
         title: "LinkedIn",
@@ -231,20 +212,43 @@ const modalProjectDescription = document.querySelector(".modal-project-descripti
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
 
-function showModal(id){
+// function showModal(id){
+//     const content = modalContent[id];
+//     if (content) {
+//         modalTitle.textContent = content.title;
+//         modalProjectDescription.textContent = content.content;
+
+//         if (content.link) {
+//             modalVisitButton.href = content.link;
+//             modalVisitButton.classList.remove("hidden");
+//         }else {
+//             modalVisitButton.classList.add("hidden");
+//         }
+
+//         modal.classList.toggle("hidden");
+//     }
+// }
+
+function showModal(id) {
     const content = modalContent[id];
     if (content) {
-        modalTitle.textContent = content.title;
-        modalProjectDescription.textContent = content.content;
+        if (content.isCamera) {
+            // Handle camera modal separately
+            cameraToggleButton.click(); // Trigger the camera button click
+        } else {
+            // Regular modal handling
+            modalTitle.textContent = content.title;
+            modalProjectDescription.textContent = content.content;
 
-        if (content.link) {
-            modalVisitButton.href = content.link;
-            modalVisitButton.classList.remove("hidden");
-        }else {
-            modalVisitButton.classList.add("hidden");
+            if (content.link) {
+                modalVisitButton.href = content.link;
+                modalVisitButton.classList.remove("hidden");
+            } else {
+                modalVisitButton.classList.add("hidden");
+            }
+
+            modal.classList.toggle("hidden");
         }
-
-        modal.classList.toggle("hidden");
     }
 }
 
@@ -256,10 +260,10 @@ let intersectObject = "";
 const intersectObjects = [];
 const intersectObjectsNames = [
     // "AirCon",
-    // "Container",
-    // "WaterTank",
-    // "Filter",
-    // "Pump",
+    // "Monitor",
+    // "Screen",
+    "CCTV",
+    "Pump",
     "Plate01",
     "Plate02",
     // "Thermometer",
@@ -303,14 +307,9 @@ let smokeMaterial = null;
 let video;
 
 let pump = null;
-let racks = null;
-let plantBase = null;
-let waterPipe = null;
 let ccTV = null;
-let airCon = null;
-let smoker1 = null;
-let smoker2 = null;
-let smoker3 = null;
+let monitor = null;
+let screen = null;
 let strawBerries1 = null;
 let strawBerries2 = null;
 let strawBerries3 = null;
@@ -383,52 +382,26 @@ loader.load( './FarmLab_WhiteRoom05_Trial.glb', function ( glb ) {
         plate02.visible = false;
         plate02.scale.set(0, 0, 0); // Start scaled down
     }
+    if (child.name === "Monitor") {
+        monitor = child;
+        monitor.visible = false;
+        monitor.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "Screen") {    
+        screen = child;
+        screen.visible = false;
+        screen.scale.set(0, 0, 0); // Start scaled down
+    }
     if (child.name === "Pump") {
         pump = child;
         pump.visible = false;
         pump.scale.set(0, 0, 0); // Start scaled down
-    }
-    if (child.name === "Racks") {
-        racks = child;
-        racks.visible = false;
-        racks.scale.set(0, 0, 0); // Start scaled down
-    }
-    if (child.name === "PlantBase") {
-        plantBase = child;
-        plantBase.visible = false;
-        plantBase.scale.set(0, 0, 0); // Start scaled down
-    }
-    if (child.name === "WaterPipe") {
-        waterPipe = child;
-        waterPipe.visible = false;
-        waterPipe.scale.set(0, 0, 0); // Start scaled down
     }
     if (child.name === "CCTV") {
         ccTV = child;
         ccTV.visible = false;
         ccTV.scale.set(0, 0, 0); // Start scaled down
     }
-    if (child.name === "AirCon") {
-        airCon = child;
-        airCon.visible = false;
-        airCon.scale.set(0, 0, 0); // Start scaled down
-    }
-    if (child.name === "Smoker1") {
-        smoker1 = child;
-        smoker1.visible = false;
-        smoker1.scale.set(0, 0, 0); // Start scaled down
-    }
-    if (child.name === "Smoker2") {
-        smoker2 = child;
-        smoker2.visible = false;
-        smoker2.scale.set(0, 0, 0); // Start scaled down
-    }
-    if (child.name === "Smoker3") {
-        smoker3 = child;
-        smoker3.visible = false;
-        smoker3.scale.set(0, 0, 0); // Start scaled down
-    }
-
     // Plays Video on Screen object
     if (child.name === "Screen") {
       child.material = new THREE.MeshBasicMaterial({ map: videoTexture });
@@ -648,7 +621,7 @@ controls.update();
 // Animate objects growth on load
 function animateObjectsGrowth() {
     const duration = 2; // Animation duration in seconds
-    const ease = "elastic.out(1, 0.5)"; // Bouncy effect
+    const ease = "elastic.out(3, 1.5)"; // Bouncy effect
     
     if (pump) {
         pump.visible = true;
@@ -660,95 +633,29 @@ function animateObjectsGrowth() {
             ease: ease
         });
     }
-    if (racks) {
-        racks.visible = true;
-        gsap.to(racks.scale, {
+    if (monitor) {
+        monitor.visible = true;
+        gsap.to(monitor.scale, {
             x: 1,
             y: 1,
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 0.4
+            delay: 0.5
         });
     }
-    if (plantBase) {
-        plantBase.visible = true;
-        gsap.to(plantBase.scale, {
+    if (screen) {
+        screen.visible = true;
+        gsap.to(screen.scale, {
             x: 1,
             y: 1,
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 1
+            delay: 0.5
         });
     }
-    if (waterPipe) {
-        waterPipe.visible = true;
-        gsap.to(waterPipe.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 1.4
-        });
-    }
-    if (ccTV) {
-        ccTV.visible = true;
-        gsap.to(ccTV.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 1.7
-        });
-    }
-    if (airCon) {
-        airCon.visible = true;
-        gsap.to(airCon.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 1.9
-        });
-    }
-    if (smoker1) {
-        smoker1.visible = true;
-        gsap.to(smoker1.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 2.1
-        });
-    }
-    if (smoker2) {
-        smoker2.visible = true;
-        gsap.to(smoker2.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 2.1
-        });
-    }
-    if (smoker3) {
-        smoker3.visible = true;
-        gsap.to(smoker3.scale, {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: duration,
-            ease: ease,
-            delay: 2.1
-        });
-    }
-    if (strawBerries1) {
+        if (strawBerries1) {
         strawBerries1.visible = true;
         gsap.to(strawBerries1.scale, {
             x: 1,
@@ -756,7 +663,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.3
+            delay: 1
         });
     }
     if (strawBerries2) {
@@ -767,7 +674,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.6
+            delay: 1.5
         });
     }
     if (strawBerries3) {
@@ -778,9 +685,21 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.9
+            delay: 2
         });
     }
+    if (ccTV) {
+        ccTV.visible = true;
+        gsap.to(ccTV.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.5
+        });
+    }
+
     if (signHolder) {
         signHolder.visible = true;
         gsap.to(signHolder.scale, {
@@ -789,7 +708,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.3
+            delay: 3
         });
     }
     
@@ -801,7 +720,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.6 // Slight delay for staggered effect
+            delay: 3.5 // Slight delay for staggered effect
         });
     }
     
@@ -813,7 +732,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.9 // Slight delay for staggered effect
+            delay: 4 // Slight delay for staggered effect
         });
     }
 }
@@ -1539,10 +1458,10 @@ enterButton.addEventListener("click", () => {
             loadingScreen.remove();
             document.getElementById("mainContent").style.display = "block";
 
-            // Start growth animation after 1 second
+            // Start growth animation after 500 milliseconds
             setTimeout(() => {
                 animateObjectsGrowth();
-            }, 1000);
+            }, 500);
         },
     });
     video.muted = false;
