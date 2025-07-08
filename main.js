@@ -192,17 +192,20 @@ const modalContent = {
       isCamera: true // Add this flag to identify camera modals
     },
     Pump: {
-        title: "Pump",
+        title: "Watering Pump",
+        image: "pumput.jpg"
     },
     Plate01: {
-        title: "LinkedIn",
-        content: "Bio.",
+        title: "Contact Person",
+        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. For more information about Mark, visit the link above.",
         link:"https://www.linkedin.com/in/mark-johnson-panelo-82030a325",
+        image: "meCartoon.jpg",
     },
     Plate02: {
         title: "Strawberry Room",
-        content: "is a Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above.",
+        content: "This is Strawberry Room, the Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above.",
         link:"https://www.metropolia.fi/en/rdi/collaboration-platforms/urbanfarmlab",
+        image: "Teacher.jpg",
     },
 };
 
@@ -213,16 +216,57 @@ const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
 
 
+// function showModal(id) {
+//     const content = modalContent[id];
+//     if (content) {
+//         if (content.isCamera) {
+//             // Handle camera modal separately
+//             cameraToggleButton.click(); // Trigger the camera button click
+//         } else {
+//             // Regular modal handling
+//             modalTitle.textContent = content.title;
+//             modalProjectDescription.textContent = content.content;
+
+//             if (content.link) {
+//                 modalVisitButton.href = content.link;
+//                 modalVisitButton.classList.remove("hidden");
+//             } else {
+//                 modalVisitButton.classList.add("hidden");
+//             }
+
+//             modal.classList.toggle("hidden");
+//         }
+//     }
+// }
+
 function showModal(id) {
     const content = modalContent[id];
     if (content) {
         if (content.isCamera) {
-            // Handle camera modal separately
-            cameraToggleButton.click(); // Trigger the camera button click
+            cameraToggleButton.click();
         } else {
-            // Regular modal handling
             modalTitle.textContent = content.title;
             modalProjectDescription.textContent = content.content;
+
+            // Remove any existing image container first
+            const existingImage = document.querySelector('.modal-image-container');
+            if (existingImage) existingImage.remove();
+
+            // Only add new image if one is specified
+            if (content.image) {
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'modal-image-container';
+                imageContainer.innerHTML = `
+                    <img src="${content.image}" alt="${content.title}" 
+                         style="max-width: 500px; width: 100%; margin: 0 auto 20px; display: block;">
+                `;
+                
+                // Insert the image before the description
+                modalProjectDescription.parentNode.insertBefore(
+                    imageContainer, 
+                    modalProjectDescription
+                );
+            }
 
             if (content.link) {
                 modalVisitButton.href = content.link;
