@@ -193,17 +193,18 @@ const modalContent = {
     },
     Pump: {
         title: "Watering Pump",
+        content: "This is the Watering Pump, which is responsible for watering the plants inside the Lab. Above are the specifics of the pump.",
         image: "pumput.jpg"
     },
     Plate01: {
         title: "Contact Person",
-        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. For more information about Mark, visit the link above.",
+        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. <br>NOTE: For more information about Mark, visit the link above.",
         link:"https://www.linkedin.com/in/mark-johnson-panelo-82030a325",
         image: "meCartoon.jpg",
     },
     Plate02: {
         title: "Strawberry Room",
-        content: "This is Strawberry Room, the Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above.",
+        content: "This is Strawberry Room, the Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above. <br>NOTE: The objects with animation at the beginning are interactive and with animation.",
         link:"https://www.metropolia.fi/en/rdi/collaboration-platforms/urbanfarmlab",
         image: "Teacher.jpg",
     },
@@ -246,7 +247,7 @@ function showModal(id) {
             cameraToggleButton.click();
         } else {
             modalTitle.textContent = content.title;
-            modalProjectDescription.textContent = content.content;
+            modalProjectDescription.innerHTML = content.content;
 
             // Remove any existing image container first
             const existingImage = document.querySelector('.modal-image-container');
@@ -947,7 +948,7 @@ setInterval(updateDateTime, 1000);
 // Device control variables and functions
 let isFanOn = false;
 let isPumpOn = false;
-let isPlantLightOn = false;
+// let isPlantLightOn = false;
 
 let coldWind1 = null;
 let coldWind2 = null;
@@ -958,7 +959,7 @@ let waterToggleInterval = null;
 
 let deviceStates = {
   fan: "OFF",
-  plantLight: "OFF",
+  // plantLight: "OFF",
   pump: "OFF"
 };
 
@@ -970,17 +971,17 @@ async function fetchDeviceStates() {
     
     // Update button states based on fetched values
     updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
-    updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
+    // updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
     updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
     
     // Update actual device states
     isFanOn = deviceStates.fan === "ON";
-    isPlantLightOn = deviceStates.plantLight === "ON";
+    // isPlantLightOn = deviceStates.plantLight === "ON";
     isPumpOn = deviceStates.pump === "ON";
     
     // Update visual states
     updateFanVisuals();
-    updatePlantLightVisuals();
+    // updatePlantLightVisuals();
     updatePumpVisuals();
     
   } catch (err) {
@@ -1008,17 +1009,17 @@ function updateFanVisuals() {
   }
 }
 
-function updatePlantLightVisuals() {
-  const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
+// function updatePlantLightVisuals() {
+//   const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
   
-  plantLights.forEach(light => {
-    gsap.to(light, {
-      intensity: isPlantLightOn ? 25 : 0,
-      duration: 1
-    });
-    light.visible = isPlantLightOn;
-  });
-}
+//   plantLights.forEach(light => {
+//     gsap.to(light, {
+//       intensity: isPlantLightOn ? 25 : 0,
+//       duration: 1
+//     });
+//     light.visible = isPlantLightOn;
+//   });
+// }
 
 function updatePumpVisuals() {
   if (isPumpOn) {
@@ -1041,7 +1042,7 @@ function updatePumpVisuals() {
 
 const fanToggleButton = document.getElementById("fanToggleButton");
 const pumpToggleButton = document.getElementById("pumpToggleButton");
-const plantLightToggleButton = document.getElementById("plantLightToggleButton");
+// const plantLightToggleButton = document.getElementById("plantLightToggleButton");
 
 function updateButtonState(button, isOn, onLabel, offLabel) {
   button.textContent = isOn ? onLabel : offLabel;
@@ -1065,22 +1066,144 @@ async function toggleFan() {
 }
 
 
-async function togglePlantLight() {
-  isPlantLightOn = !isPlantLightOn;
-  const newState = isPlantLightOn ? "ON" : "OFF";
-  updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-  updatePlantLightVisuals();
+// async function togglePlantLight() {
+//   isPlantLightOn = !isPlantLightOn;
+//   const newState = isPlantLightOn ? "ON" : "OFF";
+//   updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+//   updatePlantLightVisuals();
   
+//   try {
+//     await updateDeviceStateOnServer('plantLight', newState);
+//   } catch (err) {
+//     console.error("Error updating plant light state:", err);
+//     // Revert if update fails
+//     isPlantLightOn = !isPlantLightOn;
+//     updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+//     updatePlantLightVisuals();
+//   }
+// }
+
+// Replace the existing plant light button code with this:
+
+const plantLightToggleButton = document.getElementById("plantLightToggleButton");
+const lightSlider = document.getElementById("lightSlider");
+const lightIntensity = document.getElementById("lightIntensity");
+const selector = document.getElementById("selector");
+const selectValue = document.getElementById("selectValue");
+const progressColor = document.getElementById("progressColor");
+
+// Initialize slider values
+selectValue.innerHTML = lightIntensity.value;
+selector.style.left = lightIntensity.value + "%";
+progressColor.style.width = lightIntensity.value + "%";
+
+// Update slider when moved
+lightIntensity.oninput = function() {
+    selectValue.innerHTML = this.value;
+    selector.style.left = this.value + "%";
+    progressColor.style.width = this.value + "%";
+};
+
+// Function to fetch current light intensity from server
+async function fetchLightIntensity() {
   try {
-    await updateDeviceStateOnServer('plantLight', newState);
-  } catch (err) {
-    console.error("Error updating plant light state:", err);
-    // Revert if update fails
-    isPlantLightOn = !isPlantLightOn;
-    updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-    updatePlantLightVisuals();
+    const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity");
+    const data = await response.json();
+    return data.intensity || 50;
+  } catch (error) {
+    console.error("Error fetching light intensity:", error);
+    return 50; // Default value if fetch fails
   }
 }
+
+// Function to update light intensity on server
+async function updateLightIntensity(value) {
+  try {
+    const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ intensity: value })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to update light intensity');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating light intensity:", error);
+  }
+}
+
+// Initialize slider with server value
+async function initializeSlider() {
+  const intensity = await fetchLightIntensity();
+  lightIntensity.value = intensity;
+  selectValue.innerHTML = intensity;
+  selector.style.left = intensity + "%";
+  progressColor.style.width = intensity + "%";
+  
+  // Update lights based on intensity
+  updateLights(intensity);
+}
+
+// Function to update lights based on intensity
+function updateLights(intensity) {
+  const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
+  const normalizedIntensity = intensity / 100 * 25; // Scale to 0-25 range
+  
+  plantLights.forEach(light => {
+    gsap.to(light, {
+      intensity: normalizedIntensity,
+      duration: 0.5
+    });
+    light.visible = intensity > 0;
+  });
+}
+
+// Initialize slider when page loads
+initializeSlider();
+
+// Update slider when moved
+lightIntensity.oninput = async function() {
+  const value = parseInt(this.value);
+  selectValue.innerHTML = value;
+  selector.style.left = value + "%";
+  progressColor.style.width = value + "%";
+  
+  // Update lights immediately for responsive UI
+  updateLights(value);
+  
+  // Debounce server update to avoid too many requests
+  if (this.debounceTimer) clearTimeout(this.debounceTimer);
+  this.debounceTimer = setTimeout(() => {
+    updateLightIntensity(value);
+  }, 500); // Update server after 500ms of inactivity
+};
+
+// Toggle slider visibility
+plantLightToggleButton.addEventListener("click", () => {
+    lightSlider.classList.toggle("hidden");
+    
+    // Update button text based on slider visibility
+    if (lightSlider.classList.contains("hidden")) {
+        plantLightToggleButton.textContent = "💡👀";
+    } else {
+        plantLightToggleButton.textContent = "💡🙈";
+    }
+});
+
+// Close slider when clicking outside
+document.addEventListener('click', (event) => {
+    if (!lightSlider.contains(event.target)) {
+        if (event.target !== plantLightToggleButton) {
+            lightSlider.classList.add("hidden");
+            plantLightToggleButton.textContent = "💡👀";
+        }
+    }
+});
 
 async function togglePump() {
   isPumpOn = !isPumpOn;
@@ -1122,7 +1245,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Button event listeners
 fanToggleButton.addEventListener("click", toggleFan);
-plantLightToggleButton.addEventListener("click", togglePlantLight);
+// plantLightToggleButton.addEventListener("click", togglePlantLight);
 pumpToggleButton.addEventListener("click", togglePump);
 
 // Sound toggle
@@ -1533,6 +1656,25 @@ hideShowToggleButton.addEventListener("click", () => {
     }
 });
 
+const automateToggleButton = document.getElementById("automateToggleButton");
+let isAutomated = false;
+
+automateToggleButton.addEventListener("click", () => {
+    isAutomated = !isAutomated;
+    
+    // Update button text
+    automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+
+    // Toggle control button visibility
+    pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+
+    // Here you would add your automation logic
+    if (isAutomated) {
+        startAutomation();
+    } else {
+        stopAutomation();
+    }
+});
 
 enterButton.addEventListener("click", () => {
     gsap.to(loadingScreen, {

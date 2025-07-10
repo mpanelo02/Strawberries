@@ -103,18 +103,15 @@
             ⚡P: <span id="poreEC">--</span> mS/cm
         </div>
 
+
+        <!-- Buttons -->
+
         <button id="hide-showToggleButton" class="hide-showPin">🙈 Hide</button>
 
         
         <button id="soundToggleButton" class="soundPin">🔊</button>
         
         <button id="sunToggleButton" class="sunPin">🌞</button>
-        
-        <button id="fanToggleButton" class="fanPin">🥵OFF</button>
-
-        <button id="plantLightToggleButton" class="bulbLedPin">🕯️OFF</button>
-
-        <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
 
 
         <div class="graph-container">
@@ -152,6 +149,25 @@
         </div>
 
         <button id="cameraToggleButton" class="cameraPin">🔥 Camera</button>
+
+        <button id="fanToggleButton" class="fanPin">🥵OFF</button>
+        
+        <button id="plantLightToggleButton" class="bulbLedPin">💡👀</button>
+
+        <!-- <div id="lightSliderContainer" class="hidden"></div> -->
+        <div id="lightSlider" class="hidden">
+            <input type="range" id="lightIntensity" min="0" max="100" value="50">
+            <div id="selector">
+                <div class="selectButton"></div>
+                <div id="selectValue"></div>
+            </div>
+            <div id="progressColor"></div>
+        </div>
+        <!-- </div> -->
+
+        <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
+
+        <button id="automateToggleButton" class="automatePin">🤖 Automate</button>
 
     </div>
 

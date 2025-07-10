@@ -267,76 +267,11 @@
     color: white;
 }
 
-.fanPin {
-    position: fixed;
-    top: 80px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #a8ffb0; /* Light green background */
-    border: 2px solid #4caf50;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
 
-.fanPin:hover {
-    background-color: #4caf50;
-    color: white;
-}
-.bulbLedPin {
-    position: fixed;
-    top: 140px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #a8ffb0; /* Light green background */
-    border: 2px solid #4caf50;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.bulbLedPin:hover {
-    background-color: #4caf50;
-    color: white;
-}
-.pumpPin {
-    position: fixed;
-    top: 200px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #a8ffb0;
-    border: 2px solid #4caf50;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.pumpPin:hover {
-    background-color: #4caf50;
-    color: white;
-}
 
 .graphPin {
     position: fixed;
-    top: 260px;
+    top: 80px;
     right: 30px;
     font-size: 15px;
     font-weight: bold;
@@ -359,7 +294,7 @@
 
 .graph-container { /* Drop Down display*/
     position: fixed;
-    top: 255px;
+    top: 75px;
     right: 135px;
     z-index: 9999;
     font-family: Arial, sans-serif;
@@ -433,7 +368,7 @@
 
 .downloadPin {
     position: fixed;
-    top: 315px;
+    top: 135px;
     right: 30px;
     font-size: 15px;
     font-weight: bold;
@@ -467,7 +402,7 @@
 
 .download-container { /* Drop Down display*/
     position: fixed;
-    top: 310px;
+    top: 130px;
     right: 135px;
     z-index: 9999;
     font-family: Arial, sans-serif;
@@ -496,14 +431,14 @@
     display: none;
 }
 
-/* .cameraPin {
+.fanPin {
     position: fixed;
-    top: 370px;
+    top: 190px;
     right: 30px;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: bold;
     color: black;
-    background-color: #a8ffb0; 
+    background-color: #a8ffb0; /* Light green background */
     border: 2px solid #4caf50;
     padding: 5px 10px;
     border-radius: 10px;
@@ -512,7 +447,147 @@
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: right;
+}
+
+.fanPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
+.bulbLedPin {
+    position: fixed;
+    top: 250px;
+    right: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.bulbLedPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+/* Light Slider */
+
+#lightSlider {
+    position: fixed;
+    top: 260px;
+    right: 135px;
+    width: 200px;
+    z-index: 9999;
+}
+
+#lightIntensity {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 7px;
+    outline: none;
+    border-radius: 3px;
+    background: #a8ffb0;
+}
+
+#lightIntensity::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    z-index: 3;
+    position: relative;
+}
+
+/* #selector {
+    height: 104px;
+    width: 48px;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
 } */
+
+#selector {
+    height: 48px; /* Reduced from 104px to match thumb size */
+    width: 48px;
+    position: absolute;
+    /* bottom: -20px; */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .selectButton {
+    width: 25px;
+    height: 25px;
+    background-image: url(Slider.jpg);
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    position: relative; 
+    margin-top: -50px; 
+} */
+
+
+#selectValue {
+    height: 30px;
+    width: 40px;
+    background: #ce75d1;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+    position: relative; /* Changed from absolute */
+    /* margin-bottom: -20px;  */
+    margin-top: -65px; /* Space between value and button */
+
+}
+
+#progressColor {
+    width: 50%;
+    height: 7px;
+    background: #ce75d1;
+    border-radius: 3px;
+    position: absolute;
+    top: 40%;
+    left: 0;
+}
+
+.pumpPin {
+    position: fixed;
+    top: 310px;
+    right: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0;
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.pumpPin:hover {
+    background-color: #4caf50;
+    color: white;
+}
 
 .cameraPin:hover {
     background-color: #4caf50;
@@ -556,6 +631,28 @@
     background-color: #4caf50;
     /* color: white; */
     cursor: wait;
+}
+
+.automatePin {
+    position: fixed;
+    top: 690px;
+    right: 30px;
+    font-size: 17px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+.automatePin:hover {
+    background-color: #4caf50;
+    color: white;
 }
 
 
@@ -694,23 +791,23 @@
         font-family: Arial, sans-serif;
     }
 
- 
+    
+    .pumpPin {
+        font-size: 16px;
+        padding: 2px 8px;
+        top: 475px;
+        right: 10px;
+    }
     .fanPin {
         font-size: 16px;
         padding: 2px 8px;
-        top: 495px;
+        top: 510px;
         right: 10px;
     }
     .bulbLedPin {
         font-size: 16px;
         padding: 2px 8px;
-        top: 535px;
-        right: 10px;
-    }
-    .pumpPin {
-        font-size: 16px;
-        padding: 2px 8px;
-        top: 575px;
+        top: 545px;
         right: 10px;
     }
     /* .cameraPin {
@@ -721,7 +818,7 @@
     } */
     .cameraPin {
         position: fixed;
-        top: 615px;
+        top: 580px;
         right: 10px;
         font-size: 16px;
         font-weight: bold;
@@ -735,6 +832,12 @@
         cursor: pointer;
         transition: all 0.3s ease;
         text-align: right;
+    }
+    .automatePin {
+        font-size: 16px;
+        padding: 2px 8px;
+        top: 615px;
+        right: 10px;
     }
     
 
