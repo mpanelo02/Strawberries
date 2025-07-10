@@ -804,12 +804,12 @@
         top: 545px;
         right: 10px;
     }
-    /* .cameraPin {
-        font-size: 16px;
-        padding: 2px 8px;
-        top: 615px;
-        right: 10px;
-    } */
+    #lightSlider {
+        top: 548px;
+        right: 100px;
+        width: 180px;
+    }
+
     .cameraPin {
         position: fixed;
         top: 580px;
