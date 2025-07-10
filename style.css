@@ -431,31 +431,9 @@
     display: none;
 }
 
-.fanPin {
-    position: fixed;
-    top: 190px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #a8ffb0; /* Light green background */
-    border: 2px solid #4caf50;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.fanPin:hover {
-    background-color: #4caf50;
-    color: white;
-}
 .bulbLedPin {
     position: fixed;
-    top: 250px;
+    top: 190px;
     right: 30px;
     font-size: 20px;
     font-weight: bold;
@@ -480,7 +458,7 @@
 
 #lightSlider {
     position: fixed;
-    top: 260px;
+    top: 200px;
     right: 135px;
     width: 200px;
     z-index: 9999;
@@ -504,16 +482,6 @@
     position: relative;
 }
 
-/* #selector {
-    height: 104px;
-    width: 48px;
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-} */
-
 #selector {
     height: 48px; /* Reduced from 104px to match thumb size */
     width: 48px;
@@ -527,18 +495,6 @@
     align-items: center;
     justify-content: center;
 }
-
-/* .selectButton {
-    width: 25px;
-    height: 25px;
-    background-image: url(Slider.jpg);
-    background-size: cover;
-    background-position: center;
-    border-radius: 50%;
-    position: relative; 
-    margin-top: -50px; 
-} */
-
 
 #selectValue {
     height: 30px;
@@ -579,6 +535,29 @@
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-5px); }
   40%, 80% { transform: translateX(5px); }
+}
+
+.fanPin {
+    position: fixed;
+    top: 250px;
+    right: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    background-color: #a8ffb0; /* Light green background */
+    border: 2px solid #4caf50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.fanPin:hover {
+    background-color: #4caf50;
+    color: white;
 }
 
 .pumpPin {
@@ -650,7 +629,7 @@
 
 .automatePin {
     position: fixed;
-    top: 660px;
+    top: 650px;
     right: 30px;
     font-size: 17px;
     font-weight: bold;

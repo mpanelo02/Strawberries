@@ -1770,6 +1770,7 @@ automateToggleButton.addEventListener("click", () => {
     automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
 
     // Toggle control button visibility
+    fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
 
     // Here you would add your automation logic
