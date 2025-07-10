@@ -566,6 +566,21 @@
     left: 0;
 }
 
+#selectValue.saving {
+  background: #4caf50;
+}
+
+#selectValue.error {
+  background: #f44336;
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
 .pumpPin {
     position: fixed;
     top: 310px;
@@ -635,7 +650,7 @@
 
 .automatePin {
     position: fixed;
-    top: 690px;
+    top: 660px;
     right: 30px;
     font-size: 17px;
     font-weight: bold;

@@ -1138,15 +1138,44 @@ async function updateLightIntensity(value) {
 }
 
 // Initialize slider with server value
-async function initializeSlider() {
-  const intensity = await fetchLightIntensity();
-  lightIntensity.value = intensity;
-  selectValue.innerHTML = intensity;
-  selector.style.left = intensity + "%";
-  progressColor.style.width = intensity + "%";
+// async function initializeSlider() {
+//   const intensity = await fetchLightIntensity();
+//   lightIntensity.value = intensity;
+//   selectValue.innerHTML = intensity;
+//   selector.style.left = intensity + "%";
+//   progressColor.style.width = intensity + "%";
   
-  // Update lights based on intensity
-  updateLights(intensity);
+//   // Update lights based on intensity
+//   updateLights(intensity);
+// }
+
+async function initializeSlider() {
+  try {
+    const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity");
+    if (!response.ok) throw new Error("Failed to fetch light intensity");
+    
+    const data = await response.json();
+    const intensity = data.intensity || 50;
+    
+    // Update UI elements
+    lightIntensity.value = intensity;
+    selectValue.innerHTML = intensity;
+    selector.style.left = intensity + "%";
+    progressColor.style.width = intensity + "%";
+    
+    // Update lights based on intensity
+    updateLights(intensity);
+    
+    console.log("Slider initialized with value:", intensity);
+  } catch (error) {
+    console.error("Error initializing slider:", error);
+    // Fallback to default value
+    lightIntensity.value = 50;
+    selectValue.innerHTML = 50;
+    selector.style.left = "50%";
+    progressColor.style.width = "50%";
+    updateLights(50);
+  }
 }
 
 // Function to update lights based on intensity
@@ -1167,20 +1196,95 @@ function updateLights(intensity) {
 initializeSlider();
 
 // Update slider when moved
+// lightIntensity.oninput = async function() {
+//   const value = parseInt(this.value);
+//   selectValue.innerHTML = value;
+//   selector.style.left = value + "%";
+//   progressColor.style.width = value + "%";
+  
+//   // Update lights immediately for responsive UI
+//   updateLights(value);
+  
+//   // Debounce server update to avoid too many requests
+//   if (this.debounceTimer) clearTimeout(this.debounceTimer);
+//   this.debounceTimer = setTimeout(() => {
+//     updateLightIntensity(value);
+//   }, 500); // Update server after 500ms of inactivity
+// };
+
+// lightIntensity.oninput = async function() {
+//   const value = parseInt(this.value);
+  
+//   // Update UI immediately
+//   selectValue.innerHTML = value;
+//   selector.style.left = value + "%";
+//   progressColor.style.width = value + "%";
+//   updateLights(value);
+  
+//   // Debounce server update
+//   if (this.debounceTimer) clearTimeout(this.debounceTimer);
+//   this.debounceTimer = setTimeout(async () => {
+//     try {
+//       const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity", {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ intensity: value })
+//       });
+      
+//       if (!response.ok) {
+//         throw new Error('Failed to update light intensity');
+//       }
+      
+//       console.log("Light intensity updated to:", value);
+//     } catch (error) {
+//       console.error("Error updating light intensity:", error);
+//       // You might want to show a subtle error message to the user here
+//     }
+//   }, 500);
+// };
+
+// Add this to your lightIntensity.oninput function:
 lightIntensity.oninput = async function() {
   const value = parseInt(this.value);
+  
+  // Update UI immediately
   selectValue.innerHTML = value;
   selector.style.left = value + "%";
   progressColor.style.width = value + "%";
-  
-  // Update lights immediately for responsive UI
   updateLights(value);
   
-  // Debounce server update to avoid too many requests
+  // Clear any previous state
+  selectValue.classList.remove('saving', 'error');
+  
+  // Debounce server update
   if (this.debounceTimer) clearTimeout(this.debounceTimer);
-  this.debounceTimer = setTimeout(() => {
-    updateLightIntensity(value);
-  }, 500); // Update server after 500ms of inactivity
+  this.debounceTimer = setTimeout(async () => {
+    selectValue.classList.add('saving');
+    
+    try {
+      const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ intensity: value })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update light intensity');
+      }
+      
+      selectValue.classList.remove('saving');
+      console.log("Light intensity updated to:", value);
+    } catch (error) {
+      console.error("Error updating light intensity:", error);
+      selectValue.classList.remove('saving');
+      selectValue.classList.add('error');
+      setTimeout(() => selectValue.classList.remove('error'), 2000);
+    }
+  }, 500);
 };
 
 // Toggle slider visibility
