@@ -480,6 +480,7 @@
     cursor: pointer;
     z-index: 3;
     position: relative;
+    background: #a8ffb0;
 }
 
 #selector {
@@ -519,7 +520,7 @@
     color: white;
     position: relative; /* Changed from absolute */
     /* margin-bottom: -20px;  */
-    margin-top: -110px; /* Space between value and button */
+    margin-top: -115px; /* Space between value and button */
 
 }
 
