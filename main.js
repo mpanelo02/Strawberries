@@ -959,10 +959,28 @@ async function fetchDeviceStates() {
     updateFanVisuals();
     // updatePlantLightVisuals();
     updatePumpVisuals();
+
+    // Update automation state and button visibility
+    isAutomated = deviceStates.automation === "ON";
+    updateAutomationUI();
     
   } catch (err) {
     console.error("Error fetching device states:", err);
   }
+}
+
+function updateAutomationUI() {
+  automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+  
+  // Hide/show pump and plant light buttons based on automation state
+  pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+  fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+  
+  // Also hide the light slider if automation is on
+  // if (isAutomated) {
+  //   lightSlider.classList.add("hidden");
+  //   plantLightToggleButton.textContent = "💡👀";
+  // }
 }
 
 // Add these helper functions
@@ -1643,16 +1661,44 @@ const automateToggleButton = document.getElementById("automateToggleButton");
 let isAutomated = false;
 
 // Update your automation button event listener
+// automateToggleButton.addEventListener("click", async () => {
+//     isAutomated = !isAutomated;
+    
+//     // Update button text
+//     automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+//     automateToggleButton.classList.add('loading');
+
+//     // Toggle control button visibility
+//     fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+//     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+    
+//     try {
+//         const response = await fetch("https://valk-huone-1.onrender.com/api/update-device-state", {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ 
+//                 device: 'automation', 
+//                 state: isAutomated ? 'ON' : 'OFF' 
+//             })
+//         });
+        
+//         if (!response.ok) {
+//             throw new Error('Failed to update automation state');
+//         }
+//     } catch (error) {
+//         console.error("Error toggling automation:", error);
+//         isAutomated = !isAutomated; // Revert state
+//         automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+//     } finally {
+//         automateToggleButton.classList.remove('loading');
+//     }
+// });
+
 automateToggleButton.addEventListener("click", async () => {
     isAutomated = !isAutomated;
-    
-    // Update button text
-    automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
     automateToggleButton.classList.add('loading');
-
-    // Toggle control button visibility
-    fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-    pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
     
     try {
         const response = await fetch("https://valk-huone-1.onrender.com/api/update-device-state", {
@@ -1669,10 +1715,13 @@ automateToggleButton.addEventListener("click", async () => {
         if (!response.ok) {
             throw new Error('Failed to update automation state');
         }
+        
+        // Update UI after successful state change
+        updateAutomationUI();
+        
     } catch (error) {
         console.error("Error toggling automation:", error);
         isAutomated = !isAutomated; // Revert state
-        automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
     } finally {
         automateToggleButton.classList.remove('loading');
     }
