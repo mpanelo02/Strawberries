@@ -1732,8 +1732,7 @@ const controlButtons = [
   sunToggleButton,
   cameraToggleButton,
   graphDataButton,
-  downloadToggleButton,
-  automateToggleButton
+  downloadToggleButton
 ];
 
 let isDataVisible = true;

@@ -795,24 +795,24 @@
     .fanPin {
         font-size: 16px;
         padding: 2px 8px;
-        top: 505px;
+        top: 507px;
         right: 10px;
     }
     .bulbLedPin {
         font-size: 16px;
         padding: 2px 8px;
-        top: 540px;
+        top: 544px;
         right: 10px;
     }
-    #lightSlider {
-        top: 543px;
+    /* #lightSlider {
+        top: 547px;
         right: 100px;
-        /* width: 180px; */
-    }
+        width: 180px;
+    } */
 
     .cameraPin {
         position: fixed;
-        top: 575px;
+        top: 581px;
         right: 10px;
         font-size: 16px;
         font-weight: bold;
@@ -830,7 +830,7 @@
     .automatePin {
         font-size: 16px;
         padding: 2px 8px;
-        top: 610px;
+        top: 618px;
         right: 10px;
     }
     
