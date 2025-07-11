@@ -458,7 +458,7 @@
 
 #lightSlider {
     position: fixed;
-    top: 200px;
+    top: 215px;
     right: 135px;
     width: 200px;
     z-index: 9999;
@@ -474,8 +474,8 @@
 }
 
 #lightIntensity::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
+    /* -webkit-appearance: none; */
+    width: 10px;
     height: 20px;
     cursor: pointer;
     z-index: 3;
@@ -496,7 +496,7 @@
     justify-content: center;
 }
 
-.selectButton {
+/* .selectButton {
     width: 10px;
     height: 10px;
     background-image: url(Slider.jpg);
@@ -505,7 +505,7 @@
     border-radius: 50%;
     position: absolute;
     bottom: 50px;
-}
+} */
 
 #selectValue {
     height: 30px;
@@ -519,7 +519,7 @@
     color: white;
     position: relative; /* Changed from absolute */
     /* margin-bottom: -20px;  */
-    margin-top: -65px; /* Space between value and button */
+    margin-top: -120px; /* Space between value and button */
 
 }
 
