@@ -22,7 +22,6 @@ const ctx = document.getElementById("dataChart").getContext("2d");
 
 
 // Chart The Data    
-// Sensor history for the last day (2880 readings)
 const sensorHistory = {
     temperature: [],
     humidity: [],
@@ -972,15 +971,29 @@ async function fetchDeviceStates() {
 function updateAutomationUI() {
   automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
   
-  // Hide/show pump and plant light buttons based on automation state
+  // Hide/show pump and fan buttons based on automation state
   pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
   fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
   
-  // Also hide the light slider if automation is on
-  // if (isAutomated) {
-  //   lightSlider.classList.add("hidden");
-  //   plantLightToggleButton.textContent = "💡👀";
-  // }
+  // If automation is on, show next pump time
+  if (isAutomated) {
+    fetchNextPumpTime();
+  }
+}
+
+async function fetchNextPumpTime() {
+  try {
+    const response = await fetch("https://valk-huone-1.onrender.com/api/next-pump-time");
+    if (!response.ok) throw new Error("Failed to fetch next pump time");
+    
+    const data = await response.json();
+    if (data.status === 'Automation is ON') {
+      // You could display this information in a tooltip or status message
+      console.log(`Next pump time: ${data.nextPumpTimeLocal}`);
+    }
+  } catch (error) {
+    console.error("Error fetching next pump time:", error);
+  }
 }
 
 // Add these helper functions
@@ -1660,41 +1673,7 @@ const controlButtons = [
 const automateToggleButton = document.getElementById("automateToggleButton");
 let isAutomated = false;
 
-// Update your automation button event listener
-// automateToggleButton.addEventListener("click", async () => {
-//     isAutomated = !isAutomated;
-    
-//     // Update button text
-//     automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
-//     automateToggleButton.classList.add('loading');
-
-//     // Toggle control button visibility
-//     fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-//     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-    
-//     try {
-//         const response = await fetch("https://valk-huone-1.onrender.com/api/update-device-state", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ 
-//                 device: 'automation', 
-//                 state: isAutomated ? 'ON' : 'OFF' 
-//             })
-//         });
-        
-//         if (!response.ok) {
-//             throw new Error('Failed to update automation state');
-//         }
-//     } catch (error) {
-//         console.error("Error toggling automation:", error);
-//         isAutomated = !isAutomated; // Revert state
-//         automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
-//     } finally {
-//         automateToggleButton.classList.remove('loading');
-//     }
-// });
+// Automation button event listener
 
 automateToggleButton.addEventListener("click", async () => {
     isAutomated = !isAutomated;
@@ -1719,9 +1698,13 @@ automateToggleButton.addEventListener("click", async () => {
         // Update UI after successful state change
         updateAutomationUI();
         
+        // Fetch updated device states to ensure UI is in sync
+        await fetchDeviceStates();
+        
     } catch (error) {
         console.error("Error toggling automation:", error);
         isAutomated = !isAutomated; // Revert state
+        updateAutomationUI();
     } finally {
         automateToggleButton.classList.remove('loading');
     }
