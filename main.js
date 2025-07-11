@@ -216,30 +216,6 @@ const modalProjectDescription = document.querySelector(".modal-project-descripti
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
 
-
-// function showModal(id) {
-//     const content = modalContent[id];
-//     if (content) {
-//         if (content.isCamera) {
-//             // Handle camera modal separately
-//             cameraToggleButton.click(); // Trigger the camera button click
-//         } else {
-//             // Regular modal handling
-//             modalTitle.textContent = content.title;
-//             modalProjectDescription.textContent = content.content;
-
-//             if (content.link) {
-//                 modalVisitButton.href = content.link;
-//                 modalVisitButton.classList.remove("hidden");
-//             } else {
-//                 modalVisitButton.classList.add("hidden");
-//             }
-
-//             modal.classList.toggle("hidden");
-//         }
-//     }
-// }
-
 function showModal(id) {
     const content = modalContent[id];
     if (content) {
@@ -1666,21 +1642,39 @@ const controlButtons = [
 const automateToggleButton = document.getElementById("automateToggleButton");
 let isAutomated = false;
 
-automateToggleButton.addEventListener("click", () => {
+// Update your automation button event listener
+automateToggleButton.addEventListener("click", async () => {
     isAutomated = !isAutomated;
     
     // Update button text
     automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+    automateToggleButton.classList.add('loading');
 
     // Toggle control button visibility
     fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-
-    // Here you would add your automation logic
-    if (isAutomated) {
-        startAutomation();
-    } else {
-        stopAutomation();
+    
+    try {
+        const response = await fetch("https://valk-huone-1.onrender.com/api/update-device-state", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                device: 'automation', 
+                state: isAutomated ? 'ON' : 'OFF' 
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update automation state');
+        }
+    } catch (error) {
+        console.error("Error toggling automation:", error);
+        isAutomated = !isAutomated; // Revert state
+        automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+    } finally {
+        automateToggleButton.classList.remove('loading');
     }
 });
 

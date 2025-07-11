@@ -649,6 +649,12 @@
     background-color: #4caf50;
     color: white;
 }
+/* Add to your style.css */
+.automatePin.loading {
+    background-color: #4caf50;
+    color: white;
+    cursor: wait;
+}
 
 
 /* For Mobile Devices */
