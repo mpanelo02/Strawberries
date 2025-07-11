@@ -475,7 +475,7 @@
 
 #lightIntensity::-webkit-slider-thumb {
     /* -webkit-appearance: none; */
-    width: 10px;
+    width: 20px;
     height: 20px;
     cursor: pointer;
     z-index: 3;
@@ -496,17 +496,6 @@
     align-items: center;
     justify-content: center;
 }
-
-/* .selectButton {
-    width: 10px;
-    height: 10px;
-    background-image: url(Slider.jpg);
-    background-size: cover;
-    background-position: center;
-    border-radius: 50%;
-    position: absolute;
-    bottom: 50px;
-} */
 
 #selectValue {
     height: 30px;
@@ -530,7 +519,7 @@
     background: #ce75d1;
     border-radius: 3px;
     position: absolute;
-    top: 40%;
+    top: 42%;
     left: 0;
 }
 
