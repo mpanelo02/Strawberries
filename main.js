@@ -1009,17 +1009,6 @@ function updateFanVisuals() {
   }
 }
 
-// function updatePlantLightVisuals() {
-//   const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
-  
-//   plantLights.forEach(light => {
-//     gsap.to(light, {
-//       intensity: isPlantLightOn ? 25 : 0,
-//       duration: 1
-//     });
-//     light.visible = isPlantLightOn;
-//   });
-// }
 
 function updatePumpVisuals() {
   if (isPumpOn) {
@@ -1065,25 +1054,6 @@ async function toggleFan() {
   }
 }
 
-
-// async function togglePlantLight() {
-//   isPlantLightOn = !isPlantLightOn;
-//   const newState = isPlantLightOn ? "ON" : "OFF";
-//   updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-//   updatePlantLightVisuals();
-  
-//   try {
-//     await updateDeviceStateOnServer('plantLight', newState);
-//   } catch (err) {
-//     console.error("Error updating plant light state:", err);
-//     // Revert if update fails
-//     isPlantLightOn = !isPlantLightOn;
-//     updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-//     updatePlantLightVisuals();
-//   }
-// }
-
-// Replace the existing plant light button code with this:
 
 const plantLightToggleButton = document.getElementById("plantLightToggleButton");
 const lightSlider = document.getElementById("lightSlider");
@@ -1137,18 +1107,6 @@ async function updateLightIntensity(value) {
   }
 }
 
-// Initialize slider with server value
-// async function initializeSlider() {
-//   const intensity = await fetchLightIntensity();
-//   lightIntensity.value = intensity;
-//   selectValue.innerHTML = intensity;
-//   selector.style.left = intensity + "%";
-//   progressColor.style.width = intensity + "%";
-  
-//   // Update lights based on intensity
-//   updateLights(intensity);
-// }
-
 async function initializeSlider() {
   try {
     const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity");
@@ -1195,55 +1153,6 @@ function updateLights(intensity) {
 // Initialize slider when page loads
 initializeSlider();
 
-// Update slider when moved
-// lightIntensity.oninput = async function() {
-//   const value = parseInt(this.value);
-//   selectValue.innerHTML = value;
-//   selector.style.left = value + "%";
-//   progressColor.style.width = value + "%";
-  
-//   // Update lights immediately for responsive UI
-//   updateLights(value);
-  
-//   // Debounce server update to avoid too many requests
-//   if (this.debounceTimer) clearTimeout(this.debounceTimer);
-//   this.debounceTimer = setTimeout(() => {
-//     updateLightIntensity(value);
-//   }, 500); // Update server after 500ms of inactivity
-// };
-
-// lightIntensity.oninput = async function() {
-//   const value = parseInt(this.value);
-  
-//   // Update UI immediately
-//   selectValue.innerHTML = value;
-//   selector.style.left = value + "%";
-//   progressColor.style.width = value + "%";
-//   updateLights(value);
-  
-//   // Debounce server update
-//   if (this.debounceTimer) clearTimeout(this.debounceTimer);
-//   this.debounceTimer = setTimeout(async () => {
-//     try {
-//       const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity", {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ intensity: value })
-//       });
-      
-//       if (!response.ok) {
-//         throw new Error('Failed to update light intensity');
-//       }
-      
-//       console.log("Light intensity updated to:", value);
-//     } catch (error) {
-//       console.error("Error updating light intensity:", error);
-//       // You might want to show a subtle error message to the user here
-//     }
-//   }, 500);
-// };
 
 // Add this to your lightIntensity.oninput function:
 lightIntensity.oninput = async function() {
@@ -1710,8 +1619,26 @@ cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => 
   cameraModal.classList.add('hidden');
 });
 
-// Add this near your other button declarations (around line 1200)
 const hideShowToggleButton = document.getElementById("hide-showToggleButton");
+let isUIVisible = true;
+
+hideShowToggleButton.addEventListener("click", () => {
+    isUIVisible = !isUIVisible;
+    
+    // Update button text
+    hideShowToggleButton.textContent = isUIVisible ? '🙈 Hide' : '👀 Show';
+
+    // Toggle all UI elements
+    const allUIElements = [
+        ...dataContainers,
+        ...controlButtons
+    ].filter(element => element !== null);
+
+    allUIElements.forEach(element => {
+        element.style.display = isUIVisible ? '' : 'none';
+    });
+});
+
 const dataContainers = [
     document.getElementById('vantaa-date-container'),
     document.getElementById('vantaa-time-container'),
@@ -1722,43 +1649,19 @@ const dataContainers = [
     document.getElementById('moisture-container'),
     document.getElementById('soilElectroConductivity-container'),
     document.getElementById('poreElectroConductivity-container')
-];
+].filter(Boolean); // This removes any null elements
 
 const controlButtons = [
-  fanToggleButton,
-  pumpToggleButton,
-  plantLightToggleButton,
-  soundToggleButton,
-  sunToggleButton,
-  cameraToggleButton,
-  graphDataButton,
-  downloadToggleButton
-];
-
-let isDataVisible = true;
-
-hideShowToggleButton.addEventListener("click", () => {
-    isDataVisible = !isDataVisible;
-    
-    // Update toggle button text
-    hideShowToggleButton.textContent = isDataVisible ? '🙈 Hide' : '👀 Show';
-
-    // Toggle data containers
-    dataContainers.forEach(container => {
-        if (container) {
-            container.style.display = isDataVisible ? 'block' : 'none';
-        }
-    });
-
-    // Toggle control buttons (only on mobile)
-    if (window.innerWidth <= 768) { // You can adjust the width threshold
-        controlButtons.forEach(button => {
-            if (button) {
-                button.style.display = isDataVisible ? 'inline-block' : 'none';
-            }
-        });
-    }
-});
+    document.getElementById("fanToggleButton"),
+    document.getElementById("pumpToggleButton"),
+    document.getElementById("plantLightToggleButton"),
+    document.getElementById("soundToggleButton"),
+    document.getElementById("sunToggleButton"),
+    document.getElementById("cameraToggleButton"),
+    document.getElementById("graphDataButton"),
+    document.getElementById("downloadToggleButton"),
+    document.getElementById("automateToggleButton")
+].filter(Boolean); // This removes any null elements
 
 const automateToggleButton = document.getElementById("automateToggleButton");
 let isAutomated = false;
