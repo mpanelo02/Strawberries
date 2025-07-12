@@ -628,14 +628,14 @@
     cursor: wait;
 }
 
-.automatePin {
+.autobotPin {
     position: fixed;
     top: 650px;
     right: 30px;
-    font-size: 17px;
+    font-size: 20px;
     font-weight: bold;
     color: black;
-    background-color: #a8ffb0; /* Light green background */
+    background-color: #a8ffb0;
     border: 2px solid #4caf50;
     padding: 5px 10px;
     border-radius: 10px;
@@ -645,17 +645,10 @@
     transition: all 0.3s ease;
     text-align: right;
 }
-.automatePin:hover {
+.autobotPin:hover {
     background-color: #4caf50;
     color: white;
 }
-/* Add to your style.css */
-.automatePin.loading {
-    background-color: #4caf50;
-    color: white;
-    cursor: wait;
-}
-
 
 /* For Mobile Devices */
 
@@ -746,7 +739,6 @@
         left: 10px;
     }
 
-
     .soundPin {
         font-size: 16px;
         padding: 2px 8px;
@@ -792,7 +784,6 @@
         z-index: 9999;
         font-family: Arial, sans-serif;
     }
-
     
     .pumpPin {
         font-size: 16px;
@@ -818,9 +809,16 @@
         width: 180px;
     }
 
+    .autobotPin {
+        font-size: 16px;
+        padding: 2px 8px;
+        top: 581px;
+        right: 10px;
+    }
+
     .cameraPin {
         position: fixed;
-        top: 581px;
+        top: 618px;
         right: 10px;
         font-size: 16px;
         font-weight: bold;
@@ -835,12 +833,5 @@
         transition: all 0.3s ease;
         text-align: right;
     }
-    .automatePin {
-        font-size: 16px;
-        padding: 2px 8px;
-        top: 618px;
-        right: 10px;
-    }
-    
 
 }

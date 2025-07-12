@@ -33,6 +33,8 @@ const sensorHistory = {
     poreEC: []
 };
 
+const LOG_PREFIX = '[FarmLab]';
+
 // Then modify your getData() function to store history
 async function getData() {
     try {
@@ -215,30 +217,6 @@ const modalTitle = document.querySelector(".modal-title");
 const modalProjectDescription = document.querySelector(".modal-project-description");
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
-
-
-// function showModal(id) {
-//     const content = modalContent[id];
-//     if (content) {
-//         if (content.isCamera) {
-//             // Handle camera modal separately
-//             cameraToggleButton.click(); // Trigger the camera button click
-//         } else {
-//             // Regular modal handling
-//             modalTitle.textContent = content.title;
-//             modalProjectDescription.textContent = content.content;
-
-//             if (content.link) {
-//                 modalVisitButton.href = content.link;
-//                 modalVisitButton.classList.remove("hidden");
-//             } else {
-//                 modalVisitButton.classList.add("hidden");
-//             }
-
-//             modal.classList.toggle("hidden");
-//         }
-//     }
-// }
 
 function showModal(id) {
     const content = modalContent[id];
@@ -961,7 +939,7 @@ let deviceStates = {
   fan: "OFF",
   // plantLight: "OFF",
   pump: "OFF",
-  automation: "OFF"
+  autobot: "OFF"
 };
 
 async function fetchDeviceStates() {
@@ -972,26 +950,146 @@ async function fetchDeviceStates() {
     
     // Update button states based on fetched values
     updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
-    // updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
     updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
-
-    updateButtonState(automateToggleButton, deviceStates.automation === "ON", "👆 Manual", "🤖 Automate");
+    updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Manual");
+    
+    // Set initial visibility of control buttons
+    // toggleControlButtonsVisibility(deviceStates.autobot === "ON");
     
     // Update actual device states
     isFanOn = deviceStates.fan === "ON";
-    // isPlantLightOn = deviceStates.plantLight === "ON";
     isPumpOn = deviceStates.pump === "ON";
-    isAutomated = deviceStates.automation === "ON";
     
     // Update visual states
     updateFanVisuals();
-    // updatePlantLightVisuals();
     updatePumpVisuals();
+
+    // Start autobot interval if it's ON
+    if (deviceStates.autobot === "ON") {
+      startAutobotInterval();
+    }
     
   } catch (err) {
     console.error("Error fetching device states:", err);
   }
 }
+
+window.addEventListener('beforeunload', () => {
+  stopAutobotInterval();
+});
+
+const autobotToggleButton = document.getElementById("autobotToggleButton");
+let autobotInterval = null;
+
+async function toggleAutobot() {
+  const isAutobotOn = deviceStates.autobot === "ON";
+  const newState = isAutobotOn ? "OFF" : "ON";
+  
+  try {
+    await updateDeviceStateOnServer('autobot', newState);
+    deviceStates.autobot = newState;
+    updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Manual");
+    
+    if (newState === "ON") {
+      startAutobotInterval();
+      // Add any autobot activation logic here
+      console.log("Autobot activated");
+    } else {
+      // Add any autobot deactivation logic here
+      console.log("Autobot deactivated");
+    }
+  } catch (err) {
+    console.error("Error updating autobot state:", err);
+  }
+}
+
+function startAutobotInterval() {
+  // Check every 10 seconds (you can adjust this)
+  autobotInterval = setInterval(checkPumpSchedule, 10000);
+  // Also check immediately in case we're already at the right time
+  checkPumpSchedule();
+}
+
+function stopAutobotInterval() {
+  if (autobotInterval) {
+    clearInterval(autobotInterval);
+    autobotInterval = null;
+  }
+}
+
+let isPumpRunning = false;
+
+async function checkPumpSchedule() {
+  // Only proceed if autobot is ON and pump isn't already running
+  if (deviceStates.autobot !== "ON" || isPumpRunning) return;
+  
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  
+  // Set time for Automaition
+  if ((hours === 9 || hours === 21) && minutes === 10 && seconds === 0) {
+    console.log(`${LOG_PREFIX} Triggering scheduled pump activation at ${now.toISOString()}`);
+    await runPumpForDuration(60); // Run for 60 seconds (1 minute)
+  }
+}
+
+function formatTimeForLog(date) {
+  return date.toLocaleTimeString('en-US', {
+    hour12: true,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: 'Europe/Helsinki' // Adjust to your timezone if needed
+  });
+}
+
+async function runPumpForDuration(durationSeconds) {
+  if (isPumpRunning) return;
+  
+  isPumpRunning = true;
+  const startTime = new Date();
+  
+  console.log(`${LOG_PREFIX} Starting pump at ${startTime.toISOString()} for ${durationSeconds} seconds`);
+  
+  try {
+    // Turn pump ON
+    await updateDeviceStateOnServer('pump', 'ON');
+    deviceStates.pump = 'ON';
+    isPumpOn = true;
+    updateButtonState(pumpToggleButton, true, "🌧️ON", "🌵OFF");
+    updatePumpVisuals();
+    
+    // Set timeout to turn pump OFF after duration
+    setTimeout(async () => {
+      try {
+        await updateDeviceStateOnServer('pump', 'OFF');
+        deviceStates.pump = 'OFF';
+        isPumpOn = false;
+        updateButtonState(pumpToggleButton, false, "🌧️ON", "🌵OFF");
+        updatePumpVisuals();
+        console.log(`${LOG_PREFIX} Pump turned OFF after scheduled duration at ${new Date().toISOString()}`);
+      } catch (err) {
+        console.error(`${LOG_PREFIX} Error turning pump OFF:`, err);
+      } finally {
+        isPumpRunning = false;
+      }
+    }, durationSeconds * 1000);
+    
+  } catch (err) {
+    console.error(`${LOG_PREFIX} Error turning pump ON:`, err);
+    isPumpRunning = false;
+  }
+}
+
+// Add this event listener with your other event listeners
+autobotToggleButton.addEventListener("click", toggleAutobot);
+
+// Make sure to call fetchDeviceStates when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  fetchDeviceStates();
+});
 
 // Add these helper functions
 function updateFanVisuals() {
@@ -1664,63 +1762,8 @@ const controlButtons = [
     document.getElementById("cameraToggleButton"),
     document.getElementById("graphDataButton"),
     document.getElementById("downloadToggleButton"),
-    document.getElementById("automateToggleButton")
+    document.getElementById("autobotToggleButton")
 ].filter(Boolean); // This removes any null elements
-
-const automateToggleButton = document.getElementById("automateToggleButton");
-let isAutomated = false;
-
-// automateToggleButton.addEventListener("click", () => {
-//     isAutomated = !isAutomated;
-    
-//     // Update button text
-//     automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
-
-//     // Toggle control button visibility
-//     fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-//     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-
-//     // Here you would add your automation logic
-//     if (isAutomated) {
-//         startAutomation();
-//     } else {
-//         stopAutomation();
-//     }
-// });
-
-automateToggleButton.addEventListener("click", async () => {
-  isAutomated = !isAutomated;
-  const newState = isAutomated ? "ON" : "OFF";
-  
-  try {
-    await updateDeviceStateOnServer('automation', newState);
-    automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
-    
-    // Toggle control button visibility
-    fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-    pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-
-    if (isAutomated) {
-      startAutomation();
-    } else {
-      stopAutomation();
-    }
-  } catch (err) {
-    console.error("Error updating automation state:", err);
-    // Revert if update fails
-    isAutomated = !isAutomated;
-  }
-});
-
-function startAutomation() {
-  console.log("Automation started");
-  // Implement your automation logic here
-}
-
-function stopAutomation() {
-  console.log("Automation stopped");
-  // Implement stopping automation logic here
-}
 
 enterButton.addEventListener("click", () => {
     gsap.to(loadingScreen, {
