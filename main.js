@@ -20,6 +20,11 @@ const chartContainer = document.getElementById("chartContainer");
 const closeChartButton = document.getElementById("closeChartButton");
 const ctx = document.getElementById("dataChart").getContext("2d");
 
+const LOG_PREFIX = '[FarmLab]';
+
+let hoveredObject = null;
+const hoverScaleFactor = 1.2; // How much to scale up on hover
+const hoverAnimationDuration = 0.3; // Duration of the scale animation
 
 // Chart The Data    
 // Sensor history for the last day (2880 readings)
@@ -32,8 +37,6 @@ const sensorHistory = {
     atmosphericPress: [],
     poreEC: []
 };
-
-const LOG_PREFIX = '[FarmLab]';
 
 // Then modify your getData() function to store history
 async function getData() {
@@ -206,7 +209,7 @@ const modalContent = {
     },
     Plate02: {
         title: "Strawberry Room",
-        content: "This is Strawberry Room, the Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above. <br>NOTE: The objects with animation at the beginning are interactive and with animation.",
+        content: "This is Strawberry Room, the Digital Twin of Metropolia's UrbanFarmLab. A dynamic virtual representation that mirror physical form, condition and events inside the Lab. For more information about the UrbanFarmLab, visit the link above.",
         link:"https://www.metropolia.fi/en/rdi/collaboration-platforms/urbanfarmlab",
         image: "Teacher.jpg",
     },
@@ -820,9 +823,53 @@ function onClick() {
     }
 }
 
-function onPointerMove( event ) {
-	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+// function onPointerMove( event ) {
+// 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+// 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+// }
+function onPointerMove(event) {
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(intersectObjects);
+    
+    // Reset previously hovered object
+    if (hoveredObject) {
+        gsap.to(hoveredObject.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: hoverAnimationDuration
+        });
+        hoveredObject = null;
+    }
+    
+    if (intersects.length > 0) {
+        const intersectedObject = intersects[0].object.parent;
+        const objectName = intersectedObject.name;
+        
+        // Only apply hover effect to specific objects
+        if (["Plate01", "Plate02", "CCTV"].includes(objectName)) {
+            document.body.style.cursor = 'pointer';
+            hoveredObject = intersectedObject;
+            
+            // Animate scale up
+            gsap.to(hoveredObject.scale, {
+                x: hoverScaleFactor,
+                y: hoverScaleFactor,
+                z: hoverScaleFactor,
+                duration: hoverAnimationDuration
+            });
+            
+            intersectObject = objectName;
+            return;
+        }
+    }
+    
+    // Default cursor if not hovering over our objects
+    document.body.style.cursor = 'default';
+    intersectObject = "";
 }
 
 modalExitButton.addEventListener("click", hideModal);
