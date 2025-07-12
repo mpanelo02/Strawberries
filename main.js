@@ -960,7 +960,8 @@ let waterToggleInterval = null;
 let deviceStates = {
   fan: "OFF",
   // plantLight: "OFF",
-  pump: "OFF"
+  pump: "OFF",
+  automation: "OFF"
 };
 
 async function fetchDeviceStates() {
@@ -973,11 +974,14 @@ async function fetchDeviceStates() {
     updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
     // updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
     updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
+
+    updateButtonState(automateToggleButton, deviceStates.automation === "ON", "👆 Manual", "🤖 Automate");
     
     // Update actual device states
     isFanOn = deviceStates.fan === "ON";
     // isPlantLightOn = deviceStates.plantLight === "ON";
     isPumpOn = deviceStates.pump === "ON";
+    isAutomated = deviceStates.automation === "ON";
     
     // Update visual states
     updateFanVisuals();
@@ -1666,23 +1670,57 @@ const controlButtons = [
 const automateToggleButton = document.getElementById("automateToggleButton");
 let isAutomated = false;
 
-automateToggleButton.addEventListener("click", () => {
-    isAutomated = !isAutomated;
+// automateToggleButton.addEventListener("click", () => {
+//     isAutomated = !isAutomated;
     
-    // Update button text
-    automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+//     // Update button text
+//     automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
 
+//     // Toggle control button visibility
+//     fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+//     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+
+//     // Here you would add your automation logic
+//     if (isAutomated) {
+//         startAutomation();
+//     } else {
+//         stopAutomation();
+//     }
+// });
+
+automateToggleButton.addEventListener("click", async () => {
+  isAutomated = !isAutomated;
+  const newState = isAutomated ? "ON" : "OFF";
+  
+  try {
+    await updateDeviceStateOnServer('automation', newState);
+    automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+    
     // Toggle control button visibility
     fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
     pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
 
-    // Here you would add your automation logic
     if (isAutomated) {
-        startAutomation();
+      startAutomation();
     } else {
-        stopAutomation();
+      stopAutomation();
     }
+  } catch (err) {
+    console.error("Error updating automation state:", err);
+    // Revert if update fails
+    isAutomated = !isAutomated;
+  }
 });
+
+function startAutomation() {
+  console.log("Automation started");
+  // Implement your automation logic here
+}
+
+function stopAutomation() {
+  console.log("Automation stopped");
+  // Implement stopping automation logic here
+}
 
 enterButton.addEventListener("click", () => {
     gsap.to(loadingScreen, {
