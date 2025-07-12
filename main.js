@@ -22,6 +22,7 @@ const ctx = document.getElementById("dataChart").getContext("2d");
 
 
 // Chart The Data    
+// Sensor history for the last day (2880 readings)
 const sensorHistory = {
     temperature: [],
     humidity: [],
@@ -214,6 +215,30 @@ const modalTitle = document.querySelector(".modal-title");
 const modalProjectDescription = document.querySelector(".modal-project-description");
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
+
+
+// function showModal(id) {
+//     const content = modalContent[id];
+//     if (content) {
+//         if (content.isCamera) {
+//             // Handle camera modal separately
+//             cameraToggleButton.click(); // Trigger the camera button click
+//         } else {
+//             // Regular modal handling
+//             modalTitle.textContent = content.title;
+//             modalProjectDescription.textContent = content.content;
+
+//             if (content.link) {
+//                 modalVisitButton.href = content.link;
+//                 modalVisitButton.classList.remove("hidden");
+//             } else {
+//                 modalVisitButton.classList.add("hidden");
+//             }
+
+//             modal.classList.toggle("hidden");
+//         }
+//     }
+// }
 
 function showModal(id) {
     const content = modalContent[id];
@@ -958,41 +983,9 @@ async function fetchDeviceStates() {
     updateFanVisuals();
     // updatePlantLightVisuals();
     updatePumpVisuals();
-
-    // Update automation state and button visibility
-    isAutomated = deviceStates.automation === "ON";
-    updateAutomationUI();
     
   } catch (err) {
     console.error("Error fetching device states:", err);
-  }
-}
-
-function updateAutomationUI() {
-  automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
-  
-  // Hide/show pump and fan buttons based on automation state
-  pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-  fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
-  
-  // If automation is on, show next pump time
-  if (isAutomated) {
-    fetchNextPumpTime();
-  }
-}
-
-async function fetchNextPumpTime() {
-  try {
-    const response = await fetch("https://valk-huone-1.onrender.com/api/next-pump-time");
-    if (!response.ok) throw new Error("Failed to fetch next pump time");
-    
-    const data = await response.json();
-    if (data.status === 'Automation is ON') {
-      // You could display this information in a tooltip or status message
-      console.log(`Next pump time: ${data.nextPumpTimeLocal}`);
-    }
-  } catch (error) {
-    console.error("Error fetching next pump time:", error);
   }
 }
 
@@ -1673,40 +1666,21 @@ const controlButtons = [
 const automateToggleButton = document.getElementById("automateToggleButton");
 let isAutomated = false;
 
-// Automation button event listener
-
-automateToggleButton.addEventListener("click", async () => {
+automateToggleButton.addEventListener("click", () => {
     isAutomated = !isAutomated;
-    automateToggleButton.classList.add('loading');
     
-    try {
-        const response = await fetch("https://valk-huone-1.onrender.com/api/update-device-state", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                device: 'automation', 
-                state: isAutomated ? 'ON' : 'OFF' 
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to update automation state');
-        }
-        
-        // Update UI after successful state change
-        updateAutomationUI();
-        
-        // Fetch updated device states to ensure UI is in sync
-        await fetchDeviceStates();
-        
-    } catch (error) {
-        console.error("Error toggling automation:", error);
-        isAutomated = !isAutomated; // Revert state
-        updateAutomationUI();
-    } finally {
-        automateToggleButton.classList.remove('loading');
+    // Update button text
+    automateToggleButton.textContent = isAutomated ? '👆 Manual' : '🤖 Automate';
+
+    // Toggle control button visibility
+    fanToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+    pumpToggleButton.style.display = isAutomated ? 'none' : 'inline-block';
+
+    // Here you would add your automation logic
+    if (isAutomated) {
+        startAutomation();
+    } else {
+        stopAutomation();
     }
 });
 
