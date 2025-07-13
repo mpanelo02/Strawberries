@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="style2.css"> -->
 
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,161 +17,341 @@
 
 </head>
 <body>
+    
 
-    <div id="experience">
-        <canvas id="experience-canvas"></canvas>
+    <div class="container" id="whatAreYou">
+      <h1 class="form-title">What are you?</h1>
+      <h2 class="title2">New Here? Try Guest</h2>
+
+
+      <div class="adminBtn">
+        <button id="adminButton">👑 Admin</button>
+      </div>
+        <p class="or">
+        ----or----
+      </p>
+
+      <div class="guestBtn">
+        <button id="guestButton">👤 Guest</button>
+      </div>
     </div>
-    
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <button class="enter-button">Enter FarmLab!</button>
+
+    <div class="container" id="verification" style="display:none;">
+        <h1 class="form-title">Verification</h1>
+        <form method="post" id="verificationForm">
+
+          <div class="input-group">
+              <i class="fas fa-lock"></i>
+              <input type="password" name="password" id="password" placeholder="Password" required>
+              <label for="password">Password</label>
+          </div>
+
+         <input type="submit" class="btn" value="Sign In" name="signIn">
+        </form>
+
+        <div class="goBackBtn">
+          <p>Forgot Password? </p>
+          <button id="goBackButton">Go Back!</button>
+        </div>
     </div>
-    
-    <div class="modal hidden">
-        <div class="modal-wrapper">
-            <div class="modal-header">
-                <h1 class="modal-title">Dashboard</h1>
-                <!-- <img id="modal-image" class="hidden" style="max-width: 100%; margin-top: 10px;" /> -->
-                <button class="modal-exit-button">Exit</button>
-            </div>
-            <div class="modal-content">
-                <div class="modal-content-wrapper">
-                    <a href="#" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="modal-visit-button hidden">View Link</a>
-                    <div class="modal-project-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum magnam unde deserunt quaerat minus repellat natus nobis qui tenetur ducimus fuga quo corrupti nam similique sint at suscipit, assumenda ipsa?</div>
+      
+
+    <div class="container" id="digitalTwinGuest" style="display:none;">
+        <div id="experience">
+            <canvas id="experience-canvas"></canvas>
+        </div>
+        
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <button class="enter-button">Enter FarmLab!</button>
+        </div>
+        
+        <div class="modal hidden">
+            <div class="modal-wrapper">
+                <div class="modal-header">
+                    <h1 class="modal-title">Dashboard</h1>
+                    <!-- <img id="modal-image" class="hidden" style="max-width: 100%; margin-top: 10px;" /> -->
+                    <button class="modal-exit-button">Exit</button>
+                </div>
+                <div class="modal-content">
+                    <div class="modal-content-wrapper">
+                        <a href="#" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="modal-visit-button hidden">View Link</a>
+                        <div class="modal-project-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum magnam unde deserunt quaerat minus repellat natus nobis qui tenetur ducimus fuga quo corrupti nam similique sint at suscipit, assumenda ipsa?</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
-          }
-        }
-        
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
-        
-    <script type="module" src="./main.js"></script>
-        
-    <!-- Place these first so the elements are available -->
-    <div id="mainContent" style="display: none;">
-        <!-- Date -->
- 
-        <div id="vantaa-date-container" class="datePin">
-            <div id="vantaa-date">Loading date...</div>
-        </div> 
+        <script type="importmap">
+            {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
+            }
+            }
+            
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+            
+        <script type="module" src="./main.js"></script>
+            
+        <!-- Place these first so the elements are available -->
+        <div id="mainContent" style="display: none;">
+            <!-- Date -->
+    
+            <div id="vantaa-date-container" class="datePin">
+                <div id="vantaa-date">Loading date...</div>
+            </div> 
 
-        <!-- Time -->
-        <div id="vantaa-time-container" class="timePin">
-            <div id="vantaa-clock">Loading time...</div>
-        </div>
-
-        <!-- Temperature -->
-        <div id="temperature-container" class="tempPin">
-            🌡️T: <span id="temperature">--</span> °C
-        </div>
-  
-        <!-- Humidity -->
-        <div id="humidity-container" class="humidPin">
-            🫧H: <span id="humidity">--</span> %
-        </div>
-
-        <!-- CO2 -->
-        <div id="co2-container" class="co2Pin">
-            🚬C: <span id="co2">--</span> ppm
-        </div>
-
-        <div id="atmosphericPress-container" class="pressurePin">
-            ☁️P: <span id="atmosphericPress">--</span> hPa
-        </div>
-
-        <div id="moisture-container" class="moistPin">
-            💧S: <span id="moisture">--</span> %
-        </div>
-
-        <div id="soilElectroConductivity-container" class="soilECPin">
-            ⚡S: <span id="soilEC">--</span> mS/cm
-        </div>
-
-        <div id="poreElectroConductivity-container" class="poreECPin">
-            ⚡P: <span id="poreEC">--</span> mS/cm
-        </div>
-
-
-        <!-- Buttons -->
-
-        <button id="hide-showToggleButton" class="hide-showPin">🙈 Hide</button>
-
-        
-        <button id="soundToggleButton" class="soundPin">🔊</button>
-        
-        <button id="sunToggleButton" class="sunPin">🌞</button>
-
-
-        <div class="graph-container">
-            <button id="graphDataButton" class="graphPin">📊 Graph</button>
-            <select id="graphDataDropdown" class="hidden">
-                <option value="">Select Data</option>
-                <option value="temperature">Temperature</option>
-                <option value="humidity">Humidity</option>
-                <option value="co2">CO2</option>
-                <option value="atmosphericPress">Atmospheric Pressure</option>
-                <option value="moisture">Soil Moisture</option>
-                <option value="soilEC">Soil ⚡ Conductivity</option>
-                <option value="poreEC">Pore ⚡ Conductivity</option>
-            </select>
-        </div>
-
-        <div id="chartContainer" class="chart-container hidden">
-            <canvas id="dataChart"></canvas>
-            <button id="closeChartButton" class="close-chart">✕ Close</button>
-        </div>
-
-        
-        <div class="download-container">
-            <button id="downloadToggleButton" class="downloadPin">💾 History</button>
-            <select id="downloadDataDropdown" class="hidden">
-                <option value="">Select Data</option>
-                <option value="temperature">Temperature</option>
-                <option value="humidity">Humidity</option>
-                <option value="co2">CO2</option>
-                <option value="atmosphericPress">Atmospheric Pressure</option>
-                <option value="moisture">Soil Moisture</option>
-                <option value="soilEC">Soil ⚡ Conductivity</option>
-                <option value="poreEC">Pore ⚡ Conductivity</option>
-            </select>
-        </div>
-
-        <button id="cameraToggleButton" class="cameraPin">🔥 Camera</button>
-
-            <button id="fanToggleButton" class="fanPin">🥵OFF</button>
-
-            <button id="plantLightToggleButton" class="bulbLedPin">💡👀</button>
-
-        <!-- <div id="lightSliderContainer" class="hidden"></div> -->
-        <div id="lightSlider" class="hidden">
-            <input type="range" id="lightIntensity" min="0" max="100" value="50">
-            <div id="selector">
-                <!-- <div class="selectButton"></div> -->
-                <div id="selectValue"></div>
+            <!-- Time -->
+            <div id="vantaa-time-container" class="timePin">
+                <div id="vantaa-clock">Loading time...</div>
             </div>
-            <div id="progressColor"></div>
+
+            <!-- Temperature -->
+            <div id="temperature-container" class="tempPin">
+                🌡️T: <span id="temperature">--</span> °C
+            </div>
+    
+            <!-- Humidity -->
+            <div id="humidity-container" class="humidPin">
+                🫧H: <span id="humidity">--</span> %
+            </div>
+
+            <!-- CO2 -->
+            <div id="co2-container" class="co2Pin">
+                🚬C: <span id="co2">--</span> ppm
+            </div>
+
+            <div id="atmosphericPress-container" class="pressurePin">
+                ☁️P: <span id="atmosphericPress">--</span> hPa
+            </div>
+
+            <div id="moisture-container" class="moistPin">
+                💧S: <span id="moisture">--</span> %
+            </div>
+
+            <div id="soilElectroConductivity-container" class="soilECPin">
+                ⚡S: <span id="soilEC">--</span> mS/cm
+            </div>
+
+            <div id="poreElectroConductivity-container" class="poreECPin">
+                ⚡P: <span id="poreEC">--</span> mS/cm
+            </div>
+
+
+            <!-- Buttons -->
+
+            <button id="hide-showToggleButton" class="hide-showPin">🙈 Hide</button>
+
+            
+            <button id="soundToggleButton" class="soundPin">🔊</button>
+            
+            <button id="sunToggleButton" class="sunPin">🌞</button>
+
+
+            <div class="graph-container">
+                <button id="graphDataButton" class="graphPin">📊 Graph</button>
+                <select id="graphDataDropdown" class="hidden">
+                    <option value="">Select Data</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="humidity">Humidity</option>
+                    <option value="co2">CO2</option>
+                    <option value="atmosphericPress">Atmospheric Pressure</option>
+                    <option value="moisture">Soil Moisture</option>
+                    <option value="soilEC">Soil ⚡ Conductivity</option>
+                    <option value="poreEC">Pore ⚡ Conductivity</option>
+                </select>
+            </div>
+
+            <div id="chartContainer" class="chart-container hidden">
+                <canvas id="dataChart"></canvas>
+                <button id="closeChartButton" class="close-chart">✕ Close</button>
+            </div>
+
+            
+            <div class="download-container">
+                <button id="downloadToggleButton" class="downloadPin">💾 History</button>
+                <select id="downloadDataDropdown" class="hidden">
+                    <option value="">Select Data</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="humidity">Humidity</option>
+                    <option value="co2">CO2</option>
+                    <option value="atmosphericPress">Atmospheric Pressure</option>
+                    <option value="moisture">Soil Moisture</option>
+                    <option value="soilEC">Soil ⚡ Conductivity</option>
+                    <option value="poreEC">Pore ⚡ Conductivity</option>
+                </select>
+            </div>
+
+            <button id="cameraToggleButton" class="cameraPin">🔥 Camera</button>
+
+
+
         </div>
-        <!-- </div> -->
-
-        <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
-
-        <button id="autobotToggleButton" class="autobotPin">👆Manual</button>
-
     </div>
 
+    <div class="container" id="digitalTwinAdmin" style="display:none;">
+        <div id="experience">
+            <canvas id="experience-canvas"></canvas>
+        </div>
+        
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <button class="enter-button">Enter FarmLab!</button>
+        </div>
+        
+        <div class="modal hidden">
+            <div class="modal-wrapper">
+                <div class="modal-header">
+                    <h1 class="modal-title">Dashboard</h1>
+                    <!-- <img id="modal-image" class="hidden" style="max-width: 100%; margin-top: 10px;" /> -->
+                    <button class="modal-exit-button">Exit</button>
+                </div>
+                <div class="modal-content">
+                    <div class="modal-content-wrapper">
+                        <a href="#" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="modal-visit-button hidden">View Link</a>
+                        <div class="modal-project-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum magnam unde deserunt quaerat minus repellat natus nobis qui tenetur ducimus fuga quo corrupti nam similique sint at suscipit, assumenda ipsa?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script type="importmap">
+            {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
+            }
+            }
+            
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+            
+        <script type="module" src="./main.js"></script>
+            
+        <!-- Place these first so the elements are available -->
+        <div id="mainContent" style="display: none;">
+            <!-- Date -->
+    
+            <div id="vantaa-date-container" class="datePin">
+                <div id="vantaa-date">Loading date...</div>
+            </div> 
+
+            <!-- Time -->
+            <div id="vantaa-time-container" class="timePin">
+                <div id="vantaa-clock">Loading time...</div>
+            </div>
+
+            <!-- Temperature -->
+            <div id="temperature-container" class="tempPin">
+                🌡️T: <span id="temperature">--</span> °C
+            </div>
+    
+            <!-- Humidity -->
+            <div id="humidity-container" class="humidPin">
+                🫧H: <span id="humidity">--</span> %
+            </div>
+
+            <!-- CO2 -->
+            <div id="co2-container" class="co2Pin">
+                🚬C: <span id="co2">--</span> ppm
+            </div>
+
+            <div id="atmosphericPress-container" class="pressurePin">
+                ☁️P: <span id="atmosphericPress">--</span> hPa
+            </div>
+
+            <div id="moisture-container" class="moistPin">
+                💧S: <span id="moisture">--</span> %
+            </div>
+
+            <div id="soilElectroConductivity-container" class="soilECPin">
+                ⚡S: <span id="soilEC">--</span> mS/cm
+            </div>
+
+            <div id="poreElectroConductivity-container" class="poreECPin">
+                ⚡P: <span id="poreEC">--</span> mS/cm
+            </div>
+
+
+            <!-- Buttons -->
+
+            <button id="hide-showToggleButton" class="hide-showPin">🙈 Hide</button>
+
+            
+            <button id="soundToggleButton" class="soundPin">🔊</button>
+            
+            <button id="sunToggleButton" class="sunPin">🌞</button>
+
+
+            <div class="graph-container">
+                <button id="graphDataButton" class="graphPin">📊 Graph</button>
+                <select id="graphDataDropdown" class="hidden">
+                    <option value="">Select Data</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="humidity">Humidity</option>
+                    <option value="co2">CO2</option>
+                    <option value="atmosphericPress">Atmospheric Pressure</option>
+                    <option value="moisture">Soil Moisture</option>
+                    <option value="soilEC">Soil ⚡ Conductivity</option>
+                    <option value="poreEC">Pore ⚡ Conductivity</option>
+                </select>
+            </div>
+
+            <div id="chartContainer" class="chart-container hidden">
+                <canvas id="dataChart"></canvas>
+                <button id="closeChartButton" class="close-chart">✕ Close</button>
+            </div>
+
+            
+            <div class="download-container">
+                <button id="downloadToggleButton" class="downloadPin">💾 History</button>
+                <select id="downloadDataDropdown" class="hidden">
+                    <option value="">Select Data</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="humidity">Humidity</option>
+                    <option value="co2">CO2</option>
+                    <option value="atmosphericPress">Atmospheric Pressure</option>
+                    <option value="moisture">Soil Moisture</option>
+                    <option value="soilEC">Soil ⚡ Conductivity</option>
+                    <option value="poreEC">Pore ⚡ Conductivity</option>
+                </select>
+            </div>
+
+            <button id="cameraToggleButton" class="cameraPin">🔥 Camera</button>
+
+                <button id="fanToggleButton" class="fanPin">🥵OFF</button>
+
+                <button id="plantLightToggleButton" class="bulbLedPin">💡👀</button>
+
+            <!-- <div id="lightSliderContainer" class="hidden"></div> -->
+            <div id="lightSlider" class="hidden">
+                <input type="range" id="lightIntensity" min="0" max="100" value="50">
+                <div id="selector">
+                    <!-- <div class="selectButton"></div> -->
+                    <div id="selectValue"></div>
+                </div>
+                <div id="progressColor"></div>
+            </div>
+            <!-- </div> -->
+
+            <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
+
+            <button id="autobotToggleButton" class="autobotPin">👆Manual</button>
+
+        </div>
+    </div>
+
+    <script src="main.js"></script>
   
 </body>
 </html>
