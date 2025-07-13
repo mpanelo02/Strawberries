@@ -1076,7 +1076,7 @@ async function checkPumpSchedule() {
   const seconds = now.getSeconds();
   
   // Set time for Automaition
-  if ((hours === 9 || hours === 21) && minutes === 10 && seconds === 0) {
+  if ((hours === 2 || hours === 14) && minutes === 35 && seconds === 0) {
     console.log(`${LOG_PREFIX} Triggering scheduled pump activation at ${now.toISOString()}`);
     await runPumpForDuration(60); // Run for 60 seconds (1 minute)
   }
