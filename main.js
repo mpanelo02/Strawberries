@@ -295,6 +295,7 @@ manager.onLoad = function () {
     opacity: 1,
     duration: 0,
   });
+  animateObjectsGrowth();
 };
 
 enterButton.addEventListener("click", () => {
@@ -973,7 +974,7 @@ setInterval(updateDateTime, 1000);
 // Device control variables and functions
 let isFanOn = false;
 let isPumpOn = false;
-// let isPlantLightOn = false;
+let isPlantLightOn = false;
 
 let coldWind1 = null;
 let coldWind2 = null;
@@ -984,7 +985,7 @@ let waterToggleInterval = null;
 
 let deviceStates = {
   fan: "OFF",
-  // plantLight: "OFF",
+  plantLight: "OFF",
   pump: "OFF",
   autobot: "OFF"
 };
@@ -997,6 +998,7 @@ async function fetchDeviceStates() {
     
     // Update button states based on fetched values
     updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
+    updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
     updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
     updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Manual");
     
@@ -1005,10 +1007,12 @@ async function fetchDeviceStates() {
     
     // Update actual device states
     isFanOn = deviceStates.fan === "ON";
+    isPlantLightOn = deviceStates.plantLight === "ON";
     isPumpOn = deviceStates.pump === "ON";
     
     // Update visual states
     updateFanVisuals();
+    updatePlantLightVisuals();
     updatePumpVisuals();
 
     // Start autobot interval if it's ON
@@ -1023,10 +1027,13 @@ async function fetchDeviceStates() {
 
 window.addEventListener('beforeunload', () => {
   stopAutobotInterval();
+  stopLightScheduleCheck();
 });
 
 const autobotToggleButton = document.getElementById("autobotToggleButton");
 let autobotInterval = null;
+let lightScheduleInterval = null;
+let isPumpRunning = false;
 
 async function toggleAutobot() {
   const isAutobotOn = deviceStates.autobot === "ON";
@@ -1039,14 +1046,30 @@ async function toggleAutobot() {
     
     if (newState === "ON") {
       startAutobotInterval();
+      startLightScheduleCheck();
       // Add any autobot activation logic here
       console.log("Autobot activated");
     } else {
+      stopAutobotInterval();
+      stopLightScheduleCheck();
       // Add any autobot deactivation logic here
       console.log("Autobot deactivated");
     }
   } catch (err) {
     console.error("Error updating autobot state:", err);
+  }
+}
+
+function startLightScheduleCheck() {
+  // Check immediately and then every minute
+  checkLightSchedule();
+  lightScheduleInterval = setInterval(checkLightSchedule, 60000); // Check every minute
+}
+
+function stopLightScheduleCheck() {
+  if (lightScheduleInterval) {
+    clearInterval(lightScheduleInterval);
+    lightScheduleInterval = null;
   }
 }
 
@@ -1064,7 +1087,42 @@ function stopAutobotInterval() {
   }
 }
 
-let isPumpRunning = false;
+async function checkLightSchedule() {
+  if (deviceStates.autobot !== "ON") return;
+  
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  
+  // Convert current time to minutes since midnight for easier comparison
+  const currentTimeInMinutes = hours * 60 + minutes;
+  
+  // Define the schedule (8:10 AM to 12:10 AM)
+  const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
+  const endTimeInMinutes = 0 * 60 + 10;   // 12:10 AM (next day)
+  
+  // Determine if we should turn lights on or off
+  let shouldLightsBeOn = false;
+  
+  if (endTimeInMinutes > startTimeInMinutes) {
+    // Normal case (same day)
+    shouldLightsBeOn = currentTimeInMinutes >= startTimeInMinutes && 
+                       currentTimeInMinutes < endTimeInMinutes;
+  } else {
+    // Wrapping case (overnight)
+    shouldLightsBeOn = currentTimeInMinutes >= startTimeInMinutes || 
+                       currentTimeInMinutes < endTimeInMinutes;
+  }
+  
+  // Only make changes if needed
+  if (shouldLightsBeOn && !isPlantLightOn) {
+    console.log(`${LOG_PREFIX} Turning plant lights ON (scheduled)`);
+    await togglePlantLight();
+  } else if (!shouldLightsBeOn && isPlantLightOn) {
+    console.log(`${LOG_PREFIX} Turning plant lights OFF (scheduled)`);
+    await togglePlantLight();
+  }
+}
 
 async function checkPumpSchedule() {
   // Only proceed if autobot is ON and pump isn't already running
@@ -1076,7 +1134,7 @@ async function checkPumpSchedule() {
   const seconds = now.getSeconds();
   
   // Set time for Automaition
-  if ((hours === 2 || hours === 14) && minutes === 35 && seconds === 0) {
+  if ((hours === 9 || hours === 21) && minutes === 10 && seconds === 0) {
     console.log(`${LOG_PREFIX} Triggering scheduled pump activation at ${now.toISOString()}`);
     await runPumpForDuration(60); // Run for 60 seconds (1 minute)
   }
@@ -1158,6 +1216,18 @@ function updateFanVisuals() {
   }
 }
 
+function updatePlantLightVisuals() {
+  const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
+  
+  plantLights.forEach(light => {
+    gsap.to(light, {
+      intensity: isPlantLightOn ? 25 : 0,
+      duration: 1
+    });
+    light.visible = isPlantLightOn;
+  });
+}
+
 
 function updatePumpVisuals() {
   if (isPumpOn) {
@@ -1180,7 +1250,7 @@ function updatePumpVisuals() {
 
 const fanToggleButton = document.getElementById("fanToggleButton");
 const pumpToggleButton = document.getElementById("pumpToggleButton");
-// const plantLightToggleButton = document.getElementById("plantLightToggleButton");
+const plantLightToggleButton = document.getElementById("plantLightToggleButton");
 
 function updateButtonState(button, isOn, onLabel, offLabel) {
   button.textContent = isOn ? onLabel : offLabel;
@@ -1203,169 +1273,48 @@ async function toggleFan() {
   }
 }
 
+// async function togglePlantLight() {
+//   isPlantLightOn = !isPlantLightOn;
+//   const newState = isPlantLightOn ? "ON" : "OFF";
+//   updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+//   updatePlantLightVisuals();
+  
+//   try {
+//     await updateDeviceStateOnServer('plantLight', newState);
+//   } catch (err) {
+//     console.error("Error updating plant light state:", err);
+//     // Revert if update fails
+//     isPlantLightOn = !isPlantLightOn;
+//     updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+//     updatePlantLightVisuals();
+//   }
+// }
 
-const plantLightToggleButton = document.getElementById("plantLightToggleButton");
-const lightSlider = document.getElementById("lightSlider");
-const lightIntensity = document.getElementById("lightIntensity");
-const selector = document.getElementById("selector");
-const selectValue = document.getElementById("selectValue");
-const progressColor = document.getElementById("progressColor");
-
-// Initialize slider values
-selectValue.innerHTML = lightIntensity.value;
-selector.style.left = lightIntensity.value + "%";
-progressColor.style.width = lightIntensity.value + "%";
-
-// Update slider when moved
-lightIntensity.oninput = function() {
-    selectValue.innerHTML = this.value;
-    selector.style.left = this.value + "%";
-    progressColor.style.width = this.value + "%";
-};
-
-// Function to fetch current light intensity from server
-async function fetchLightIntensity() {
+async function togglePlantLight(manualToggle = true) {
+  // If this is an automatic toggle (from schedule), skip the server update
+  if (!manualToggle) {
+    isPlantLightOn = !isPlantLightOn;
+    updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+    updatePlantLightVisuals();
+    return;
+  }
+  
+  // Original manual toggle logic
+  isPlantLightOn = !isPlantLightOn;
+  const newState = isPlantLightOn ? "ON" : "OFF";
+  updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+  updatePlantLightVisuals();
+  
   try {
-    const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity");
-    const data = await response.json();
-    return data.intensity || 50;
-  } catch (error) {
-    console.error("Error fetching light intensity:", error);
-    return 50; // Default value if fetch fails
+    await updateDeviceStateOnServer('plantLight', newState);
+  } catch (err) {
+    console.error("Error updating plant light state:", err);
+    // Revert if update fails
+    isPlantLightOn = !isPlantLightOn;
+    updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
+    updatePlantLightVisuals();
   }
 }
-
-// Function to update light intensity on server
-async function updateLightIntensity(value) {
-  try {
-    const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ intensity: value })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to update light intensity');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error("Error updating light intensity:", error);
-  }
-}
-
-async function initializeSlider() {
-  try {
-    const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity");
-    if (!response.ok) throw new Error("Failed to fetch light intensity");
-    
-    const data = await response.json();
-    const intensity = data.intensity || 50;
-    
-    // Update UI elements
-    lightIntensity.value = intensity;
-    selectValue.innerHTML = intensity;
-    selector.style.left = intensity + "%";
-    progressColor.style.width = intensity + "%";
-    
-    // Update lights based on intensity
-    updateLights(intensity);
-    
-    console.log("Slider initialized with value:", intensity);
-  } catch (error) {
-    console.error("Error initializing slider:", error);
-    // Fallback to default value
-    lightIntensity.value = 50;
-    selectValue.innerHTML = 50;
-    selector.style.left = "50%";
-    progressColor.style.width = "50%";
-    updateLights(50);
-  }
-}
-
-// Function to update lights based on intensity
-function updateLights(intensity) {
-  const plantLights = [rectLight1, rectLight2, rectLight3, rectLight4, rectLight5, rectLight6];
-  const normalizedIntensity = intensity / 100 * 25; // Scale to 0-25 range
-  
-  plantLights.forEach(light => {
-    gsap.to(light, {
-      intensity: normalizedIntensity,
-      duration: 0.5
-    });
-    light.visible = intensity > 0;
-  });
-}
-
-// Initialize slider when page loads
-initializeSlider();
-
-
-// Add this to your lightIntensity.oninput function:
-lightIntensity.oninput = async function() {
-  const value = parseInt(this.value);
-  
-  // Update UI immediately
-  selectValue.innerHTML = value;
-  selector.style.left = value + "%";
-  progressColor.style.width = value + "%";
-  updateLights(value);
-  
-  // Clear any previous state
-  selectValue.classList.remove('saving', 'error');
-  
-  // Debounce server update
-  if (this.debounceTimer) clearTimeout(this.debounceTimer);
-  this.debounceTimer = setTimeout(async () => {
-    selectValue.classList.add('saving');
-    
-    try {
-      const response = await fetch("https://valk-huone-1.onrender.com/api/light-intensity", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ intensity: value })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update light intensity');
-      }
-      
-      selectValue.classList.remove('saving');
-      console.log("Light intensity updated to:", value);
-    } catch (error) {
-      console.error("Error updating light intensity:", error);
-      selectValue.classList.remove('saving');
-      selectValue.classList.add('error');
-      setTimeout(() => selectValue.classList.remove('error'), 2000);
-    }
-  }, 500);
-};
-
-// Toggle slider visibility
-plantLightToggleButton.addEventListener("click", () => {
-    lightSlider.classList.toggle("hidden");
-    
-    // Update button text based on slider visibility
-    if (lightSlider.classList.contains("hidden")) {
-        plantLightToggleButton.textContent = "💡👀";
-    } else {
-        plantLightToggleButton.textContent = "💡🙈";
-    }
-});
-
-// Close slider when clicking outside
-document.addEventListener('click', (event) => {
-    if (!lightSlider.contains(event.target)) {
-        if (event.target !== plantLightToggleButton) {
-            lightSlider.classList.add("hidden");
-            plantLightToggleButton.textContent = "💡👀";
-        }
-    }
-});
 
 async function togglePump() {
   isPumpOn = !isPumpOn;
@@ -1407,7 +1356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Button event listeners
 fanToggleButton.addEventListener("click", toggleFan);
-// plantLightToggleButton.addEventListener("click", togglePlantLight);
+plantLightToggleButton.addEventListener("click", togglePlantLight);
 pumpToggleButton.addEventListener("click", togglePump);
 
 // Sound toggle
@@ -1788,6 +1737,7 @@ hideShowToggleButton.addEventListener("click", () => {
     });
 });
 
+
 const dataContainers = [
     document.getElementById('vantaa-date-container'),
     document.getElementById('vantaa-time-container'),
@@ -1812,11 +1762,13 @@ const controlButtons = [
     document.getElementById("autobotToggleButton")
 ].filter(Boolean); // This removes any null elements
 
+
 enterButton.addEventListener("click", () => {
     gsap.to(loadingScreen, {
         opacity: 0,
         duration: 1,
         onComplete: () => {
+          
             loadingScreen.remove();
             document.getElementById("mainContent").style.display = "block";
 

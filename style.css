@@ -431,7 +431,7 @@
     display: none;
 }
 
-.bulbLedPin {
+.fanPin {
     position: fixed;
     top: 190px;
     right: 30px;
@@ -449,96 +449,12 @@
     text-align: right;
 }
 
-.bulbLedPin:hover {
+.fanPin:hover {
     background-color: #4caf50;
     color: white;
 }
 
-/* Light Slider */
-
-#lightSlider {
-    position: fixed;
-    top: 215px;
-    right: 135px;
-    width: 200px;
-    z-index: 9999;
-}
-
-#lightIntensity {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    outline: none;
-    border-radius: 3px;
-    background: #a8ffb0;
-}
-
-#lightIntensity::-webkit-slider-thumb {
-    /* -webkit-appearance: none; */
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    z-index: 3;
-    position: relative;
-    background: #a8ffb0;
-}
-
-#selector {
-    height: 48px; 
-    width: 48px;
-    position: absolute;
-    /* bottom: -20px; */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-#selectValue {
-    height: 30px;
-    width: 40px;
-    background: #ce75d1;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 30px;
-    font-size: 15px;
-    font-weight: bold;
-    color: white;
-    position: relative; /* Changed from absolute */
-    /* margin-bottom: -20px;  */
-    margin-top: -115px; /* Space between value and button */
-
-}
-
-#progressColor {
-    width: 50%;
-    height: 8px;
-    background: #ce75d1;
-    border-radius: 3px;
-    position: absolute;
-    top: 45%;
-    left: 0;
-}
-
-#selectValue.saving {
-  background: #4caf50;
-}
-
-#selectValue.error {
-  background: #f44336;
-  animation: shake 0.5s;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-5px); }
-  40%, 80% { transform: translateX(5px); }
-}
-
-.fanPin {
+.bulbLedPin {
     position: fixed;
     top: 250px;
     right: 30px;
@@ -556,7 +472,7 @@
     text-align: right;
 }
 
-.fanPin:hover {
+.bulbLedPin:hover {
     background-color: #4caf50;
     color: white;
 }
@@ -791,24 +707,18 @@
         top: 470px;
         right: 10px;
     }
-    .fanPin {
+    .bulbLedPin {
         font-size: 16px;
         padding: 2px 8px;
         top: 507px;
         right: 10px;
     }
-    .bulbLedPin {
+    .fanPin {
         font-size: 16px;
         padding: 2px 8px;
         top: 544px;
         right: 10px;
     }
-    #lightSlider {
-        top: 555px;
-        right: 100px;
-        width: 180px;
-    }
-
     .autobotPin {
         font-size: 16px;
         padding: 2px 8px;
