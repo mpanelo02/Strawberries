@@ -1830,3 +1830,30 @@ enterButton.addEventListener("click", () => {
     video.volume = 0.2;
     video.play();
 });
+
+
+const verificationPage=document.getElementById('verification');
+
+const verificationForm = document.getElementById("verificationForm");
+const digitalTwinAdminPage = document.getElementById("digitalTwinAdmin");
+
+verificationForm.addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    const passwordInput = document.getElementById("password");
+    const enteredPassword = passwordInput.value;
+    
+    // Check if the password is correct
+    if (enteredPassword === "farmlab12345") {
+        // Hide verification page and show admin page
+        verificationPage.style.display = "none";
+        digitalTwinAdminPage.style.display = "block";
+        
+        // Clear the password field
+        passwordInput.value = "";
+    } else {
+        alert("Incorrect password. Please try again.");
+        passwordInput.value = "";
+        passwordInput.focus();
+    }
+});
