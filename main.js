@@ -1099,7 +1099,7 @@ async function checkLightSchedule() {
   
   // Define the schedule (8:10 AM to 12:10 AM)
   const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
-  const endTimeInMinutes = 0 * 60 + 10;   // 12:10 AM (next day)
+  const endTimeInMinutes = 23 * 60 + 10;   // 11:10 AM (next day)
   
   // Determine if we should turn lights on or off
   let shouldLightsBeOn = false;
@@ -1272,23 +1272,6 @@ async function toggleFan() {
     updateFanVisuals();
   }
 }
-
-// async function togglePlantLight() {
-//   isPlantLightOn = !isPlantLightOn;
-//   const newState = isPlantLightOn ? "ON" : "OFF";
-//   updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-//   updatePlantLightVisuals();
-  
-//   try {
-//     await updateDeviceStateOnServer('plantLight', newState);
-//   } catch (err) {
-//     console.error("Error updating plant light state:", err);
-//     // Revert if update fails
-//     isPlantLightOn = !isPlantLightOn;
-//     updateButtonState(plantLightToggleButton, isPlantLightOn, "💡ON", "🕯️OFF");
-//     updatePlantLightVisuals();
-//   }
-// }
 
 async function togglePlantLight(manualToggle = true) {
   // If this is an automatic toggle (from schedule), skip the server update
