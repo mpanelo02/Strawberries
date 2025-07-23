@@ -27,7 +27,6 @@ const hoverScaleFactor = 1.2; // How much to scale up on hover
 const hoverAnimationDuration = 0.3; // Duration of the scale animation
 
 // Chart The Data    
-// Sensor history for the last day (2880 readings)
 const sensorHistory = {
     temperature: [],
     humidity: [],
@@ -41,8 +40,11 @@ const sensorHistory = {
 // Then modify your getData() function to store history
 async function getData() {
     try {
+        console.log(`${LOG_PREFIX} Fetching data from API...`);
         const response = await fetch("https://valk-huone-1.onrender.com/api/data");
         const data = await response.json();
+
+        console.log(`${LOG_PREFIX} Raw API data:`, data);
 
         // Log camera data if available
         if (data.lastCameraShot) {
@@ -58,49 +60,49 @@ async function getData() {
         // Access historical data arrays
         if (data.tempHistory) {
             const tempValues = data.tempHistory.map(r => ({ time: r.time, value: r.value }));
-            console.log("Temperature History:", tempValues);
+            // console.log("Temperature History:", tempValues);
             
             // You can store this in your sensorHistory if needed
             sensorHistory.temperature = tempValues; // Keep all readings
         }
         if (data.humidityHistory) {
             const humidityValues = data.humidityHistory.map(r => ({ time: r.time, value: r.value }));
-            console.log("Humidity History:", humidityValues);
+            // console.log("Humidity History:", humidityValues);
             
             // Store in sensorHistory
             sensorHistory.humidity = humidityValues;
         }
         if (data.co2History) {
             const co2Values = data.co2History.map(r => ({ time: r.time, value: r.value }));
-            console.log("CO2 History:", co2Values);
+            // console.log("CO2 History:", co2Values);
             
             // Store in sensorHistory
             sensorHistory.co2 = co2Values;
         }
         if (data.atmosphericPressHistory) {
             const atmosphericPressValues = data.atmosphericPressHistory.map(r => ({ time: r.time, value: r.value }));
-            console.log("Atmospheric Pressure History:", atmosphericPressValues);
+            // console.log("Atmospheric Pressure History:", atmosphericPressValues);
 
             // Store in sensorHistory
             sensorHistory.atmosphericPress = atmosphericPressValues;
         }
         if (data.moistureHistory) {
             const moistureValues = data.moistureHistory.map(r => ({ time: r.time, value: r.value }));
-            console.log("Moisture History:", moistureValues);
+            // console.log("Moisture History:", moistureValues);
 
             // Store in sensorHistory
             sensorHistory.moisture = moistureValues;
         }
         if (data.soilECHistory) {
             const soilECValues = data.soilECHistory.map(r => ({ time: r.time, value: r.value }));
-            console.log("Soil EC History:", soilECValues);
+            // console.log("Soil EC History:", soilECValues);
 
             // Store in sensorHistory
             sensorHistory.soilEC = soilECValues;
         }
         if (data.poreECHistory) {
             const poreECValues = data.poreECHistory.map(r => ({ time: r.time, value: r.value }));
-            console.log("Pore EC History:", poreECValues);
+            // console.log("Pore EC History:", poreECValues);
 
             // Store in sensorHistory
             sensorHistory.poreEC = poreECValues;
@@ -122,45 +124,54 @@ async function getData() {
         const soilECReading = moistureSoilECData.find(r => r.metric === "10");
         const poreECReading = moistureSoilECData.find(r => r.metric === "11");
 
+        console.log(`${LOG_PREFIX} Latest Sensor Readings:`);
+
         // Add new readings to history (keeping last 120 readings)
         if (temperatureReading) {
             const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
+            console.log(`Temperature: ${roundedTemp}°C`);
             document.getElementById('temperature').textContent = roundedTemp;
             sensorHistory.temperature.push(roundedTemp);
             if (sensorHistory.temperature.length > 120) sensorHistory.temperature.shift();
         }
         if (humidityReading) {
             const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
+            console.log(`Humidity: ${roundedHumidity}%`);
             document.getElementById('humidity').textContent = roundedHumidity;
             sensorHistory.humidity.push(roundedHumidity);
             if (sensorHistory.humidity.length > 120) sensorHistory.humidity.shift();
         }
         if (moistureReading) {
             const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
+            console.log(`Soil Moisture: ${roundedMoisture}%`);
             document.getElementById('moisture').textContent = roundedMoisture;
             sensorHistory.moisture.push(roundedMoisture);
             if (sensorHistory.moisture.length > 120) sensorHistory.moisture.shift();
         }
         if (soilECReading) {
             const roundedSoilEC = parseFloat(soilECReading.value).toFixed(3);
+            console.log(`Soil EC: ${roundedSoilEC}mS/cm`);
             document.getElementById('soilEC').textContent = roundedSoilEC;
             sensorHistory.soilEC.push(roundedSoilEC);
             if (sensorHistory.soilEC.length > 120) sensorHistory.soilEC.shift();
         }
         if (co2Reading) {
             const roundedCO2 = parseFloat(co2Reading.value).toFixed(0);
+            console.log(`CO2: ${roundedCO2}ppm`);
             document.getElementById('co2').textContent = roundedCO2;
             sensorHistory.co2.push(roundedCO2);
             if (sensorHistory.co2.length > 120) sensorHistory.co2.shift();
         }
         if (atmosphericPressReading) {
             const roundedAtmosphericPress = parseFloat(atmosphericPressReading.value).toFixed(0);
+            console.log(`Atmospheric Pressure: ${roundedAtmosphericPress}hPa`);
             document.getElementById('atmosphericPress').textContent = roundedAtmosphericPress;
             sensorHistory.atmosphericPress.push(roundedAtmosphericPress);
             if (sensorHistory.atmosphericPress.length > 120) sensorHistory.atmosphericPress.shift();
         }
         if (poreECReading) {
             const roundedPoreEC = parseFloat(poreECReading.value).toFixed(3);
+            console.log(`Pore EC: ${roundedPoreEC}mS/cm`);
             document.getElementById('poreEC').textContent = roundedPoreEC;
             sensorHistory.poreEC.push(roundedPoreEC);
             if (sensorHistory.poreEC.length > 120) sensorHistory.poreEC.shift();
@@ -180,7 +191,8 @@ async function getData() {
 
 // Call immediately and then every 60 seconds
 getData();
-setInterval(getData, 60000); // 60000 ms = 60 seconds
+setInterval(getData, 60000); // 60000 ms = 60 seconds data fetch interval
+
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setSize( sizes.width, sizes.height );
@@ -1093,12 +1105,12 @@ async function checkLightSchedule() {
   const now = new Date();
   const hours = now.getHours();
   const minutes = now.getMinutes();
-  
+  //Timer
   // Convert current time to minutes since midnight for easier comparison
   const currentTimeInMinutes = hours * 60 + minutes;
   
   // Define the schedule (8:10 AM to 12:10 AM)
-  const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
+  const startTimeInMinutes = 8 * 60 + 30; // 8:10 AM
   const endTimeInMinutes = 23 * 60 + 10;   // 11:10 AM (next day)
   
   // Determine if we should turn lights on or off
@@ -1132,7 +1144,7 @@ async function checkPumpSchedule() {
   const hours = now.getHours();
   const minutes = now.getMinutes();
   const seconds = now.getSeconds();
-  
+  //Timer
   // Set time for Automaition
   if ((hours === 9 || hours === 21) && minutes === 10 && seconds === 0) {
     console.log(`${LOG_PREFIX} Triggering scheduled pump activation at ${now.toISOString()}`);
