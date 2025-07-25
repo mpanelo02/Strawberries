@@ -1005,6 +1005,9 @@ let deviceStates = {
 async function fetchDeviceStates() {
   try {
     const response = await fetch("https://valk-huone-1.onrender.com/api/device-states");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     deviceStates = data;
     
@@ -1030,6 +1033,8 @@ async function fetchDeviceStates() {
     // Start autobot interval if it's ON
     if (deviceStates.autobot === "ON") {
       startAutobotInterval();
+    } else {
+      stopAutobotInterval();
     }
     
   } catch (err) {
@@ -1110,8 +1115,8 @@ async function checkLightSchedule() {
   const currentTimeInMinutes = hours * 60 + minutes;
   
   // Define the schedule (8:10 AM to 12:10 AM)
-  const startTimeInMinutes = 8 * 60 + 30; // 8:10 AM
-  const endTimeInMinutes = 23 * 60 + 10;   // 11:10 AM (next day)
+  const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
+  const endTimeInMinutes = 23 * 60 + 50;   // 11:50 PM (mid Night)
   
   // Determine if we should turn lights on or off
   let shouldLightsBeOn = false;
@@ -1206,6 +1211,15 @@ autobotToggleButton.addEventListener("click", toggleAutobot);
 // Make sure to call fetchDeviceStates when the page loads
 document.addEventListener('DOMContentLoaded', () => {
   fetchDeviceStates();
+});
+
+// Set up periodic refresh every 5 seconds
+const deviceStateInterval = setInterval(fetchDeviceStates, 5000);
+
+window.addEventListener('beforeunload', () => {
+  clearInterval(deviceStateInterval);
+  stopAutobotInterval();
+  stopLightScheduleCheck();
 });
 
 // Add these helper functions
