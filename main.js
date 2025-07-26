@@ -343,7 +343,7 @@ let plate02 = null;
 
 const loader = new GLTFLoader();
 
-loader.load( './FarmLab_WhiteRoom05_Trial.glb', function ( glb ) {
+loader.load( './FarmLab_WhiteRoom06_Trial.glb', function ( glb ) {
   video = document.createElement('video');
   video.src = 'DigitalTwins2.mp4';
   video.crossOrigin = 'anonymous';
