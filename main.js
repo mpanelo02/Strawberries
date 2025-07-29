@@ -133,6 +133,35 @@ async function getData() {
             document.getElementById('temperature').textContent = roundedTemp;
             sensorHistory.temperature.push(roundedTemp);
             if (sensorHistory.temperature.length > 120) sensorHistory.temperature.shift();
+
+            // Show/hide heat warning based on temperature
+            const tempValue = parseFloat(roundedTemp);
+            const heatWarningButton = document.getElementById('heatWarningButton');
+            // const tempValue = parseFloat(roundedTemp);
+            if (tempValue > 22.0) {
+                heatWarningButton.classList.remove('hidden');
+                heatWarningButton.classList.add('visible', 'pulse'); // Add pulse effect
+            } else {
+                heatWarningButton.classList.add('hidden');
+                heatWarningButton.classList.remove('visible', 'pulse');
+            }
+            // Remove For Heat Warning Animation
+            // if (heatWarn1) {
+            //     const shouldShow = tempValue > 20.0;
+            //     if (shouldShow !== heatWarn1.visible) {
+            //         // Only animate if visibility is changing
+            //         gsap.to(heatWarn1.scale, {
+            //             x: shouldShow ? 1 : 0,
+            //             y: shouldShow ? 1 : 0,
+            //             z: shouldShow ? 1 : 0,
+            //             duration: 0.5,
+            //             onComplete: () => {
+            //                 heatWarn1.visible = shouldShow;
+            //             }
+            //         });
+            //     }
+            // }
+
         }
         if (humidityReading) {
             const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
@@ -140,6 +169,18 @@ async function getData() {
             document.getElementById('humidity').textContent = roundedHumidity;
             sensorHistory.humidity.push(roundedHumidity);
             if (sensorHistory.humidity.length > 120) sensorHistory.humidity.shift();
+
+            // Show/hide humid warning based on humidity
+            const humidValue = parseFloat(roundedHumidity);
+            const humidWarningButton = document.getElementById('humidWarningButton');
+            // const humidValue = parseFloat(roundedHumidity>);
+            if (humidValue > 75.0) {
+                humidWarningButton.classList.remove('hidden');
+                humidWarningButton.classList.add('visible', 'pulse'); // Add pulse effect
+            } else {
+                humidWarningButton.classList.add('hidden');
+                humidWarningButton.classList.remove('visible', 'pulse');
+            }
         }
         if (moistureReading) {
             const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
@@ -161,6 +202,18 @@ async function getData() {
             document.getElementById('co2').textContent = roundedCO2;
             sensorHistory.co2.push(roundedCO2);
             if (sensorHistory.co2.length > 120) sensorHistory.co2.shift();
+
+            // Show/hide co2 warning based on co2 level
+            const co2Value = parseFloat(roundedCO2);
+            const co2WarningButton = document.getElementById('co2WarningButton');
+            if (co2Value > 620.0) {
+                co2WarningButton.classList.remove('hidden');
+                co2WarningButton.classList.add('visible', 'pulse'); // Add pulse effect
+            } else {
+                co2WarningButton.classList.add('hidden');
+                co2WarningButton.classList.remove('visible', 'pulse');
+            }
+
         }
         if (atmosphericPressReading) {
             const roundedAtmosphericPress = parseFloat(atmosphericPressReading.value).toFixed(0);
@@ -340,10 +393,11 @@ let strawBerries3 = null;
 let signHolder = null;
 let plate01 = null;
 let plate02 = null;
+let heatWarn1 = null;
 
 const loader = new GLTFLoader();
 
-loader.load( './FarmLab_WhiteRoom06_Trial.glb', function ( glb ) {
+loader.load( './FarmLab_WhiteRoom06a.glb', function ( glb ) {
   video = document.createElement('video');
   video.src = 'DigitalTwins2.mp4';
   video.crossOrigin = 'anonymous';
@@ -430,6 +484,11 @@ loader.load( './FarmLab_WhiteRoom06_Trial.glb', function ( glb ) {
         ccTV = child;
         ccTV.visible = false;
         ccTV.scale.set(0, 0, 0); // Start scaled down
+    }
+    if (child.name === "HeatWarn1") {
+        heatWarn1 = child;
+        heatWarn1.visible = false;
+        // heatWarn1.scale.set(0, 0, 0); // Start scaled down
     }
     // Plays Video on Screen object
     if (child.name === "Screen") {
@@ -536,7 +595,6 @@ loader.load('./Strawberries3.glb', function(gltf) {
   });
   scene.add(model3);
 });
-
 
 
 const width = .2;
@@ -931,6 +989,12 @@ function animate() {
       p.visible = false;
     });
   }
+  // For Heat Warning Animation
+  // if (heatWarn1 && heatWarn1.visible) {
+  //   heatWarn1.scale.x = 3.8 + Math.sin(Date.now() * 0.002) * 0.1;
+  //   heatWarn1.scale.y = 4.7 + Math.sin(Date.now() * 0.002) * 0.1;
+  //   heatWarn1.scale.z = 3.8 + Math.sin(Date.now() * 0.002) * 0.1;
+  // }
 
   controls.update();
 
@@ -1790,4 +1854,17 @@ enterButton.addEventListener("click", () => {
     video.muted = false;
     video.volume = 0.2;
     video.play();
+});
+
+//Warning Alert, Message and Advisory
+document.getElementById('heatWarningButton').addEventListener('click', () => {
+    alert("Temperature is too high! Consider turning on the fan or reducing light exposure.");
+});
+
+document.getElementById('humidWarningButton').addEventListener('click', () => {
+    alert("Humidity is too high! Consider turning on the dehumidifier or reducing water exposure.");
+});
+
+document.getElementById('co2WarningButton').addEventListener('click', () => {
+    alert("CO2 levels are too high! Consider improving ventilation or reducing plant density.");
 });

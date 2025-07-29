@@ -77,16 +77,19 @@
         <!-- Temperature -->
         <div id="temperature-container" class="tempPin">
             🌡️T: <span id="temperature">--</span> °C
+            <button id="heatWarningButton" class="heat-warning hidden">⚠️</button>
         </div>
   
         <!-- Humidity -->
         <div id="humidity-container" class="humidPin">
             🫧H: <span id="humidity">--</span> %
+            <button id="humidWarningButton" class="humid-warning hidden">⚠️</button>
         </div>
 
         <!-- CO2 -->
         <div id="co2-container" class="co2Pin">
             🚬C: <span id="co2">--</span> ppm
+            <button id="co2WarningButton" class="co2-warning hidden">⚠️</button>
         </div>
 
         <div id="atmosphericPress-container" class="pressurePin">
@@ -154,7 +157,7 @@
 
         <button id="fanToggleButton" class="fanPin">🥵OFF</button>
 
-        <button id="plantLightToggleButton" class="bulbLedPin">💡OFF</button>
+        <button id="plantLightToggleButton" class="bulbLedPin">🕯️OFF</button>
 
         <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
 
