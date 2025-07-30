@@ -255,6 +255,7 @@ renderer.shadowMap.enabled = true;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
+
 const modalContent = {
     CCTV: {
       title: "Thermal Camera View",
@@ -268,7 +269,7 @@ const modalContent = {
     },
     Plate01: {
         title: "Contact Person",
-        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. <br>NOTE: For more information about Mark, visit the link above.",
+        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. <br><br>NOTE: For more information about Mark, visit the link above.",
         link:"https://www.linkedin.com/in/mark-johnson-panelo-82030a325",
         image: "meCartoon.jpg",
     },
@@ -286,6 +287,47 @@ const modalProjectDescription = document.querySelector(".modal-project-descripti
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
 
+// function showModal(id) {
+//     const content = modalContent[id];
+//     if (content) {
+//         if (content.isCamera) {
+//             cameraToggleButton.click();
+//         } else {
+//             modalTitle.textContent = content.title;
+//             modalProjectDescription.innerHTML = content.content;
+
+//             // Remove any existing image container first
+//             const existingImage = document.querySelector('.modal-image-container');
+//             if (existingImage) existingImage.remove();
+
+//             // Only add new image if one is specified
+//             if (content.image) {
+//                 const imageContainer = document.createElement('div');
+//                 imageContainer.className = 'modal-image-container';
+//                 imageContainer.innerHTML = `
+//                     <img src="${content.image}" alt="${content.title}" 
+//                          style="max-width: 500px; width: 100%; margin: 0 auto 20px; display: block;">
+//                 `;
+                
+//                 // Insert the image before the description
+//                 modalProjectDescription.parentNode.insertBefore(
+//                     imageContainer, 
+//                     modalProjectDescription
+//                 );
+//             }
+
+//             if (content.link) {
+//                 modalVisitButton.href = content.link;
+//                 modalVisitButton.classList.remove("hidden");
+//             } else {
+//                 modalVisitButton.classList.add("hidden");
+//             }
+
+//             modal.classList.toggle("hidden");
+//         }
+//     }
+// }
+
 function showModal(id) {
     const content = modalContent[id];
     if (content) {
@@ -295,11 +337,24 @@ function showModal(id) {
             modalTitle.textContent = content.title;
             modalProjectDescription.innerHTML = content.content;
 
+            // Remove existing styles
+            modal.classList.remove("plate01-style", "plate02-style", "pump-style");
+
+            // Apply custom class for Plate01 or Plate02
+            if (id === "Plate01") {
+                modal.classList.add("plate01-style");
+            } else if (id === "Plate02") {
+                modal.classList.add("plate02-style");
+            } else if (id === "Plate02") {
+                modal.classList.add("plate02-style");
+            } else if (id === "Pump") {
+                modal.classList.add("pump-style");
+            }
+
             // Remove any existing image container first
             const existingImage = document.querySelector('.modal-image-container');
             if (existingImage) existingImage.remove();
 
-            // Only add new image if one is specified
             if (content.image) {
                 const imageContainer = document.createElement('div');
                 imageContainer.className = 'modal-image-container';
@@ -307,12 +362,7 @@ function showModal(id) {
                     <img src="${content.image}" alt="${content.title}" 
                          style="max-width: 500px; width: 100%; margin: 0 auto 20px; display: block;">
                 `;
-                
-                // Insert the image before the description
-                modalProjectDescription.parentNode.insertBefore(
-                    imageContainer, 
-                    modalProjectDescription
-                );
+                modalProjectDescription.parentNode.insertBefore(imageContainer, modalProjectDescription);
             }
 
             if (content.link) {
@@ -322,14 +372,17 @@ function showModal(id) {
                 modalVisitButton.classList.add("hidden");
             }
 
-            modal.classList.toggle("hidden");
+            modal.classList.remove("hidden");
         }
     }
 }
 
+
 function hideModal(){
     modal.classList.toggle("hidden");
 }
+
+modalExitButton.addEventListener("click", hideModal);
 
 let intersectObject = "";
 const intersectObjects = [];
@@ -943,7 +996,6 @@ function onPointerMove(event) {
     intersectObject = "";
 }
 
-modalExitButton.addEventListener("click", hideModal);
 window.addEventListener("resize", onResize);
 window.addEventListener("click", onClick);
 window.addEventListener( "pointermove", onPointerMove );
@@ -1857,14 +1909,40 @@ enterButton.addEventListener("click", () => {
 });
 
 //Warning Alert, Message and Advisory
+
 document.getElementById('heatWarningButton').addEventListener('click', () => {
-    alert("Temperature is too high! Consider turning on the fan or reducing light exposure.");
+    showWarning(
+        "⚠️ Temperature Warning", 
+        "The temperature level of the room is too high! Turn on the fan or reduce light exposure."
+    );
 });
 
 document.getElementById('humidWarningButton').addEventListener('click', () => {
-    alert("Humidity is too high! Consider turning on the dehumidifier or reducing water exposure.");
+    showWarning(
+        "⚠️ Humidity Warning", 
+        "The humidity level of the room is too high! Turn on the dehumidifier or reduce water exposure."
+    );
 });
 
 document.getElementById('co2WarningButton').addEventListener('click', () => {
-    alert("CO2 levels are too high! Consider improving ventilation or reducing plant density.");
+    showWarning(
+        "⚠️ CO2 Warning", 
+        "The CO2 level of the room is too high! Turn on ventilation or open the door."
+    );
 });
+
+// This helper function to show the warning modal
+function showWarning(title, message) {
+    const warningModal = document.querySelector('.warning-modal');
+    const warningTitle = document.getElementById('warning-title');
+    const warningMessage = document.getElementById('warning-message');
+    
+    warningTitle.textContent = title;
+    warningMessage.textContent = message;
+    warningModal.classList.remove('hidden');
+    
+    // Close button functionality
+    document.querySelector('.warning-close-button').addEventListener('click', () => {
+        warningModal.classList.add('hidden');
+    }, { once: true }); // The event listener will be removed after first click
+}
