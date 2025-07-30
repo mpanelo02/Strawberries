@@ -138,7 +138,7 @@ async function getData() {
             const tempValue = parseFloat(roundedTemp);
             const heatWarningButton = document.getElementById('heatWarningButton');
             // const tempValue = parseFloat(roundedTemp);
-            if (tempValue > 22.0) {
+            if (tempValue > 23.0 || tempValue < 20.0) {
                 heatWarningButton.classList.remove('hidden');
                 heatWarningButton.classList.add('visible', 'pulse'); // Add pulse effect
             } else {
@@ -174,7 +174,7 @@ async function getData() {
             const humidValue = parseFloat(roundedHumidity);
             const humidWarningButton = document.getElementById('humidWarningButton');
             // const humidValue = parseFloat(roundedHumidity>);
-            if (humidValue > 75.0) {
+            if (humidValue > 75.0 || humidValue < 62.0) {
                 humidWarningButton.classList.remove('hidden');
                 humidWarningButton.classList.add('visible', 'pulse'); // Add pulse effect
             } else {
@@ -206,7 +206,7 @@ async function getData() {
             // Show/hide co2 warning based on co2 level
             const co2Value = parseFloat(roundedCO2);
             const co2WarningButton = document.getElementById('co2WarningButton');
-            if (co2Value > 620.0) {
+            if (co2Value > 620.0 || co2Value < 580.0) {
                 co2WarningButton.classList.remove('hidden');
                 co2WarningButton.classList.add('visible', 'pulse'); // Add pulse effect
             } else {
@@ -1911,24 +1911,48 @@ enterButton.addEventListener("click", () => {
 //Warning Alert, Message and Advisory
 
 document.getElementById('heatWarningButton').addEventListener('click', () => {
-    showWarning(
-        "⚠️ Temperature Warning", 
-        "The temperature level of the room is too high! Turn on the fan or reduce light exposure."
-    );
+    const tempValue = parseFloat(document.getElementById('temperature').textContent);
+    if (tempValue > 23) {
+      showWarning(
+          "⚠️ Warning (High Temperature)", 
+          "The temperature level of the room is too high! Increase the ventilation or reduce light exposure."
+      );
+    } else if (tempValue < 20) {
+      showWarning(
+          "⚠️ Warning (Low Temperature)", 
+          "The temperature level of the room is too low for optimal plant growth. Increase heat exposure."
+      );
+    }
 });
 
 document.getElementById('humidWarningButton').addEventListener('click', () => {
-    showWarning(
-        "⚠️ Humidity Warning", 
-        "The humidity level of the room is too high! Turn on the dehumidifier or reduce water exposure."
-    );
+    const humidValue = parseFloat(document.getElementById('humidity').textContent);
+    if (humidValue > 75) {
+      showWarning(
+          "⚠️ Warning (High Humidity)", 
+          "The humidity level of the room is too high! Turn on the dehumidifier or reduce water exposure."
+      );
+    } else if (humidValue < 62) {
+      showWarning(
+            "⚠️ Warning (Low Humidity)", 
+            "The humidity level of the room is too low for optimal plant growth. Increasewater exposure."
+        );
+    }
 });
 
 document.getElementById('co2WarningButton').addEventListener('click', () => {
-    showWarning(
-        "⚠️ CO2 Warning", 
-        "The CO2 level of the room is too high! Turn on ventilation or open the door."
-    );
+    const co2Value = parseFloat(document.getElementById('co2').textContent);
+    if (co2Value > 620) {
+        showWarning(
+            "⚠️ Warning (High CO2)", 
+            "The CO2 level of the room is too high! Increase the ventilation or open the door."
+        );
+    } else if (co2Value < 580) {
+        showWarning(
+            "⚠️ Warning (Low CO2)", 
+            "The CO2 level of the room is too low for optimal plant growth. Reduce ventilation."
+        );
+    }
 });
 
 // This helper function to show the warning modal
