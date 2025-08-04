@@ -14,6 +14,39 @@ const sizes = {
     height: window.innerHeight
 }
 
+// Login functionality
+const loginScreen = document.getElementById('loginScreen');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const loadingScreen = document.getElementById('loadingScreen');
+
+// Hardcoded credentials (for demo only - in production use secure authentication)
+const validCredentials = {
+  username: 'admin',
+  password: 'farmlab123'
+};
+
+loginForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+  if (username === validCredentials.username && password === validCredentials.password) {
+    // Successful login
+    loginError.classList.add('hidden');
+    loginScreen.classList.add('hidden');
+    loadingScreen.classList.remove('hidden');
+  } else {
+    // Failed login
+    loginError.textContent = 'Invalid username or password';
+    loginError.classList.remove('hidden');
+  }
+});
+
+// Hide loading screen initially
+loadingScreen.classList.add('hidden');
+
 // Initialize chart variables
 let dataChart = null;
 const chartContainer = document.getElementById("chartContainer");
@@ -401,7 +434,7 @@ const intersectObjectsNames = [
 ];
 
 // Loading screen and loading manager
-const loadingScreen = document.getElementById("loadingScreen");
+// const loadingScreen = document.getElementById("loadingScreen");
 const enterButton = document.querySelector(".enter-button");
 
 const manager = new THREE.LoadingManager();
@@ -452,6 +485,7 @@ const loader = new GLTFLoader();
 
 loader.load( './FarmLab_WhiteRoom06a.glb', function ( glb ) {
   video = document.createElement('video');
+  // video.src = 'SmartLab.mp4';
   video.src = 'DigitalTwins2.mp4';
   video.crossOrigin = 'anonymous';
   video.loop = true;
