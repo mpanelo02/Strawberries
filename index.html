@@ -75,6 +75,22 @@
         </div>
     </div>
 
+    <div class="time-modal hidden">
+        <div class="time-modal-content">
+            <h2>Set Light Schedule</h2>
+            <div class="time-input-group">
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime" required>
+            </div>
+            <div class="time-input-group">
+                <label for="endTime">End Time:</label>
+                <input type="time" id="endTime" required>
+            </div>
+            <button id="saveTimeButton">Save Schedule</button>
+            <button class="time-close-button">Cancel</button>
+        </div>
+    </div>
+
 
     <script type="importmap">
         {
@@ -189,7 +205,9 @@
 
         <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
 
-        <button id="autobotToggleButton" class="autobotPin">👆Manual</button>
+        <button id="setTimeButton" class="setTimePin">🕒</button>
+
+        <button id="autobotToggleButton" class="autobotPin">👆Man</button>
 
     </div>
   

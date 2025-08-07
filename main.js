@@ -12,7 +12,13 @@ const canvas = document.getElementById("experience-canvas");
 const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
-}
+};
+
+// Time Variables
+let lightSchedule = {
+  startTime: { hours: 8, minutes: 10 }, // Default start time 8:10 AM
+  endTime: { hours: 23, minutes: 50 }   // Default end time 11:50 PM
+};
 
 // Login functionality
 const loginScreen = document.getElementById('loginScreen');
@@ -22,7 +28,7 @@ const loadingScreen = document.getElementById('loadingScreen');
 
 // Hardcoded credentials (for demo only - in production use secure authentication)
 const validCredentials = {
-  username: 'admin',
+  username: 'Admin',
   password: 'farmlab123'
 };
 
@@ -417,6 +423,87 @@ function hideModal(){
 
 modalExitButton.addEventListener("click", hideModal);
 
+// Time configuration functionality
+const setTimeButton = document.getElementById("setTimeButton");
+const timeModal = document.querySelector(".time-modal");
+const startTimeInput = document.getElementById("startTime");
+const endTimeInput = document.getElementById("endTime");
+const saveTimeButton = document.getElementById("saveTimeButton");
+const timeCloseButton = document.querySelector(".time-close-button");
+
+function openTimeModal() {
+  // Format current times for input fields (HH:MM)
+  const formatTime = (hours, minutes) => 
+    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  
+  startTimeInput.value = formatTime(lightSchedule.startTime.hours, lightSchedule.startTime.minutes);
+  endTimeInput.value = formatTime(lightSchedule.endTime.hours, lightSchedule.endTime.minutes);
+  
+  timeModal.classList.remove("hidden");
+}
+
+function closeTimeModal() {
+  timeModal.classList.add("hidden");
+}
+
+// function saveLightSchedule() {
+//   const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+//   const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+  
+//   lightSchedule = {
+//     startTime: { hours: startHours, minutes: startMinutes },
+//     endTime: { hours: endHours, minutes: endMinutes }
+//   };
+  
+//   console.log(`${LOG_PREFIX} Light schedule updated: ${startHours}:${startMinutes} to ${endHours}:${endMinutes}`);
+//   closeTimeModal();
+  
+//   // Immediately check if we need to adjust lights based on new schedule
+//   checkLightSchedule();
+// }
+
+async function saveLightSchedule() {
+  const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+  const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+  
+  try {
+    const response = await fetch("https://valk-huone-1.onrender.com/api/light-schedule", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        startHour: startHours,
+        startMinute: startMinutes,
+        endHour: endHours,
+        endMinute: endMinutes
+      })
+    });
+    
+    if (!response.ok) throw new Error('Failed to save schedule');
+    
+    lightSchedule = {
+      startTime: { hours: startHours, minutes: startMinutes },
+      endTime: { hours: endHours, minutes: endMinutes }
+    };
+    
+    console.log(`${LOG_PREFIX} Light schedule updated: ${startHours}:${startMinutes} to ${endHours}:${endMinutes}`);
+    closeTimeModal();
+    
+    // Immediately check if we need to adjust lights based on new schedule
+    checkLightSchedule();
+  } catch (err) {
+    console.error(`${LOG_PREFIX} Error saving light schedule:`, err);
+    alert('Failed to save schedule. Please try again.');
+  }
+}
+
+// Event listeners
+setTimeButton.addEventListener("click", openTimeModal);
+timeCloseButton.addEventListener("click", closeTimeModal);
+saveTimeButton.addEventListener("click", saveLightSchedule);
+
+// Raycaster
 let intersectObject = "";
 const intersectObjects = [];
 const intersectObjectsNames = [
@@ -1165,7 +1252,7 @@ async function fetchDeviceStates() {
     updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
     updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
     updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
-    updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Manual");
+    updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Man");
     
     // Set initial visibility of control buttons
     // toggleControlButtonsVisibility(deviceStates.autobot === "ON");
@@ -1209,7 +1296,7 @@ async function toggleAutobot() {
   try {
     await updateDeviceStateOnServer('autobot', newState);
     deviceStates.autobot = newState;
-    updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Manual");
+    updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Man");
     
     if (newState === "ON") {
       startAutobotInterval();
@@ -1254,19 +1341,57 @@ function stopAutobotInterval() {
   }
 }
 
+// async function checkLightSchedule() {
+//   if (deviceStates.autobot !== "ON") return;
+  
+//   const now = new Date();
+//   const hours = now.getHours();
+//   const minutes = now.getMinutes();
+//   //Timer
+//   // Convert current time to minutes since midnight for easier comparison
+//   const currentTimeInMinutes = hours * 60 + minutes;
+  
+//   // Define the schedule (8:10 AM to 12:10 AM)
+//   const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
+//   const endTimeInMinutes = 23 * 60 + 50;   // 11:50 PM (mid Night)
+  
+//   // Determine if we should turn lights on or off
+//   let shouldLightsBeOn = false;
+  
+//   if (endTimeInMinutes > startTimeInMinutes) {
+//     // Normal case (same day)
+//     shouldLightsBeOn = currentTimeInMinutes >= startTimeInMinutes && 
+//                        currentTimeInMinutes < endTimeInMinutes;
+//   } else {
+//     // Wrapping case (overnight)
+//     shouldLightsBeOn = currentTimeInMinutes >= startTimeInMinutes || 
+//                        currentTimeInMinutes < endTimeInMinutes;
+//   }
+  
+//   // Only make changes if needed
+//   if (shouldLightsBeOn && !isPlantLightOn) {
+//     console.log(`${LOG_PREFIX} Turning plant lights ON (scheduled)`);
+//     await togglePlantLight();
+//   } else if (!shouldLightsBeOn && isPlantLightOn) {
+//     console.log(`${LOG_PREFIX} Turning plant lights OFF (scheduled)`);
+//     await togglePlantLight();
+//   }
+// }
+
+// Timer function to check light schedule
 async function checkLightSchedule() {
   if (deviceStates.autobot !== "ON") return;
   
   const now = new Date();
   const hours = now.getHours();
   const minutes = now.getMinutes();
-  //Timer
+  
   // Convert current time to minutes since midnight for easier comparison
   const currentTimeInMinutes = hours * 60 + minutes;
   
-  // Define the schedule (8:10 AM to 12:10 AM)
-  const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
-  const endTimeInMinutes = 23 * 60 + 50;   // 11:50 PM (mid Night)
+  // Use the configurable schedule times
+  const startTimeInMinutes = lightSchedule.startTime.hours * 60 + lightSchedule.startTime.minutes;
+  const endTimeInMinutes = lightSchedule.endTime.hours * 60 + lightSchedule.endTime.minutes;
   
   // Determine if we should turn lights on or off
   let shouldLightsBeOn = false;
@@ -1290,6 +1415,26 @@ async function checkLightSchedule() {
     await togglePlantLight();
   }
 }
+
+// Fetch light schedule from server 
+async function fetchLightSchedule() {
+  try {
+    const response = await fetch("https://valk-huone-1.onrender.com/api/light-schedule");
+    if (!response.ok) throw new Error('Failed to fetch light schedule');
+    
+    const schedule = await response.json();
+    if (schedule) {
+      lightSchedule = {
+        startTime: { hours: schedule.start_hour, minutes: schedule.start_minute },
+        endTime: { hours: schedule.end_hour, minutes: schedule.end_minute }
+      };
+      console.log(`${LOG_PREFIX} Loaded light schedule: ${schedule.start_hour}:${schedule.start_minute} to ${schedule.end_hour}:${schedule.end_minute}`);
+    }
+  } catch (err) {
+    console.error(`${LOG_PREFIX} Error fetching light schedule:`, err);
+  }
+}
+
 
 async function checkPumpSchedule() {
   // Only proceed if autobot is ON and pump isn't already running
@@ -1361,6 +1506,7 @@ autobotToggleButton.addEventListener("click", toggleAutobot);
 // Make sure to call fetchDeviceStates when the page loads
 document.addEventListener('DOMContentLoaded', () => {
   fetchDeviceStates();
+  fetchLightSchedule();
 });
 
 // Set up periodic refresh every 5 seconds
@@ -1918,6 +2064,7 @@ const controlButtons = [
     document.getElementById("cameraToggleButton"),
     document.getElementById("graphDataButton"),
     document.getElementById("downloadToggleButton"),
+    document.getElementById("setTimeButton"),
     document.getElementById("autobotToggleButton")
 ].filter(Boolean); // This removes any null elements
 
