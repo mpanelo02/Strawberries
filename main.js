@@ -20,6 +20,16 @@ let lightSchedule = {
   endTime: { hours: 23, minutes: 50 }   // Default end time 11:50 PM
 };
 
+// Optimal Range / Warning Thresholds
+let warningThresholds = {
+    tempHigh: 23.0,
+    tempLow: 20.0,
+    humidHigh: 75.0,
+    humidLow: 62.0,
+    co2High: 620.0,
+    co2Low: 580.0
+};
+
 // Login functionality
 const loginScreen = document.getElementById('loginScreen');
 const loginForm = document.getElementById('loginForm');
@@ -166,6 +176,7 @@ async function getData() {
         console.log(`${LOG_PREFIX} Latest Sensor Readings:`);
 
         // Add new readings to history (keeping last 120 readings)
+
         if (temperatureReading) {
             const roundedTemp = parseFloat(temperatureReading.value).toFixed(1);
             console.log(`Temperature: ${roundedTemp}°C`);
@@ -176,32 +187,15 @@ async function getData() {
             // Show/hide heat warning based on temperature
             const tempValue = parseFloat(roundedTemp);
             const heatWarningButton = document.getElementById('heatWarningButton');
-            // const tempValue = parseFloat(roundedTemp);
-            if (tempValue > 23.0 || tempValue < 20.0) {
+            if (tempValue > warningThresholds.tempHigh || tempValue < warningThresholds.tempLow) {
                 heatWarningButton.classList.remove('hidden');
-                heatWarningButton.classList.add('visible', 'pulse'); // Add pulse effect
+                heatWarningButton.classList.add('visible', 'pulse');
             } else {
                 heatWarningButton.classList.add('hidden');
                 heatWarningButton.classList.remove('visible', 'pulse');
             }
-            // Remove For Heat Warning Animation
-            // if (heatWarn1) {
-            //     const shouldShow = tempValue > 20.0;
-            //     if (shouldShow !== heatWarn1.visible) {
-            //         // Only animate if visibility is changing
-            //         gsap.to(heatWarn1.scale, {
-            //             x: shouldShow ? 1 : 0,
-            //             y: shouldShow ? 1 : 0,
-            //             z: shouldShow ? 1 : 0,
-            //             duration: 0.5,
-            //             onComplete: () => {
-            //                 heatWarn1.visible = shouldShow;
-            //             }
-            //         });
-            //     }
-            // }
-
         }
+
         if (humidityReading) {
             const roundedHumidity = parseFloat(humidityReading.value).toFixed(1);
             console.log(`Humidity: ${roundedHumidity}%`);
@@ -212,15 +206,15 @@ async function getData() {
             // Show/hide humid warning based on humidity
             const humidValue = parseFloat(roundedHumidity);
             const humidWarningButton = document.getElementById('humidWarningButton');
-            // const humidValue = parseFloat(roundedHumidity>);
-            if (humidValue > 75.0 || humidValue < 62.0) {
+            if (humidValue > warningThresholds.humidHigh || humidValue < warningThresholds.humidLow) {
                 humidWarningButton.classList.remove('hidden');
-                humidWarningButton.classList.add('visible', 'pulse'); // Add pulse effect
+                humidWarningButton.classList.add('visible', 'pulse');
             } else {
                 humidWarningButton.classList.add('hidden');
                 humidWarningButton.classList.remove('visible', 'pulse');
             }
         }
+
         if (moistureReading) {
             const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
             console.log(`Soil Moisture: ${roundedMoisture}%`);
@@ -235,6 +229,7 @@ async function getData() {
             sensorHistory.soilEC.push(roundedSoilEC);
             if (sensorHistory.soilEC.length > 120) sensorHistory.soilEC.shift();
         }
+
         if (co2Reading) {
             const roundedCO2 = parseFloat(co2Reading.value).toFixed(0);
             console.log(`CO2: ${roundedCO2}ppm`);
@@ -245,15 +240,15 @@ async function getData() {
             // Show/hide co2 warning based on co2 level
             const co2Value = parseFloat(roundedCO2);
             const co2WarningButton = document.getElementById('co2WarningButton');
-            if (co2Value > 620.0 || co2Value < 580.0) {
+            if (co2Value > warningThresholds.co2High || co2Value < warningThresholds.co2Low) {
                 co2WarningButton.classList.remove('hidden');
-                co2WarningButton.classList.add('visible', 'pulse'); // Add pulse effect
+                co2WarningButton.classList.add('visible', 'pulse');
             } else {
                 co2WarningButton.classList.add('hidden');
                 co2WarningButton.classList.remove('visible', 'pulse');
             }
-
         }
+
         if (atmosphericPressReading) {
             const roundedAtmosphericPress = parseFloat(atmosphericPressReading.value).toFixed(0);
             console.log(`Atmospheric Pressure: ${roundedAtmosphericPress}hPa`);
@@ -294,6 +289,7 @@ renderer.shadowMap.enabled = true;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
+let isModalOpen = false;
 
 const modalContent = {
     CCTV: {
@@ -326,48 +322,9 @@ const modalProjectDescription = document.querySelector(".modal-project-descripti
 const modalExitButton = document.querySelector(".modal-exit-button");
 const modalVisitButton = document.querySelector(".modal-visit-button");
 
-// function showModal(id) {
-//     const content = modalContent[id];
-//     if (content) {
-//         if (content.isCamera) {
-//             cameraToggleButton.click();
-//         } else {
-//             modalTitle.textContent = content.title;
-//             modalProjectDescription.innerHTML = content.content;
-
-//             // Remove any existing image container first
-//             const existingImage = document.querySelector('.modal-image-container');
-//             if (existingImage) existingImage.remove();
-
-//             // Only add new image if one is specified
-//             if (content.image) {
-//                 const imageContainer = document.createElement('div');
-//                 imageContainer.className = 'modal-image-container';
-//                 imageContainer.innerHTML = `
-//                     <img src="${content.image}" alt="${content.title}" 
-//                          style="max-width: 500px; width: 100%; margin: 0 auto 20px; display: block;">
-//                 `;
-                
-//                 // Insert the image before the description
-//                 modalProjectDescription.parentNode.insertBefore(
-//                     imageContainer, 
-//                     modalProjectDescription
-//                 );
-//             }
-
-//             if (content.link) {
-//                 modalVisitButton.href = content.link;
-//                 modalVisitButton.classList.remove("hidden");
-//             } else {
-//                 modalVisitButton.classList.add("hidden");
-//             }
-
-//             modal.classList.toggle("hidden");
-//         }
-//     }
-// }
 
 function showModal(id) {
+    isModalOpen = true;
     const content = modalContent[id];
     if (content) {
         if (content.isCamera) {
@@ -418,90 +375,181 @@ function showModal(id) {
 
 
 function hideModal(){
+    isModalOpen = false;
     modal.classList.toggle("hidden");
 }
 
 modalExitButton.addEventListener("click", hideModal);
 
 // Time configuration functionality
-const setTimeButton = document.getElementById("setTimeButton");
-const timeModal = document.querySelector(".time-modal");
+const settingsButton = document.getElementById("settingsButton");
+const settingsModal = document.querySelector(".settings-modal");
 const startTimeInput = document.getElementById("startTime");
 const endTimeInput = document.getElementById("endTime");
-const saveTimeButton = document.getElementById("saveTimeButton");
-const timeCloseButton = document.querySelector(".time-close-button");
+const saveSettingsButton = document.getElementById("saveSettingsButton");
+const settingsCloseButton = document.querySelector(".settings-close-button");
 
-function openTimeModal() {
-  // Format current times for input fields (HH:MM)
-  const formatTime = (hours, minutes) => 
-    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-  
-  startTimeInput.value = formatTime(lightSchedule.startTime.hours, lightSchedule.startTime.minutes);
-  endTimeInput.value = formatTime(lightSchedule.endTime.hours, lightSchedule.endTime.minutes);
-  
-  timeModal.classList.remove("hidden");
+function closeSettingsModal() {
+  // timeModal.classList.add("hidden");
+  settingsModal.classList.add("hidden");
 }
 
-function closeTimeModal() {
-  timeModal.classList.add("hidden");
+async function openSettingsModal() {
+    isModalOpen = true;
+    try {
+        // Show loading state
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'settings-loading';
+        settingsModal.querySelector('.settings-modal-content').appendChild(loadingDiv);
+
+        // Fetch current settings from the server
+        const [settingsResponse, thresholdsResponse] = await Promise.all([
+            fetch("https://valk-huone-1.onrender.com/api/light-schedule"),
+            fetch("https://valk-huone-1.onrender.com/api/warning-thresholds")
+        ]);
+        
+        if (!settingsResponse.ok || !thresholdsResponse.ok) {
+            throw new Error('Failed to fetch settings');
+        }
+        
+        const lightSchedule = await settingsResponse.json();
+        const warningThresholds = await thresholdsResponse.json();
+        
+        // Format current times for input fields (HH:MM)
+        const formatTime = (hours, minutes) => 
+            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        
+        // Set light schedule values
+        startTimeInput.value = formatTime(lightSchedule.start_hour, lightSchedule.start_minute);
+        endTimeInput.value = formatTime(lightSchedule.end_hour, lightSchedule.end_minute);
+        
+        // Set threshold values
+        document.getElementById('tempHigh').value = warningThresholds.temp_high;
+        document.getElementById('tempLow').value = warningThresholds.temp_low;
+        document.getElementById('humidHigh').value = warningThresholds.humid_high;
+        document.getElementById('humidLow').value = warningThresholds.humid_low;
+        document.getElementById('co2High').value = warningThresholds.co2_high;
+        document.getElementById('co2Low').value = warningThresholds.co2_low;
+        
+        // Remove loading state
+        loadingDiv.remove();
+        settingsModal.classList.remove("hidden");
+    } catch (err) {
+        console.error("Error fetching settings:", err);
+        // Remove loading state even if there's an error
+        if (loadingDiv) loadingDiv.remove();
+        
+        // Fall back to default values if fetch fails
+        const formatTime = (hours, minutes) => 
+            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        
+        startTimeInput.value = formatTime(8, 10);
+        endTimeInput.value = formatTime(23, 50);
+        
+        document.getElementById('tempHigh').value = 23.0;
+        document.getElementById('tempLow').value = 20.0;
+        document.getElementById('humidHigh').value = 75.0;
+        document.getElementById('humidLow').value = 62.0;
+        document.getElementById('co2High').value = 620;
+        document.getElementById('co2Low').value = 580;
+        
+        settingsModal.classList.remove("hidden");
+        
+        // Show error to user
+        showWarning(
+            "Settings Error", 
+            "Failed to load current settings. Default values are shown."
+        );
+    }
 }
 
-// function saveLightSchedule() {
-//   const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-//   const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-  
-//   lightSchedule = {
-//     startTime: { hours: startHours, minutes: startMinutes },
-//     endTime: { hours: endHours, minutes: endMinutes }
-//   };
-  
-//   console.log(`${LOG_PREFIX} Light schedule updated: ${startHours}:${startMinutes} to ${endHours}:${endMinutes}`);
-//   closeTimeModal();
-  
-//   // Immediately check if we need to adjust lights based on new schedule
-//   checkLightSchedule();
-// }
+async function fetchSettings() {
+    try {
+        const response = await fetch("https://valk-huone-1.onrender.com/api/settings");
+        if (!response.ok) throw new Error('Failed to fetch settings');
+        
+        const settings = await response.json();
+        if (settings) {
+            if (settings.lightSchedule) {
+                lightSchedule = {
+                    startTime: { 
+                        hours: settings.lightSchedule.start_hour, 
+                        minutes: settings.lightSchedule.start_minute 
+                    },
+                    endTime: { 
+                        hours: settings.lightSchedule.end_hour, 
+                        minutes: settings.lightSchedule.end_minute 
+                    }
+                };
+            }
+            
+            if (settings.warningThresholds) {
+                warningThresholds = settings.warningThresholds;
+            }
+        }
+    } catch (err) {
+        console.error(`${LOG_PREFIX} Error fetching settings:`, err);
+    }
+}
 
-async function saveLightSchedule() {
-  const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-  const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-  
-  try {
-    const response = await fetch("https://valk-huone-1.onrender.com/api/light-schedule", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        startHour: startHours,
-        startMinute: startMinutes,
-        endHour: endHours,
-        endMinute: endMinutes
-      })
-    });
+
+async function saveSettings() {
+    const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+    const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
     
-    if (!response.ok) throw new Error('Failed to save schedule');
-    
-    lightSchedule = {
-      startTime: { hours: startHours, minutes: startMinutes },
-      endTime: { hours: endHours, minutes: endMinutes }
+    // Get threshold values
+    warningThresholds = {
+        tempHigh: parseFloat(document.getElementById('tempHigh').value),
+        tempLow: parseFloat(document.getElementById('tempLow').value),
+        humidHigh: parseFloat(document.getElementById('humidHigh').value),
+        humidLow: parseFloat(document.getElementById('humidLow').value),
+        co2High: parseFloat(document.getElementById('co2High').value),
+        co2Low: parseFloat(document.getElementById('co2Low').value)
     };
     
-    console.log(`${LOG_PREFIX} Light schedule updated: ${startHours}:${startMinutes} to ${endHours}:${endMinutes}`);
-    closeTimeModal();
-    
-    // Immediately check if we need to adjust lights based on new schedule
-    checkLightSchedule();
-  } catch (err) {
-    console.error(`${LOG_PREFIX} Error saving light schedule:`, err);
-    alert('Failed to save schedule. Please try again.');
-  }
+    try {
+        const response = await fetch("https://valk-huone-1.onrender.com/api/settings", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lightSchedule: {
+                    startHour: startHours,
+                    startMinute: startMinutes,
+                    endHour: endHours,
+                    endMinute: endMinutes
+                },
+                warningThresholds
+            })
+        });
+        
+        if (!response.ok) throw new Error('Failed to save settings');
+        
+        lightSchedule = {
+            startTime: { hours: startHours, minutes: startMinutes },
+            endTime: { hours: endHours, minutes: endMinutes }
+        };
+        
+        console.log(`${LOG_PREFIX} Settings updated`);
+        closeSettingsModal();
+        
+        // Immediately check if we need to adjust anything based on new settings
+        checkLightSchedule();
+    } catch (err) {
+        console.error(`${LOG_PREFIX} Error saving settings:`, err);
+        alert('Failed to save settings. Please try again.');
+    }
 }
 
 // Event listeners
-setTimeButton.addEventListener("click", openTimeModal);
-timeCloseButton.addEventListener("click", closeTimeModal);
-saveTimeButton.addEventListener("click", saveLightSchedule);
+settingsButton.addEventListener("click", openSettingsModal);
+// settingsCloseButton.addEventListener("click", closeSettingsModal);
+settingsCloseButton.addEventListener("click", () => {
+    isModalOpen = false;
+    closeSettingsModal();
+});
+saveSettingsButton.addEventListener("click", saveSettings);
 
 // Raycaster
 let intersectObject = "";
@@ -1063,16 +1111,20 @@ function onResize() {
 }
 
 function onClick() {
-    if(intersectObject !== ""){
-        showModal(intersectObject);
-    }
+  if (isModalOpen) return;
+
+  if(intersectObject !== ""){
+      showModal(intersectObject);
+  }
 }
 
-// function onPointerMove( event ) {
-// 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-// 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-// }
+
 function onPointerMove(event) {
+    if (isModalOpen) {
+        document.body.style.cursor = 'default';
+        return;
+    }
+
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     
@@ -1123,7 +1175,7 @@ window.addEventListener( "pointermove", onPointerMove );
 
 function animate() {
   controls.maxDistance = 45;
-  controls.minDistance = 10;
+  controls.minDistance = 5;
   controls.minPolarAngle = THREE.MathUtils.degToRad(35);
   controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
   controls.minAzimuthAngle = THREE.MathUtils.degToRad(5);
@@ -1162,29 +1214,26 @@ function animate() {
       p.visible = false;
     });
   }
-  // For Heat Warning Animation
-  // if (heatWarn1 && heatWarn1.visible) {
-  //   heatWarn1.scale.x = 3.8 + Math.sin(Date.now() * 0.002) * 0.1;
-  //   heatWarn1.scale.y = 4.7 + Math.sin(Date.now() * 0.002) * 0.1;
-  //   heatWarn1.scale.z = 3.8 + Math.sin(Date.now() * 0.002) * 0.1;
-  // }
 
   controls.update();
 
-  raycaster.setFromCamera( pointer, camera );
 
-	const intersects = raycaster.intersectObjects(intersectObjects);
+  if (!isModalOpen) {
+    raycaster.setFromCamera( pointer, camera );
 
-    if ( intersects.length > 0 ) {
-        document.body.style.cursor = 'pointer';
-    } else {
-        document.body.style.cursor = 'default';
-        intersectObject = "";
+    const intersects = raycaster.intersectObjects(intersectObjects);
+
+      if ( intersects.length > 0 ) {
+          document.body.style.cursor = 'pointer';
+      } else {
+          document.body.style.cursor = 'default';
+          intersectObject = "";
+      }
+
+    for ( let i = 0; i < intersects.length; i ++ ) {
+          intersectObject = intersects[0].object.parent.name;
     }
-
-	for ( let i = 0; i < intersects.length; i ++ ) {
-        intersectObject = intersects[0].object.parent.name;
-	}
+  }
 
   if (exhaustFan) {
     exhaustFan.rotation.y += 0.08;
@@ -1341,42 +1390,6 @@ function stopAutobotInterval() {
   }
 }
 
-// async function checkLightSchedule() {
-//   if (deviceStates.autobot !== "ON") return;
-  
-//   const now = new Date();
-//   const hours = now.getHours();
-//   const minutes = now.getMinutes();
-//   //Timer
-//   // Convert current time to minutes since midnight for easier comparison
-//   const currentTimeInMinutes = hours * 60 + minutes;
-  
-//   // Define the schedule (8:10 AM to 12:10 AM)
-//   const startTimeInMinutes = 8 * 60 + 10; // 8:10 AM
-//   const endTimeInMinutes = 23 * 60 + 50;   // 11:50 PM (mid Night)
-  
-//   // Determine if we should turn lights on or off
-//   let shouldLightsBeOn = false;
-  
-//   if (endTimeInMinutes > startTimeInMinutes) {
-//     // Normal case (same day)
-//     shouldLightsBeOn = currentTimeInMinutes >= startTimeInMinutes && 
-//                        currentTimeInMinutes < endTimeInMinutes;
-//   } else {
-//     // Wrapping case (overnight)
-//     shouldLightsBeOn = currentTimeInMinutes >= startTimeInMinutes || 
-//                        currentTimeInMinutes < endTimeInMinutes;
-//   }
-  
-//   // Only make changes if needed
-//   if (shouldLightsBeOn && !isPlantLightOn) {
-//     console.log(`${LOG_PREFIX} Turning plant lights ON (scheduled)`);
-//     await togglePlantLight();
-//   } else if (!shouldLightsBeOn && isPlantLightOn) {
-//     console.log(`${LOG_PREFIX} Turning plant lights OFF (scheduled)`);
-//     await togglePlantLight();
-//   }
-// }
 
 // Timer function to check light schedule
 async function checkLightSchedule() {
@@ -1505,8 +1518,8 @@ autobotToggleButton.addEventListener("click", toggleAutobot);
 
 // Make sure to call fetchDeviceStates when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-  fetchDeviceStates();
-  fetchLightSchedule();
+    fetchSettings();
+    fetchDeviceStates();
 });
 
 // Set up periodic refresh every 5 seconds
@@ -1979,6 +1992,7 @@ function formatCurrentTime() {
 }
 
 cameraToggleButton.addEventListener("click", async () => {
+  isModalOpen = true;
   try {
     document.getElementById('camera-timestamp').textContent = formatCurrentTime();
     
@@ -2019,6 +2033,7 @@ cameraToggleButton.addEventListener("click", async () => {
 });
 
 cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => {
+  isModalOpen = false;
   cameraModal.classList.add('hidden');
 });
 
@@ -2064,7 +2079,7 @@ const controlButtons = [
     document.getElementById("cameraToggleButton"),
     document.getElementById("graphDataButton"),
     document.getElementById("downloadToggleButton"),
-    document.getElementById("setTimeButton"),
+    document.getElementById("settingsButton"),
     document.getElementById("autobotToggleButton")
 ].filter(Boolean); // This removes any null elements
 
@@ -2093,51 +2108,52 @@ enterButton.addEventListener("click", () => {
 
 document.getElementById('heatWarningButton').addEventListener('click', () => {
     const tempValue = parseFloat(document.getElementById('temperature').textContent);
-    if (tempValue > 23) {
-      showWarning(
-          "⚠️ Warning (High Temperature)", 
-          "The temperature level of the room is too high! Increase the ventilation or reduce light exposure."
-      );
-    } else if (tempValue < 20) {
-      showWarning(
-          "⚠️ Warning (Low Temperature)", 
-          "The temperature level of the room is too low for optimal plant growth. Increase heat exposure."
-      );
+    if (tempValue > warningThresholds.tempHigh) {
+        showWarning(
+            "⚠️ Warning (High Temperature)", 
+            `The temperature level of the room is too high (${tempValue}°C > ${warningThresholds.tempHigh}°C)! Increase the ventilation or reduce light exposure.`
+        );
+    } else if (tempValue < warningThresholds.tempLow) {
+        showWarning(
+            "⚠️ Warning (Low Temperature)", 
+            `The temperature level of the room is too low for optimal plant growth (${tempValue}°C < ${warningThresholds.tempLow}°C). Increase heat exposure.`
+        );
     }
 });
 
 document.getElementById('humidWarningButton').addEventListener('click', () => {
     const humidValue = parseFloat(document.getElementById('humidity').textContent);
-    if (humidValue > 75) {
-      showWarning(
-          "⚠️ Warning (High Humidity)", 
-          "The humidity level of the room is too high! Turn on the dehumidifier or reduce water exposure."
-      );
-    } else if (humidValue < 62) {
-      showWarning(
+    if (humidValue > warningThresholds.humidHigh) {
+        showWarning(
+            "⚠️ Warning (High Humidity)", 
+            `The humidity level of the room is too high (${humidValue}% > ${warningThresholds.humidHigh}%)! Turn on the dehumidifier or reduce water exposure.`
+        );
+    } else if (humidValue < warningThresholds.humidLow) {
+        showWarning(
             "⚠️ Warning (Low Humidity)", 
-            "The humidity level of the room is too low for optimal plant growth. Increasewater exposure."
+            `The humidity level of the room is too low for optimal plant growth (${humidValue}% < ${warningThresholds.humidLow}%). Increase water exposure.`
         );
     }
 });
 
 document.getElementById('co2WarningButton').addEventListener('click', () => {
     const co2Value = parseFloat(document.getElementById('co2').textContent);
-    if (co2Value > 620) {
+    if (co2Value > warningThresholds.co2High) {
         showWarning(
             "⚠️ Warning (High CO2)", 
-            "The CO2 level of the room is too high! Increase the ventilation or open the door."
+            `The CO2 level of the room is too high (${co2Value}ppm > ${warningThresholds.co2High}ppm)! Increase the ventilation or open the door.`
         );
-    } else if (co2Value < 580) {
+    } else if (co2Value < warningThresholds.co2Low) {
         showWarning(
             "⚠️ Warning (Low CO2)", 
-            "The CO2 level of the room is too low for optimal plant growth. Reduce ventilation."
+            `The CO2 level of the room is too low for optimal plant growth (${co2Value}ppm < ${warningThresholds.co2Low}ppm). Reduce ventilation.`
         );
     }
 });
 
 // This helper function to show the warning modal
 function showWarning(title, message) {
+    isModalOpen = true;
     const warningModal = document.querySelector('.warning-modal');
     const warningTitle = document.getElementById('warning-title');
     const warningMessage = document.getElementById('warning-message');
@@ -2148,6 +2164,7 @@ function showWarning(title, message) {
     
     // Close button functionality
     document.querySelector('.warning-close-button').addEventListener('click', () => {
+        isModalOpen = false;
         warningModal.classList.add('hidden');
     }, { once: true }); // The event listener will be removed after first click
 }

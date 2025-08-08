@@ -75,19 +75,52 @@
         </div>
     </div>
 
-    <div class="time-modal hidden">
-        <div class="time-modal-content">
-            <h2>Set Light Schedule</h2>
-            <div class="time-input-group">
-                <label for="startTime">Start Time:</label>
-                <input type="time" id="startTime" required>
+    <div class="settings-modal hidden">
+        <div class="settings-modal-content">
+            <h2>Settings</h2>
+            
+            <div class="settings-section">
+                <h3>Light Schedule</h3>
+                <div class="time-input-group">
+                    <label for="startTime">Start Time:</label>
+                    <input type="time" id="startTime" required>
+                </div>
+                <div class="time-input-group">
+                    <label for="endTime">End Time:</label>
+                    <input type="time" id="endTime" required>
+                </div>
             </div>
-            <div class="time-input-group">
-                <label for="endTime">End Time:</label>
-                <input type="time" id="endTime" required>
+            
+            <div class="settings-section">
+                <h3>Warning Thresholds</h3>
+                <div class="threshold-input-group">
+                    <label for="tempHigh">Temperature High (°C):</label>
+                    <input type="number" id="tempHigh" step="0.1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="tempLow">Temperature Low (°C):</label>
+                    <input type="number" id="tempLow" step="0.1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="humidHigh">Humidity High (%):</label>
+                    <input type="number" id="humidHigh" step="1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="humidLow">Humidity Low (%):</label>
+                    <input type="number" id="humidLow" step="1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="co2High">CO2 High (ppm):</label>
+                    <input type="number" id="co2High" step="1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="co2Low">CO2 Low (ppm):</label>
+                    <input type="number" id="co2Low" step="1" required>
+                </div>
             </div>
-            <button id="saveTimeButton">Save Schedule</button>
-            <button class="time-close-button">Cancel</button>
+            
+            <button id="saveSettingsButton">Save Settings</button>
+            <button class="settings-close-button">Cancel</button>
         </div>
     </div>
 
@@ -162,6 +195,8 @@
         
         <button id="sunToggleButton" class="sunPin">🌞</button>
 
+        <button id="settingsButton" class="settingsPin">🔧</button>
+
 
         <div class="graph-container">
             <button id="graphDataButton" class="graphPin">📊 Graph</button>
@@ -204,8 +239,6 @@
         <button id="plantLightToggleButton" class="bulbLedPin">🕯️OFF</button>
 
         <button id="pumpToggleButton" class="pumpPin">🌵OFF</button>
-
-        <button id="setTimeButton" class="setTimePin">🕒</button>
 
         <button id="autobotToggleButton" class="autobotPin">👆Man</button>
 

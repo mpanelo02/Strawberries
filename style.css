@@ -193,28 +193,17 @@
 
 /* For Plate01 */
 .plate01-style {
-    /* background: linear-gradient(145deg, #f2f2f2, #cce0ff);
-    color: #003366;
-    border: 2px solid #3399ff; */
     max-width: 600px;
 }
 
 /* For Plate02 */
 .plate02-style {
-    /* background: linear-gradient(145deg, #fef6f6, #ffcccc);
-    color: #660000;
-    border: 2px solid #ff6666; */
     max-width: 600px;
-
 }
 
 /* For Pump */
 .pump-style {
-    /* background: linear-gradient(145deg, #fef6f6, #ffcccc);
-    color: #660000;
-    border: 2px solid #ff6666; */
     max-width: 600px;
-
 }
 
 
@@ -280,8 +269,8 @@
 }
 
 
-/* Time Modal */
-.time-modal {
+/* Settings Modal */
+.settings-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -292,9 +281,10 @@
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  overflow-y: auto; /* Enable scrolling for the modal background */
 }
 
-.time-modal-content {
+.settings-modal-content {
   background-color: #be98e4;
   color: #fff;
   padding: 30px;
@@ -302,8 +292,11 @@
   max-width: 400px;
   width: 90%;
   text-align: center;
+  max-height: 90vh; /* Limit height to 90% of viewport */
+  overflow-y: auto; /* Enable scrolling for content */
   box-shadow: 0 4px 20px rgba(247, 245, 245, 0.923);
   border: 3px solid #fff;
+  margin: 20px 0; /* Add some margin for better spacing */
 }
 
 .time-input-group {
@@ -325,7 +318,7 @@
   font-size: 16px;
 }
 
-#saveTimeButton, .time-close-button {
+#saveSettingsButton, .settings-close-button {
   background-color: white;
   color: #be98e4;
   border: none;
@@ -338,9 +331,58 @@
   margin: 5px;
 }
 
-#saveTimeButton:hover, .time-close-button:hover {
+#saveSettingsButton:hover, .settings-close-button:hover {
   background-color: #a869e6;
   color: white;
+}
+
+.settings-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.settings-section h3 {
+    color: white;
+    margin-bottom: 15px;
+}
+
+.threshold-input-group {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.threshold-input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.threshold-input-group input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #a869e6;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.settings-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(190, 152, 228, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.settings-loading::after {
+    content: "Loading...";
+    color: white;
+    font-size: 18px;
 }
 
 
@@ -534,15 +576,13 @@
 .soundPin {
     position: fixed;
     top: 20px;
-    right: 85px;
+    right: 120px;
     font-size: 20px;
-    /* font-weight: bold; */
     color: black;
-    background-color: #be98e4; /* Light purple background */
+    background-color: #be98e4;
     border: 2px solid #a869e6;
-    padding: 5px 10px;
+    padding: 5px 5px;
     border-radius: 10px;
-    /* font-family: Arial, sans-serif; */
     z-index: 9999;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -557,15 +597,13 @@
 .sunPin {
     position: fixed;
     top: 20px;
-    right: 30px;
+    right: 75px;
     font-size: 20px;
-    /* font-weight: bold; */
     color: black;
-    background-color: #be98e4; /* Light purple background */
+    background-color: #be98e4;
     border: 2px solid #a869e6;
-    padding: 5px 10px;
+    padding: 5px 5px;
     border-radius: 10px;
-    /* font-family: Arial, sans-serif; */
     z-index: 9999;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -573,6 +611,27 @@
 }
 
 .sunPin:hover {
+    background-color: #a869e6;
+    color: white;
+}
+
+.settingsPin {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    font-size: 20px;
+    color: black;
+    background-color: #be98e4;
+    border: 2px solid #a869e6;
+    padding: 5px 5px;
+    border-radius: 10px;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.settingsPin:hover {
     background-color: #a869e6;
     color: white;
 }
@@ -854,29 +913,6 @@
     cursor: wait;
 }
 
-.setTimePin {
-    position: fixed;
-    top: 650px;
-    right: 130px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #be98e4; /* Light purple background */
-    border: 2px solid #a869e6;
-    padding: 5px 5px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.setTimePin:hover {
-    background-color: #a869e6;
-    color: white;
-}
-
 .autobotPin {
     position: fixed;
     top: 650px;
@@ -990,13 +1026,19 @@
 
     .soundPin {
         font-size: 16px;
-        padding: 2px 8px;
+        padding: 2px 2px;
         top: 10px;
-        right: 53px;
+        right: 80px;
     }
     .sunPin {
         font-size: 16px;
-        padding: 2px 8px;
+        padding: 2px 2px;
+        top: 10px;
+        right: 45px;
+    }
+    .settingsPin {
+        font-size: 16px;
+        padding: 2px 2px;
         top: 10px;
         right: 10px;
     }
