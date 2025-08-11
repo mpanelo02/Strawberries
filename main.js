@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
+// import { gsap } from "gsap";
 
 const scene = new THREE.Scene();
 const raycaster = new THREE.Raycaster();
@@ -27,7 +28,9 @@ let warningThresholds = {
     humidHigh: 75.0,
     humidLow: 62.0,
     co2High: 620.0,
-    co2Low: 580.0
+    co2Low: 580.0,
+    moistureHigh: 34.0,
+    moistureLow: 30.0
 };
 
 // Login functionality
@@ -184,6 +187,7 @@ async function getData() {
             sensorHistory.temperature.push(roundedTemp);
             if (sensorHistory.temperature.length > 120) sensorHistory.temperature.shift();
 
+            updateTemperatureVisibility();
             // Show/hide heat warning based on temperature
             const tempValue = parseFloat(roundedTemp);
             const heatWarningButton = document.getElementById('heatWarningButton');
@@ -217,11 +221,25 @@ async function getData() {
 
         if (moistureReading) {
             const roundedMoisture = parseFloat(moistureReading.value).toFixed(1);
-            console.log(`Soil Moisture: ${roundedMoisture}%`);
+            console.log(`Moisture: ${roundedMoisture}%`);
             document.getElementById('moisture').textContent = roundedMoisture;
             sensorHistory.moisture.push(roundedMoisture);
             if (sensorHistory.moisture.length > 120) sensorHistory.moisture.shift();
+
+            updateMoistHighVisibility();
+
+            // Show/hide moisture warning based on moisture
+            const moistureValue = parseFloat(roundedMoisture);
+            const moistureWarningButton = document.getElementById('moistureWarningButton');
+            if (moistureValue > warningThresholds.moistureHigh || moistureValue < warningThresholds.moistureLow) {
+                moistureWarningButton.classList.remove('hidden');
+                moistureWarningButton.classList.add('visible', 'pulse');
+            } else {
+                moistureWarningButton.classList.add('hidden');
+                moistureWarningButton.classList.remove('visible', 'pulse');
+            }
         }
+
         if (soilECReading) {
             const roundedSoilEC = parseFloat(soilECReading.value).toFixed(3);
             console.log(`Soil EC: ${roundedSoilEC}mS/cm`);
@@ -236,6 +254,8 @@ async function getData() {
             document.getElementById('co2').textContent = roundedCO2;
             sensorHistory.co2.push(roundedCO2);
             if (sensorHistory.co2.length > 120) sensorHistory.co2.shift();
+
+            updateCloudVisibility();
 
             // Show/hide co2 warning based on co2 level
             const co2Value = parseFloat(roundedCO2);
@@ -289,7 +309,7 @@ renderer.shadowMap.enabled = true;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
-let isModalOpen = false;
+// let isModalOpen = false;
 
 const modalContent = {
     CCTV: {
@@ -324,7 +344,7 @@ const modalVisitButton = document.querySelector(".modal-visit-button");
 
 
 function showModal(id) {
-    isModalOpen = true;
+    // isModalOpen = true;
     const content = modalContent[id];
     if (content) {
         if (content.isCamera) {
@@ -375,7 +395,7 @@ function showModal(id) {
 
 
 function hideModal(){
-    isModalOpen = false;
+    // isModalOpen = false;
     modal.classList.toggle("hidden");
 }
 
@@ -395,34 +415,45 @@ function closeSettingsModal() {
 }
 
 async function openSettingsModal() {
-    isModalOpen = true;
+    // isModalOpen = true;
     try {
         // Show loading state
         const loadingDiv = document.createElement('div');
         loadingDiv.className = 'settings-loading';
         settingsModal.querySelector('.settings-modal-content').appendChild(loadingDiv);
 
-        // Fetch current settings from the server
-        const [settingsResponse, thresholdsResponse] = await Promise.all([
+        // Fetch all settings in parallel
+        const [settingsResponse, thresholdsResponse, pumpResponse] = await Promise.all([
             fetch("https://valk-huone-1.onrender.com/api/light-schedule"),
-            fetch("https://valk-huone-1.onrender.com/api/warning-thresholds")
+            fetch("https://valk-huone-1.onrender.com/api/warning-thresholds"),
+            fetch("https://valk-huone-1.onrender.com/api/pump-schedule")
         ]);
         
-        if (!settingsResponse.ok || !thresholdsResponse.ok) {
+        if (!settingsResponse.ok || !thresholdsResponse.ok || !pumpResponse.ok) {
             throw new Error('Failed to fetch settings');
         }
         
         const lightSchedule = await settingsResponse.json();
         const warningThresholds = await thresholdsResponse.json();
+        const pumpSchedule = await pumpResponse.json();
         
-        // Format current times for input fields (HH:MM)
+        // Format time helper function
         const formatTime = (hours, minutes) => 
             `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
         
         // Set light schedule values
         startTimeInput.value = formatTime(lightSchedule.start_hour, lightSchedule.start_minute);
         endTimeInput.value = formatTime(lightSchedule.end_hour, lightSchedule.end_minute);
-        
+
+        // Set pump schedule values
+        if (pumpSchedule) {
+            document.getElementById('firstIrrigationTime').value = 
+                formatTime(pumpSchedule.first_irrigation_hour, pumpSchedule.first_irrigation_minute);
+            document.getElementById('secondIrrigationTime').value = 
+                formatTime(pumpSchedule.second_irrigation_hour, pumpSchedule.second_irrigation_minute);
+            document.getElementById('pumpDuration').value = pumpSchedule.duration_seconds;
+        }
+
         // Set threshold values
         document.getElementById('tempHigh').value = warningThresholds.temp_high;
         document.getElementById('tempLow').value = warningThresholds.temp_low;
@@ -430,7 +461,9 @@ async function openSettingsModal() {
         document.getElementById('humidLow').value = warningThresholds.humid_low;
         document.getElementById('co2High').value = warningThresholds.co2_high;
         document.getElementById('co2Low').value = warningThresholds.co2_low;
-        
+        document.getElementById('moistureHigh').value = warningThresholds.moisture_high;
+        document.getElementById('moistureLow').value = warningThresholds.moisture_low;
+
         // Remove loading state
         loadingDiv.remove();
         settingsModal.classList.remove("hidden");
@@ -446,12 +479,20 @@ async function openSettingsModal() {
         startTimeInput.value = formatTime(8, 10);
         endTimeInput.value = formatTime(23, 50);
         
+        // Default pump schedule
+        document.getElementById('firstIrrigationTime').value = '09:10';
+        document.getElementById('secondIrrigationTime').value = '21:10';
+        document.getElementById('pumpDuration').value = 60;
+        
+        // Default thresholds
         document.getElementById('tempHigh').value = 23.0;
         document.getElementById('tempLow').value = 20.0;
         document.getElementById('humidHigh').value = 75.0;
         document.getElementById('humidLow').value = 62.0;
         document.getElementById('co2High').value = 620;
         document.getElementById('co2Low').value = 580;
+        document.getElementById('moistureHigh').value = 34.0;
+        document.getElementById('moistureLow').value = 30.0;
         
         settingsModal.classList.remove("hidden");
         
@@ -493,9 +534,15 @@ async function fetchSettings() {
 }
 
 
+
 async function saveSettings() {
     const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
     const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+    
+    // Get pump schedule values
+    const [firstHours, firstMinutes] = document.getElementById('firstIrrigationTime').value.split(':').map(Number);
+    const [secondHours, secondMinutes] = document.getElementById('secondIrrigationTime').value.split(':').map(Number);
+    const durationSeconds = parseInt(document.getElementById('pumpDuration').value);
     
     // Get threshold values
     warningThresholds = {
@@ -504,41 +551,75 @@ async function saveSettings() {
         humidHigh: parseFloat(document.getElementById('humidHigh').value),
         humidLow: parseFloat(document.getElementById('humidLow').value),
         co2High: parseFloat(document.getElementById('co2High').value),
-        co2Low: parseFloat(document.getElementById('co2Low').value)
+        co2Low: parseFloat(document.getElementById('co2Low').value),
+        moistureHigh: parseFloat(document.getElementById('moistureHigh').value),
+        moistureLow: parseFloat(document.getElementById('moistureLow').value)
     };
     
     try {
-        const response = await fetch("https://valk-huone-1.onrender.com/api/settings", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                lightSchedule: {
-                    startHour: startHours,
-                    startMinute: startMinutes,
-                    endHour: endHours,
-                    endMinute: endMinutes
+        // Save all settings in parallel
+        const [settingsResponse, pumpResponse] = await Promise.all([
+            fetch("https://valk-huone-1.onrender.com/api/settings", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                warningThresholds
+                body: JSON.stringify({
+                    lightSchedule: {
+                        startHour: startHours,
+                        startMinute: startMinutes,
+                        endHour: endHours,
+                        endMinute: endMinutes
+                    },
+                    warningThresholds
+                })
+            }),
+            fetch("https://valk-huone-1.onrender.com/api/pump-schedule", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstIrrigationHour: firstHours,
+                    firstIrrigationMinute: firstMinutes,
+                    secondIrrigationHour: secondHours,
+                    secondIrrigationMinute: secondMinutes,
+                    durationSeconds: durationSeconds
+                })
             })
-        });
+        ]);
         
-        if (!response.ok) throw new Error('Failed to save settings');
+        if (!settingsResponse.ok || !pumpResponse.ok) {
+            const errorData = await settingsResponse.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Failed to save settings');
+        }
         
-        lightSchedule = {
-            startTime: { hours: startHours, minutes: startMinutes },
-            endTime: { hours: endHours, minutes: endMinutes }
-        };
+        const [settingsResult, pumpResult] = await Promise.all([
+            settingsResponse.json(),
+            pumpResponse.json()
+        ]);
         
-        console.log(`${LOG_PREFIX} Settings updated`);
-        closeSettingsModal();
-        
-        // Immediately check if we need to adjust anything based on new settings
-        checkLightSchedule();
+        if (settingsResult.success && pumpResult) {
+            lightSchedule = {
+                startTime: { hours: startHours, minutes: startMinutes },
+                endTime: { hours: endHours, minutes: endMinutes }
+            };
+            
+            console.log(`${LOG_PREFIX} Settings updated`);
+            closeSettingsModal();
+            checkLightSchedule();
+            updateCloudVisibility();
+            updateMoistHighVisibility();
+            updateTemperatureVisibility();
+        } else {
+            throw new Error(settingsResult.error || 'Failed to save settings');
+        }
     } catch (err) {
         console.error(`${LOG_PREFIX} Error saving settings:`, err);
-        alert('Failed to save settings. Please try again.');
+        showWarning(
+            "Settings Error",
+            `Failed to save settings: ${err.message}`
+        );
     }
 }
 
@@ -546,7 +627,7 @@ async function saveSettings() {
 settingsButton.addEventListener("click", openSettingsModal);
 // settingsCloseButton.addEventListener("click", closeSettingsModal);
 settingsCloseButton.addEventListener("click", () => {
-    isModalOpen = false;
+    // isModalOpen = false;
     closeSettingsModal();
 });
 saveSettingsButton.addEventListener("click", saveSettings);
@@ -593,6 +674,9 @@ enterButton.addEventListener("click", () => {
       document.getElementById("mainContent").style.display = "block";
     },
   });
+  video.muted = false;
+  video.volume = 0.2;
+  video.play();
 });
 
 let exhaustFan = null;
@@ -614,11 +698,17 @@ let strawBerries3 = null;
 let signHolder = null;
 let plate01 = null;
 let plate02 = null;
-let heatWarn1 = null;
+let cloud = null;
+let moistHigh = null;
+let thermometer = null;
+let tHigh = null;
+let tLow = null;
+let tNormal = null;
+
 
 const loader = new GLTFLoader();
 
-loader.load( './FarmLab_WhiteRoom06a.glb', function ( glb ) {
+loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
   video = document.createElement('video');
   // video.src = 'SmartLab.mp4';
   video.src = 'DigitalTwins2.mp4';
@@ -707,11 +797,32 @@ loader.load( './FarmLab_WhiteRoom06a.glb', function ( glb ) {
         ccTV.visible = false;
         ccTV.scale.set(0, 0, 0); // Start scaled down
     }
-    if (child.name === "HeatWarn1") {
-        heatWarn1 = child;
-        heatWarn1.visible = false;
-        // heatWarn1.scale.set(0, 0, 0); // Start scaled down
+    if (child.name === "Thermometer") {
+        thermometer = child;
+        thermometer.visible = false;
+        thermometer.scale.set(0, 0, 0); // Start scaled down
     }
+    if (child.name === "Cloud") {
+        cloud = child;
+        cloud.visible = false;
+    }
+    if (child.name === "MoistHigh") {
+        moistHigh = child;
+        moistHigh.visible = false;
+    }
+    if (child.name === "THigh") {
+        tHigh = child;
+        tHigh.visible = false;
+    }
+    if (child.name === "TLow") {
+        tLow = child;
+        tLow.visible = false;
+    }
+    if (child.name === "TNormal") {
+        tNormal = child;
+        tNormal.visible = false;
+    }
+    
     // Plays Video on Screen object
     if (child.name === "Screen") {
       child.material = new THREE.MeshBasicMaterial({ map: videoTexture });
@@ -1033,7 +1144,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 2.5
+            delay: 2.3
         });
     }
     if (strawBerries2) {
@@ -1044,7 +1155,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3
+            delay: 2.6
         });
     }
     if (strawBerries3) {
@@ -1055,7 +1166,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 3.5
+            delay: 2.9
         });
     }
 
@@ -1067,7 +1178,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 4
+            delay: 3.2
         });
     }
     
@@ -1079,7 +1190,7 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 4.5 // Slight delay for staggered effect
+            delay: 3.5 // Slight delay for staggered effect
         });
     }
     
@@ -1091,7 +1202,18 @@ function animateObjectsGrowth() {
             z: 1,
             duration: duration,
             ease: ease,
-            delay: 5 // Slight delay for staggered effect
+            delay: 3.8 // Slight delay for staggered effect
+        });
+    }
+    if (thermometer) {
+        thermometer.visible = true;
+        gsap.to(thermometer.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 4.1 // Slight delay for staggered effect
         });
     }
 }
@@ -1111,7 +1233,7 @@ function onResize() {
 }
 
 function onClick() {
-  if (isModalOpen) return;
+  // if (isModalOpen) return;
 
   if(intersectObject !== ""){
       showModal(intersectObject);
@@ -1120,10 +1242,10 @@ function onClick() {
 
 
 function onPointerMove(event) {
-    if (isModalOpen) {
-        document.body.style.cursor = 'default';
-        return;
-    }
+    // if (isModalOpen) {
+    //     document.body.style.cursor = 'default';
+    //     return;
+    // }
 
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -1217,23 +1339,6 @@ function animate() {
 
   controls.update();
 
-
-  if (!isModalOpen) {
-    raycaster.setFromCamera( pointer, camera );
-
-    const intersects = raycaster.intersectObjects(intersectObjects);
-
-      if ( intersects.length > 0 ) {
-          document.body.style.cursor = 'pointer';
-      } else {
-          document.body.style.cursor = 'default';
-          intersectObject = "";
-      }
-
-    for ( let i = 0; i < intersects.length; i ++ ) {
-          intersectObject = intersects[0].object.parent.name;
-    }
-  }
 
   if (exhaustFan) {
     exhaustFan.rotation.y += 0.08;
@@ -1450,18 +1555,36 @@ async function fetchLightSchedule() {
 
 
 async function checkPumpSchedule() {
-  // Only proceed if autobot is ON and pump isn't already running
   if (deviceStates.autobot !== "ON" || isPumpRunning) return;
   
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-  //Timer
-  // Set time for Automaition
-  if ((hours === 9 || hours === 21) && minutes === 10 && seconds === 0) {
-    console.log(`${LOG_PREFIX} Triggering scheduled pump activation at ${now.toISOString()}`);
-    await runPumpForDuration(60); // Run for 60 seconds (1 minute)
+  try {
+    // Fetch current pump schedule
+    const response = await fetch("https://valk-huone-1.onrender.com/api/pump-schedule");
+    if (!response.ok) throw new Error('Failed to fetch pump schedule');
+    
+    const schedule = await response.json();
+    if (!schedule) return;
+    
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    
+    // Check first irrigation time
+    if (hours === schedule.first_irrigation_hour && 
+        minutes === schedule.first_irrigation_minute && 
+        seconds === 0) {
+      await runPumpForDuration(schedule.duration_seconds);
+    }
+    
+    // Check second irrigation time
+    if (hours === schedule.second_irrigation_hour && 
+        minutes === schedule.second_irrigation_minute && 
+        seconds === 0) {
+      await runPumpForDuration(schedule.duration_seconds);
+    }
+  } catch (err) {
+    console.error(`${LOG_PREFIX} Error checking pump schedule:`, err);
   }
 }
 
@@ -1992,7 +2115,7 @@ function formatCurrentTime() {
 }
 
 cameraToggleButton.addEventListener("click", async () => {
-  isModalOpen = true;
+  // isModalOpen = true;
   try {
     document.getElementById('camera-timestamp').textContent = formatCurrentTime();
     
@@ -2033,7 +2156,7 @@ cameraToggleButton.addEventListener("click", async () => {
 });
 
 cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => {
-  isModalOpen = false;
+  // isModalOpen = false;
   cameraModal.classList.add('hidden');
 });
 
@@ -2120,6 +2243,24 @@ document.getElementById('heatWarningButton').addEventListener('click', () => {
         );
     }
 });
+function updateTemperatureVisibility() {
+    const tempValue = parseFloat(document.getElementById('temperature').textContent);
+    if (thermometer) {
+        if (tempValue > warningThresholds.tempHigh) {
+            tHigh.visible = true;
+            tLow.visible = false;
+            tNormal.visible = false;
+        } else if (tempValue < warningThresholds.tempLow) {
+            tLow.visible = true;
+            tHigh.visible = false;
+            tNormal.visible = false;
+        } else {
+            tHigh.visible = false;
+            tLow.visible = false;
+            tNormal.visible = true;
+        }
+    }
+}
 
 document.getElementById('humidWarningButton').addEventListener('click', () => {
     const humidValue = parseFloat(document.getElementById('humidity').textContent);
@@ -2150,10 +2291,58 @@ document.getElementById('co2WarningButton').addEventListener('click', () => {
         );
     }
 });
+function updateCloudVisibility() {
+    const co2Value = parseFloat(document.getElementById('co2').textContent);
+    if (cloud) {
+        if (co2Value > warningThresholds.co2High) {
+            cloud.visible = true;
+            // You might want to add some animation here
+            gsap.to(cloud.scale, {
+                x: 1.1,
+                y: 1.1,
+                z: 1.1,
+                duration: 1,
+                yoyo: true,
+                repeat: -1
+            });
+        } else {
+            cloud.visible = false;
+            // Reset any animations
+            gsap.killTweensOf(cloud.scale);
+            cloud.scale.set(1, 1, 1);
+        }
+    }
+}
+
+document.getElementById('moistureWarningButton').addEventListener('click', () => {
+    const moistureValue = parseFloat(document.getElementById('moisture').textContent);
+    if (moistureValue > warningThresholds.moistureHigh) {
+        showWarning(
+            "⚠️ Warning (High Moisture)", 
+            `The moisture level of the soil is too high (${moistureValue}% > ${warningThresholds.moistureHigh}%)! Turn OFF the irrigation system.`
+        );
+    } else if (moistureValue < warningThresholds.moistureLow) {
+        showWarning(
+            "⚠️ Warning (Low Moisture)", 
+            `The moisture level of the soil is too low for optimal plant growth (${moistureValue}% < ${warningThresholds.moistureLow}%). Turn ON the irrigation system.`
+        );
+    }
+});
+
+function updateMoistHighVisibility() {
+    const moistureValue = parseFloat(document.getElementById('moisture').textContent);
+    if (moistHigh) {
+        if (moistureValue > warningThresholds.moistureHigh) {
+            moistHigh.visible = true;
+        } else {
+            moistHigh.visible = false;
+        }
+    }
+}
 
 // This helper function to show the warning modal
 function showWarning(title, message) {
-    isModalOpen = true;
+    // isModalOpen = true;
     const warningModal = document.querySelector('.warning-modal');
     const warningTitle = document.getElementById('warning-title');
     const warningMessage = document.getElementById('warning-message');
@@ -2164,7 +2353,7 @@ function showWarning(title, message) {
     
     // Close button functionality
     document.querySelector('.warning-close-button').addEventListener('click', () => {
-        isModalOpen = false;
+        // isModalOpen = false;
         warningModal.classList.add('hidden');
     }, { once: true }); // The event listener will be removed after first click
 }

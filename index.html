@@ -19,7 +19,7 @@
 </head>
 <body>
 
-    <!-- Add this right after the <body> tag -->
+    <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
     <div class="login-container">
         <h1>Urban Farm Lab</h1>
@@ -90,6 +90,22 @@
                     <input type="time" id="endTime" required>
                 </div>
             </div>
+
+            <div class="settings-section">
+                <h3>Pump Schedule</h3>
+                <div class="time-input-group">
+                    <label for="firstIrrigationTime">1st Irrigation:</label>
+                    <input type="time" id="firstIrrigationTime" required>
+                </div>
+                <div class="time-input-group">
+                    <label for="secondIrrigationTime">2nd Irrigation:</label>
+                    <input type="time" id="secondIrrigationTime" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="pumpDuration">Duration (seconds):</label>
+                    <input type="number" id="pumpDuration" min="1" max="3600" required>
+                </div>
+            </div>
             
             <div class="settings-section">
                 <h3>Warning Thresholds</h3>
@@ -116,6 +132,14 @@
                 <div class="threshold-input-group">
                     <label for="co2Low">CO2 Low (ppm):</label>
                     <input type="number" id="co2Low" step="1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="moistureHigh">Moisture High (%):</label>
+                    <input type="number" id="moistureHigh" step="1" required>
+                </div>
+                <div class="threshold-input-group">
+                    <label for="moistureLow">Moisture Low (%):</label>
+                    <input type="number" id="moistureLow" step="1" required>
                 </div>
             </div>
             
@@ -173,8 +197,10 @@
             ☁️P: <span id="atmosphericPress">--</span> hPa
         </div>
 
+        <!-- Moisture -->
         <div id="moisture-container" class="moistPin">
             💧S: <span id="moisture">--</span> %
+            <button id="moistureWarningButton" class="moisture-warning hidden">⚠️</button>
         </div>
 
         <div id="soilElectroConductivity-container" class="soilECPin">
