@@ -693,8 +693,14 @@ let monitor = null;
 let screen = null;
 let clock = null;
 let strawBerries1 = null;
+let strawBerries1_1 = null;
+let strawBerries1_2 = null;
 let strawBerries2 = null;
+let strawBerries2_1 = null;
+let strawBerries2_2 = null;
 let strawBerries3 = null;
+let strawBerries3_1 = null;
+let strawBerries3_2 = null;
 let signHolder = null;
 let plate01 = null;
 let plate02 = null;
@@ -894,37 +900,64 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
   console.error( error );
 } );
 
-loader.load('./Strawberries1.glb', function(gltf) {
+loader.load('./Strawberries1a.glb', function(gltf) {
   const model1 = gltf.scene;
   model1.traverse((child) => {
       if (child.name === "StrawBerries1") {
         strawBerries1 = child;
         strawBerries1.visible = false;
         strawBerries1.scale.set(0, 0, 0); // Start scaled down
-    }
+      }
+      if (child.name === "StrawBerries1_1") {
+        strawBerries1_1 = child;
+        strawBerries1_1.visible = false;
+        strawBerries1_1.scale.set(0, 0, 0); // Start scaled down
+      }
+      if (child.name === "StrawBerries1_2") {
+        strawBerries1_2 = child;
+        strawBerries1_2.visible = false;
+      }
   });
 
   scene.add(model1);
 });
-loader.load('./Strawberries2.glb', function(gltf) {
+loader.load('./Strawberries2a.glb', function(gltf) {
   const model2 = gltf.scene;
   model2.traverse((child) => {
       if (child.name === "StrawBerries2") {
         strawBerries2 = child;
         strawBerries2.visible = false;
         strawBerries2.scale.set(0, 0, 0); // Start scaled down
-    }
+      }
+      if (child.name === "StrawBerries2_1") {
+        strawBerries2_1 = child;
+        strawBerries2_1.visible = false;
+        strawBerries2_1.scale.set(0, 0, 0); // Start scaled down
+      }
+      if (child.name === "StrawBerries2_2") {
+        strawBerries2_2 = child;
+        strawBerries2_2.visible = false;
+      }
   });
   scene.add(model2);
 });
-loader.load('./Strawberries3.glb', function(gltf) {
+loader.load('./Strawberries3a.glb', function(gltf) {
   const model3 = gltf.scene;
   model3.traverse((child) => {
       if (child.name === "StrawBerries3") {
         strawBerries3 = child;
         strawBerries3.visible = false;
         strawBerries3.scale.set(0, 0, 0); // Start scaled down
-    }
+      }
+      if (child.name === "StrawBerries3_1") {
+        strawBerries3_1 = child;
+        strawBerries3_1.visible = false;
+        strawBerries3_1.scale.set(0, 0, 0); // Start scaled down
+      }
+      if (child.name === "StrawBerries3_2") {
+        strawBerries3_2 = child;
+        strawBerries3_2.visible = false;
+      }
   });
   scene.add(model3);
 });
@@ -1147,6 +1180,17 @@ function animateObjectsGrowth() {
             delay: 2.3
         });
     }
+    if (strawBerries1_1) {
+        strawBerries1_1.visible = true;
+        gsap.to(strawBerries1_1.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.3
+        });
+    }
     if (strawBerries2) {
         strawBerries2.visible = true;
         gsap.to(strawBerries2.scale, {
@@ -1158,9 +1202,31 @@ function animateObjectsGrowth() {
             delay: 2.6
         });
     }
+    if (strawBerries2_1) {
+        strawBerries2_1.visible = true;
+        gsap.to(strawBerries2_1.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.6
+        });
+    }
     if (strawBerries3) {
         strawBerries3.visible = true;
         gsap.to(strawBerries3.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: duration,
+            ease: ease,
+            delay: 2.9
+        });
+    }
+    if (strawBerries3_1) {
+        strawBerries3_1.visible = true;
+        gsap.to(strawBerries3_1.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -2334,8 +2400,28 @@ function updateMoistHighVisibility() {
     if (moistHigh) {
         if (moistureValue > warningThresholds.moistureHigh) {
             moistHigh.visible = true;
+            strawBerries1_1.visible = true;
+            strawBerries2_1.visible = true;
+            strawBerries3_1.visible = true;
+            strawBerries1_2.visible = false;
+            strawBerries2_2.visible = false;
+            strawBerries3_2.visible = false;
+        } else if (moistureValue < warningThresholds.moistureLow) {
+            moistHigh.visible = false;
+            strawBerries1_1.visible = false;
+            strawBerries2_1.visible = false;
+            strawBerries3_1.visible = false;
+            strawBerries1_2.visible = true;
+            strawBerries2_2.visible = true;
+            strawBerries3_2.visible = true;
         } else {
             moistHigh.visible = false;
+            strawBerries1_1.visible = true;
+            strawBerries2_1.visible = true;
+            strawBerries3_1.visible = true;
+            strawBerries1_2.visible = false;
+            strawBerries2_2.visible = false;
+            strawBerries3_2.visible = false;
         }
     }
 }
