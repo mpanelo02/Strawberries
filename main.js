@@ -2359,12 +2359,12 @@ document.getElementById('heatWarningButton').addEventListener('click', () => {
     if (tempValue > warningThresholds.tempHigh) {
         showWarning(
             "⚠️ Warning (High Temperature)", 
-            `The temperature level of the room is too high (${tempValue}°C > ${warningThresholds.tempHigh}°C)! Increase the ventilation or reduce light exposure.`
+            `The temperature level of the room is too high (${tempValue}°C > ${warningThresholds.tempHigh}°C)! If the situation persists, plants may experience heat stress.`
         );
     } else if (tempValue < warningThresholds.tempLow) {
         showWarning(
             "⚠️ Warning (Low Temperature)", 
-            `The temperature level of the room is too low for optimal plant growth (${tempValue}°C < ${warningThresholds.tempLow}°C). Increase heat exposure.`
+            `The temperature level of the room is too low for optimal plant growth (${tempValue}°C < ${warningThresholds.tempLow}°C). If the situation persists, plants may experience cold stress.`
         );
     }
 });
@@ -2409,7 +2409,7 @@ document.getElementById('co2WarningButton').addEventListener('click', () => {
     if (co2Value > warningThresholds.co2High) {
         showWarning(
             "⚠️ Warning (High CO2)", 
-            `The CO2 level of the room is too high (${co2Value}ppm > ${warningThresholds.co2High}ppm)! Increase the ventilation or open the door.`
+            `The CO2 level of the room is too high (${co2Value}ppm > ${warningThresholds.co2High}ppm)! If the situation persists, CO2 will build up.`
         );
     } else if (co2Value < warningThresholds.co2Low) {
         showWarning(
@@ -2449,12 +2449,12 @@ document.getElementById('moistureWarningButton').addEventListener('click', () =>
     if (moistureValue > warningThresholds.moistureHigh) {
         showWarning(
             "⚠️ Warning (High Moisture)", 
-            `The moisture level of the soil is too high (${moistureValue}% > ${warningThresholds.moistureHigh}%)! Turn OFF the irrigation system.`
+            `The moisture level of the soil is too high (${moistureValue}% > ${warningThresholds.moistureHigh}%)! If the situation persists, waterlogging may occur.`
         );
     } else if (moistureValue < warningThresholds.moistureLow) {
         showWarning(
             "⚠️ Warning (Low Moisture)", 
-            `The moisture level of the soil is too low for optimal plant growth (${moistureValue}% < ${warningThresholds.moistureLow}%). Turn ON the irrigation system.`
+            `The moisture level of the soil is too low for optimal plant growth (${moistureValue}% < ${warningThresholds.moistureLow}%). If the situation persists, plants may wilt.`
         );
     }
 });
