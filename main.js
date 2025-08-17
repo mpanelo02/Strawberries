@@ -33,6 +33,8 @@ let warningThresholds = {
     moistureLow: 30.0
 };
 
+let initialDelayPassed = false;
+
 // Login functionality
 const loginScreen = document.getElementById('loginScreen');
 const loginForm = document.getElementById('loginForm');
@@ -53,6 +55,7 @@ loginForm.addEventListener('submit', (e) => {
   
   if (username === validCredentials.username && password === validCredentials.password) {
     // Successful login
+    initialDelayPassed = false; // Reset the delay flag
     loginError.classList.add('hidden');
     loginScreen.classList.add('hidden');
     loadingScreen.classList.remove('hidden');
@@ -158,6 +161,21 @@ async function getData() {
 
             // Store in sensorHistory
             sensorHistory.poreEC = poreECValues;
+        }
+
+        // Update visibility functions with delay logic
+        if (initialDelayPassed) {
+            updateTemperatureVisibility();
+            updateCloudVisibility();
+            updateMoistHighVisibility();
+        } else {
+            // Set timeout for initial delay
+            setTimeout(() => {
+                initialDelayPassed = true;
+                updateTemperatureVisibility();
+                updateCloudVisibility();
+                updateMoistHighVisibility();
+            }, 10000); // 10 seconds delay
         }
 
         // Access data from sensor1 (1061612) - likely has temperature and humidity
@@ -299,6 +317,42 @@ async function getData() {
 // Call immediately and then every 60 seconds
 getData();
 setInterval(getData, 60000); // 60000 ms = 60 seconds data fetch interval
+
+async function fetchWarningThresholds() {
+    try {
+        const response = await fetch("https://valk-huone-1.onrender.com/api/warning-thresholds");
+        if (!response.ok) throw new Error('Failed to fetch warning thresholds');
+        
+        const thresholds = await response.json();
+        if (thresholds) {
+            warningThresholds = {
+                tempHigh: parseFloat(thresholds.temp_high),
+                tempLow: parseFloat(thresholds.temp_low),
+                humidHigh: parseFloat(thresholds.humid_high),
+                humidLow: parseFloat(thresholds.humid_low),
+                co2High: parseFloat(thresholds.co2_high),
+                co2Low: parseFloat(thresholds.co2_low),
+                moistureHigh: parseFloat(thresholds.moisture_high),
+                moistureLow: parseFloat(thresholds.moisture_low)
+            };
+            console.log(`${LOG_PREFIX} Loaded warning thresholds`);
+        }
+    } catch (err) {
+        console.error(`${LOG_PREFIX} Error fetching warning thresholds:`, err);
+        // Fall back to default values if fetch fails
+        warningThresholds = {
+            tempHigh: 23.0,
+            tempLow: 20.0,
+            humidHigh: 75.0,
+            humidLow: 62.0,
+            co2High: 620.0,
+            co2Low: 580.0,
+            moistureHigh: 34.0,
+            moistureLow: 30.0
+        };
+    }
+
+}
 
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -1706,9 +1760,14 @@ async function runPumpForDuration(durationSeconds) {
 autobotToggleButton.addEventListener("click", toggleAutobot);
 
 // Make sure to call fetchDeviceStates when the page loads
+// document.addEventListener('DOMContentLoaded', () => {
+//     fetchSettings();
+//     fetchDeviceStates();
+// });
 document.addEventListener('DOMContentLoaded', () => {
     fetchSettings();
     fetchDeviceStates();
+    fetchWarningThresholds(); // Add this line
 });
 
 // Set up periodic refresh every 5 seconds
@@ -1857,9 +1916,9 @@ async function updateDeviceStateOnServer(device, state) {
 }
 
 // Call fetchDeviceStates when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  fetchDeviceStates();
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//   fetchDeviceStates();
+// });
 
 // Button event listeners
 fanToggleButton.addEventListener("click", toggleFan);
@@ -2310,6 +2369,8 @@ document.getElementById('heatWarningButton').addEventListener('click', () => {
     }
 });
 function updateTemperatureVisibility() {
+    if (!initialDelayPassed) return;
+
     const tempValue = parseFloat(document.getElementById('temperature').textContent);
     if (thermometer) {
         if (tempValue > warningThresholds.tempHigh) {
@@ -2358,6 +2419,9 @@ document.getElementById('co2WarningButton').addEventListener('click', () => {
     }
 });
 function updateCloudVisibility() {
+
+    if (!initialDelayPassed) return;
+
     const co2Value = parseFloat(document.getElementById('co2').textContent);
     if (cloud) {
         if (co2Value > warningThresholds.co2High) {
@@ -2396,6 +2460,9 @@ document.getElementById('moistureWarningButton').addEventListener('click', () =>
 });
 
 function updateMoistHighVisibility() {
+
+    if (!initialDelayPassed) return;
+
     const moistureValue = parseFloat(document.getElementById('moisture').textContent);
     if (moistHigh) {
         if (moistureValue > warningThresholds.moistureHigh) {
