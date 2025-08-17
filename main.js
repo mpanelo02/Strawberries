@@ -1417,7 +1417,7 @@ window.addEventListener( "pointermove", onPointerMove );
 
 function animate() {
   controls.maxDistance = 45;
-  controls.minDistance = 5;
+  controls.minDistance = 11;
   controls.minPolarAngle = THREE.MathUtils.degToRad(35);
   controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
   controls.minAzimuthAngle = THREE.MathUtils.degToRad(5);
