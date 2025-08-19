@@ -1529,7 +1529,7 @@ async function fetchDeviceStates() {
     updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Man");
     
     // Set initial visibility of control buttons
-    // toggleControlButtonsVisibility(deviceStates.autobot === "ON");
+    toggleControlButtonsVisibility(deviceStates.autobot === "ON");
     
     // Update actual device states
     isFanOn = deviceStates.fan === "ON";
@@ -1558,6 +1558,20 @@ window.addEventListener('beforeunload', () => {
   stopLightScheduleCheck();
 });
 
+// Helper function to toggle control buttons visibility
+function toggleControlButtonsVisibility(hideButtons) {
+    if (pumpToggleButton && plantLightToggleButton) {
+        if (hideButtons) {
+            pumpToggleButton.style.display = 'none';
+            plantLightToggleButton.style.display = 'none';
+        } else {
+            pumpToggleButton.style.display = '';
+            plantLightToggleButton.style.display = '';
+        }
+    }
+}
+
+
 const autobotToggleButton = document.getElementById("autobotToggleButton");
 let autobotInterval = null;
 let lightScheduleInterval = null;
@@ -1572,15 +1586,18 @@ async function toggleAutobot() {
     deviceStates.autobot = newState;
     updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Man");
     
+    // Toggle control buttons visibility
+    toggleControlButtonsVisibility(newState === "ON");
+    
     if (newState === "ON") {
       startAutobotInterval();
       startLightScheduleCheck();
-      // Add any autobot activation logic here
+      
       console.log("Autobot activated");
     } else {
       stopAutobotInterval();
       stopLightScheduleCheck();
-      // Add any autobot deactivation logic here
+      
       console.log("Autobot deactivated");
     }
   } catch (err) {
@@ -2285,51 +2302,51 @@ cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => 
   cameraModal.classList.add('hidden');
 });
 
-const hideShowToggleButton = document.getElementById("hide-showToggleButton");
-let isUIVisible = true;
+// const hideShowToggleButton = document.getElementById("hide-showToggleButton");
+// let isUIVisible = true;
 
-hideShowToggleButton.addEventListener("click", () => {
-    isUIVisible = !isUIVisible;
+// hideShowToggleButton.addEventListener("click", () => {
+//     isUIVisible = !isUIVisible;
     
-    // Update button text
-    hideShowToggleButton.textContent = isUIVisible ? '🙈 Hide' : '👀 Show';
+//     // Update button text
+//     hideShowToggleButton.textContent = isUIVisible ? '🙈 Hide' : '👀 Show';
 
-    // Toggle all UI elements
-    const allUIElements = [
-        ...dataContainers,
-        ...controlButtons
-    ].filter(element => element !== null);
+//     // Toggle all UI elements
+//     const allUIElements = [
+//         ...dataContainers,
+//         ...controlButtons
+//     ].filter(element => element !== null);
 
-    allUIElements.forEach(element => {
-        element.style.display = isUIVisible ? '' : 'none';
-    });
-});
+//     allUIElements.forEach(element => {
+//         element.style.display = isUIVisible ? '' : 'none';
+//     });
+// });
 
 
-const dataContainers = [
-    document.getElementById('vantaa-date-container'),
-    document.getElementById('vantaa-time-container'),
-    document.getElementById('temperature-container'),
-    document.getElementById('humidity-container'),
-    document.getElementById('co2-container'),
-    document.getElementById('atmosphericPress-container'),
-    document.getElementById('moisture-container'),
-    document.getElementById('soilElectroConductivity-container'),
-    document.getElementById('poreElectroConductivity-container')
-].filter(Boolean); // This removes any null elements
+// const dataContainers = [
+//     document.getElementById('vantaa-date-container'),
+//     document.getElementById('vantaa-time-container'),
+//     document.getElementById('temperature-container'),
+//     document.getElementById('humidity-container'),
+//     document.getElementById('co2-container'),
+//     document.getElementById('atmosphericPress-container'),
+//     document.getElementById('moisture-container'),
+//     document.getElementById('soilElectroConductivity-container'),
+//     document.getElementById('poreElectroConductivity-container')
+// ].filter(Boolean); // This removes any null elements
 
-const controlButtons = [
-    document.getElementById("fanToggleButton"),
-    document.getElementById("pumpToggleButton"),
-    document.getElementById("plantLightToggleButton"),
-    document.getElementById("soundToggleButton"),
-    document.getElementById("sunToggleButton"),
-    document.getElementById("cameraToggleButton"),
-    document.getElementById("graphDataButton"),
-    document.getElementById("downloadToggleButton"),
-    document.getElementById("settingsButton"),
-    document.getElementById("autobotToggleButton")
-].filter(Boolean); // This removes any null elements
+// const controlButtons = [
+//     document.getElementById("fanToggleButton"),
+//     document.getElementById("pumpToggleButton"),
+//     document.getElementById("plantLightToggleButton"),
+//     document.getElementById("soundToggleButton"),
+//     document.getElementById("sunToggleButton"),
+//     document.getElementById("cameraToggleButton"),
+//     document.getElementById("graphDataButton"),
+//     document.getElementById("downloadToggleButton"),
+//     document.getElementById("settingsButton"),
+//     document.getElementById("autobotToggleButton")
+// ].filter(Boolean); // This removes any null elements
 
 
 enterButton.addEventListener("click", () => {

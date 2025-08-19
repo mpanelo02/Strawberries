@@ -989,7 +989,7 @@
         padding: 2px 4px;
     }
 
-    .hide-showPin {
+    /* .hide-showPin {
         display: inline-block !important;
         position: fixed;
         top: 10px;
@@ -997,7 +997,7 @@
         font-size: 16px;
         font-weight: bold;
         color: black;
-        background-color: #be98e4; /* Light purple background */
+        background-color: #be98e4;
         border: 2px solid #a869e6;
         padding: 2px 10px;
         border-radius: 10px;
@@ -1006,20 +1006,20 @@
         cursor: pointer;
         transition: all 0.3s ease;
         text-align: right;
-    }
+    } */
 
-    .hide-showPin:hover {
+    /* .hide-showPin:hover {
         background-color: #a869e6;
         color: white;
-    }
+    } */
     .datePin {
         font-size: 16px;
-        top: 50px;
+        top: 10px;
         left: 10px;
     }
     .timePin {
         font-size: 16px;
-        top: 75px;
+        top: 35px;
         left: 10px;
     }
     .tempPin {
