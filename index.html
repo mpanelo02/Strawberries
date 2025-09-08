@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- <link rel="icon" type="image/jpg" href="UFL.jpg"> -->
     <link rel="icon" type="image/jpg" href="Mario.gif">
     <title>Urban Farm Lab</title>
@@ -46,7 +47,14 @@
     <div class="loading-screen" id="loadingScreen">
         <button class="enter-button">Enter FarmLab!</button>
     </div>
+
+    <!-- Button Sound Effect -->
+    <audio id="buttonSound" preload="auto">
+        <source src="FarmLabButton.mp3" type="audio/mpeg">
+    </audio>
     
+    <!-- Pop-up Modals -->
+    <div class="modal-bg-overlay hidden"></div> 
     <div class="modal hidden">
         <div class="modal-wrapper">
             <div class="modal-header">
@@ -214,7 +222,7 @@
 
         <!-- Buttons -->
 
-        <button id="hide-showToggleButton" class="hide-showPin">🙈 Hide</button>
+        <!-- <button id="hide-showToggleButton" class="hide-showPin">🙈 Hide</button> -->
 
         
         <button id="soundToggleButton" class="soundPin">🔊</button>

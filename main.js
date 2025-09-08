@@ -15,6 +15,11 @@ const sizes = {
     height: window.innerHeight
 };
 
+// Audio Variables for Button Click Sound
+let buttonSound = null;
+let isAudioLoaded = false;
+
+
 // Time Variables
 let lightSchedule = {
   startTime: { hours: 8, minutes: 10 }, // Default start time 8:10 AM
@@ -378,7 +383,7 @@ const modalContent = {
     },
     Plate01: {
         title: "Contact Person",
-        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. <br><br>NOTE: For more information about Mark, visit the link above.",
+        content: "Mark Johnson Panelo is a CIC program master's student at Metropolia University of Applied Sciences. He is currently working on the Digital Twin project for the UrbanFarmLab. For more information about Mark, visit the link above.",
         link:"https://www.linkedin.com/in/mark-johnson-panelo-82030a325",
         image: "meCartoon.jpg",
     },
@@ -391,6 +396,7 @@ const modalContent = {
 };
 
 const modal = document.querySelector(".modal");
+const modalbgOverlay = document.querySelector(".modal-bg-overlay");
 const modalTitle = document.querySelector(".modal-title");
 const modalProjectDescription = document.querySelector(".modal-project-description");
 const modalExitButton = document.querySelector(".modal-exit-button");
@@ -398,6 +404,7 @@ const modalVisitButton = document.querySelector(".modal-visit-button");
 
 
 function showModal(id) {
+    playButtonSound();
     // isModalOpen = true;
     const content = modalContent[id];
     if (content) {
@@ -443,6 +450,7 @@ function showModal(id) {
             }
 
             modal.classList.remove("hidden");
+            modalbgOverlay.classList.remove("hidden");
         }
     }
 }
@@ -451,9 +459,13 @@ function showModal(id) {
 function hideModal(){
     // isModalOpen = false;
     modal.classList.toggle("hidden");
+    modalbgOverlay.classList.add("hidden");
 }
 
-modalExitButton.addEventListener("click", hideModal);
+modalExitButton.addEventListener("click", function () {
+    playButtonSound();
+    hideModal();
+});
 
 // Time configuration functionality
 const settingsButton = document.getElementById("settingsButton");
@@ -678,13 +690,19 @@ async function saveSettings() {
 }
 
 // Event listeners
-settingsButton.addEventListener("click", openSettingsModal);
+settingsButton.addEventListener("click", function() {
+    playButtonSound();
+    openSettingsModal();
+});
 // settingsCloseButton.addEventListener("click", closeSettingsModal);
 settingsCloseButton.addEventListener("click", () => {
-    // isModalOpen = false;
+    playButtonSound();
     closeSettingsModal();
 });
-saveSettingsButton.addEventListener("click", saveSettings);
+saveSettingsButton.addEventListener("click", () => {
+    playButtonSound();
+    saveSettings();
+});
 
 // Raycaster
 let intersectObject = "";
@@ -719,19 +737,6 @@ manager.onLoad = function () {
   animateObjectsGrowth();
 };
 
-enterButton.addEventListener("click", () => {
-  gsap.to(loadingScreen, {
-    opacity: 0,
-    duration: 2,
-    onComplete: () => {
-      loadingScreen.remove();
-      document.getElementById("mainContent").style.display = "block";
-    },
-  });
-  video.muted = false;
-  video.volume = 0.2;
-  video.play();
-});
 
 let exhaustFan = null;
 let clockHandShort = null;
@@ -1338,6 +1343,34 @@ function animateObjectsGrowth() {
     }
 }
 
+function initAudio() {
+    buttonSound = document.getElementById('buttonSound');
+
+    // Set volume levels (0.0 to 1.0)
+    buttonSound.volume = 0.3; // Adjust as needed
+    
+    buttonSound.addEventListener('canplaythrough', () => {
+        isAudioLoaded = true;
+    });
+    
+    buttonSound.addEventListener('error', () => {
+        console.error("Error loading audio file");
+    });
+    
+    // Preload the audio
+    buttonSound.load();
+}
+
+// Add this function to play the sound
+function playButtonSound() {
+    if (isAudioLoaded && buttonSound) {
+        buttonSound.currentTime = 0; // Reset to start
+        buttonSound.play().catch(e => {
+            console.log("Audio play failed:", e);
+        });
+    }
+}
+
 function onResize() {
     sizes.width = window.innerWidth;
     sizes.height = window.innerHeight;
@@ -1411,6 +1444,10 @@ function onPointerMove(event) {
     intersectObject = "";
 }
 
+modalbgOverlay.addEventListener("click", function() {
+  playButtonSound();
+    hideModal();
+});
 window.addEventListener("resize", onResize);
 window.addEventListener("click", onClick);
 window.addEventListener( "pointermove", onPointerMove );
@@ -1774,17 +1811,18 @@ async function runPumpForDuration(durationSeconds) {
 }
 
 // Add this event listener with your other event listeners
-autobotToggleButton.addEventListener("click", toggleAutobot);
+autobotToggleButton.addEventListener("click", function() {
+  playButtonSound();
+    toggleAutobot();
+});
 
 // Make sure to call fetchDeviceStates when the page loads
-// document.addEventListener('DOMContentLoaded', () => {
-//     fetchSettings();
-//     fetchDeviceStates();
-// });
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchSettings();
     fetchDeviceStates();
     fetchWarningThresholds(); // Add this line
+    initAudio(); // Initialize audio
 });
 
 // Set up periodic refresh every 5 seconds
@@ -1932,20 +1970,26 @@ async function updateDeviceStateOnServer(device, state) {
   return response.json();
 }
 
-// Call fetchDeviceStates when the page loads
-// document.addEventListener('DOMContentLoaded', () => {
-//   fetchDeviceStates();
-// });
-
 // Button event listeners
-fanToggleButton.addEventListener("click", toggleFan);
-plantLightToggleButton.addEventListener("click", togglePlantLight);
-pumpToggleButton.addEventListener("click", togglePump);
+fanToggleButton.addEventListener("click", function() {
+  playButtonSound();
+  toggleFan();
+});
+plantLightToggleButton.addEventListener("click", function() {
+  playButtonSound();
+  togglePlantLight();
+});
+pumpToggleButton.addEventListener("click", function() {
+  playButtonSound();
+  togglePump();
+});
 
 // Sound toggle
 const soundToggleButton = document.getElementById("soundToggleButton");
 let isSoundOn = true;
 soundToggleButton.addEventListener("click", () => {
+  playButtonSound();
+
   isSoundOn = !isSoundOn;
   soundToggleButton.textContent = isSoundOn ? '🔊' : '🔇';
   video.muted = !isSoundOn;
@@ -1956,6 +2000,7 @@ const sunToggleButton = document.getElementById('sunToggleButton');
 let isBright = true;
 
 sunToggleButton.addEventListener('click', () => {
+  playButtonSound();
   isBright = !isBright;
   sunToggleButton.textContent = isBright ? '🌞' : '🌚';
 
@@ -2003,6 +2048,7 @@ const graphDataDropdown = document.getElementById("graphDataDropdown");
 
 // Toggle dropdown visibility
 graphDataButton.addEventListener("click", () => {
+    playButtonSound();
     graphDataDropdown.classList.toggle("hidden");
 });
 
@@ -2017,6 +2063,7 @@ graphDataDropdown.addEventListener("change", (event) => {
 
 // Close chart button
 closeChartButton.addEventListener("click", () => {
+    playButtonSound();
     chartContainer.classList.add("hidden");
 });
 
@@ -2128,6 +2175,7 @@ const downloadDataDropdown = document.getElementById("downloadDataDropdown");
 
 // Toggle dropdown visibility
 downloadToggleButton.addEventListener("click", () => {
+    playButtonSound();
     downloadDataDropdown.classList.toggle("hidden");
 });
 
@@ -2257,6 +2305,7 @@ function formatCurrentTime() {
 }
 
 cameraToggleButton.addEventListener("click", async () => {
+  playButtonSound();
   // isModalOpen = true;
   try {
     document.getElementById('camera-timestamp').textContent = formatCurrentTime();
@@ -2298,6 +2347,7 @@ cameraToggleButton.addEventListener("click", async () => {
 });
 
 cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => {
+  playButtonSound();
   // isModalOpen = false;
   cameraModal.classList.add('hidden');
 });
@@ -2350,6 +2400,8 @@ cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => 
 
 
 enterButton.addEventListener("click", () => {
+    playButtonSound();
+
     gsap.to(loadingScreen, {
         opacity: 0,
         duration: 1,
@@ -2372,6 +2424,7 @@ enterButton.addEventListener("click", () => {
 //Warning Alert, Message and Advisory
 
 document.getElementById('heatWarningButton').addEventListener('click', () => {
+  playButtonSound();
     const tempValue = parseFloat(document.getElementById('temperature').textContent);
     if (tempValue > warningThresholds.tempHigh) {
         showWarning(
@@ -2407,6 +2460,7 @@ function updateTemperatureVisibility() {
 }
 
 document.getElementById('humidWarningButton').addEventListener('click', () => {
+  playButtonSound();
     const humidValue = parseFloat(document.getElementById('humidity').textContent);
     if (humidValue > warningThresholds.humidHigh) {
         showWarning(
@@ -2422,6 +2476,7 @@ document.getElementById('humidWarningButton').addEventListener('click', () => {
 });
 
 document.getElementById('co2WarningButton').addEventListener('click', () => {
+  playButtonSound();
     const co2Value = parseFloat(document.getElementById('co2').textContent);
     if (co2Value > warningThresholds.co2High) {
         showWarning(
@@ -2462,6 +2517,7 @@ function updateCloudVisibility() {
 }
 
 document.getElementById('moistureWarningButton').addEventListener('click', () => {
+  playButtonSound();
     const moistureValue = parseFloat(document.getElementById('moisture').textContent);
     if (moistureValue > warningThresholds.moistureHigh) {
         showWarning(
@@ -2523,6 +2579,7 @@ function showWarning(title, message) {
     
     // Close button functionality
     document.querySelector('.warning-close-button').addEventListener('click', () => {
+        playButtonSound();
         // isModalOpen = false;
         warningModal.classList.add('hidden');
     }, { once: true }); // The event listener will be removed after first click

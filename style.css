@@ -140,6 +140,17 @@
 
 
 /* Modal */
+.modal-bg-overlay {
+  z-index: 750;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
 .modal {
     z-index: 999;
     position: absolute ;
@@ -155,7 +166,7 @@
 }
 
 .modal-wrapper{
-    padding: 12px
+    padding: 5px
 }
 
 .modal-header{
@@ -163,6 +174,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #fff;
+    margin-bottom: 12px;
 }
 
 .modal-exit-button {
@@ -182,13 +196,38 @@
 
 .modal-image-container {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .modal-image-container img {
     border-radius: 5%;
     border: 3px solid #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.modal-visit-button {
+  background: #fff;
+  border: 2px solid #fff;
+  color: #be98e4;
+  padding: 4px 0px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+}
+
+.modal-visit-button:hover {
+  background: #be98e4;
+  border: 2px solid #fff;
+  color: #fff;
+  cursor: pointer;
 }
 
 /* For Plate01 */
