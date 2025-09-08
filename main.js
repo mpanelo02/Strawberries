@@ -1347,7 +1347,7 @@ function initAudio() {
     buttonSound = document.getElementById('buttonSound');
 
     // Set volume levels (0.0 to 1.0)
-    buttonSound.volume = 0.4; // Adjust as needed
+    buttonSound.volume = 0.6; // Adjust as needed
     
     buttonSound.addEventListener('canplaythrough', () => {
         isAudioLoaded = true;
