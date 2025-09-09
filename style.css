@@ -114,9 +114,18 @@
   align-items: center;
   justify-content: center;
   border: 12px solid white;
-  z-index: 10;
+  z-index: 1000;
   pointer-events: all;
-  transition: opacity 0.5s ease;
+  /* transition: opacity 0.5s ease; */
+}
+
+.loading-text {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 36px;
 }
 
 .enter-button {
@@ -129,13 +138,28 @@
   background: #be98e4;
   border: 3px solid white;
   padding: 8px 20px;
-  opacity: 1;
+  opacity: 0;
 }
 
 .enter-button:hover {
   cursor: pointer;
   background-color: #fff;
   color: #be98e4;
+}
+
+.instructions {
+  z-index: 1000;
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 26px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 

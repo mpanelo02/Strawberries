@@ -45,6 +45,9 @@ const loginScreen = document.getElementById('loginScreen');
 const loginForm = document.getElementById('loginForm');
 const loginError = document.getElementById('loginError');
 const loadingScreen = document.getElementById('loadingScreen');
+const enterButton = document.querySelector(".enter-button");
+const loadingText = document.querySelector(".loading-text");
+const instructions = document.querySelector(".instructions");
 
 // Hardcoded credentials (for demo only - in production use secure authentication)
 const validCredentials = {
@@ -723,18 +726,50 @@ const intersectObjectsNames = [
 
 // Loading screen and loading manager
 // const loadingScreen = document.getElementById("loadingScreen");
-const enterButton = document.querySelector(".enter-button");
 
 const manager = new THREE.LoadingManager();
 
-manager.onLoad = function () {
-  const t1 = gsap.timeline();
+// manager.onLoad = function () {
+//   const t1 = gsap.timeline();
 
-  t1.to(enterButton, {
-    opacity: 1,
-    duration: 0,
+//   t1.to(enterButton, {
+//     opacity: 1,
+//     duration: 0,
+//   });
+//   animateObjectsGrowth();
+// };
+
+// Hide loading text after 2 seconds and show welcome button
+setTimeout(() => {
+  gsap.to(loadingText, {
+    opacity: 0,
+    duration: 0.5,
+    onComplete: () => {
+      loadingText.style.display = 'none';
+      
+      // Show the welcome button after loading text disappears
+      gsap.to(enterButton, {
+        opacity: 1,
+        duration: 1,
+        delay: 0.3
+      });
+    }
   });
-  animateObjectsGrowth();
+}, 8000);
+
+// Update the manager.onLoad function
+manager.onLoad = function () {
+  // If models load before the 2-second timeout, ensure the button is shown
+  if (loadingText.style.display !== 'none') {
+    // Loading text is still visible, so we'll let the timeout handle the transition
+    return;
+  }
+  
+  // If loading text is already hidden, show the button immediately
+  gsap.to(enterButton, {
+    opacity: 1,
+    duration: 1
+  });
 };
 
 
