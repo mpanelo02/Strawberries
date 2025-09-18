@@ -816,6 +816,7 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
   video.loop = true;
   video.playsInline = true;
   video.autoplay = true;
+  video.muted = true;
   video.volume = 0.2;
   video.load();
 
@@ -1598,7 +1599,7 @@ async function fetchDeviceStates() {
     updateButtonState(fanToggleButton, deviceStates.fan === "ON", "🌀ON", "🥵OFF");
     updateButtonState(plantLightToggleButton, deviceStates.plantLight === "ON", "💡ON", "🕯️OFF");
     updateButtonState(pumpToggleButton, deviceStates.pump === "ON", "🌧️ON", "🌵OFF");
-    updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Man");
+    updateButtonState(autobotToggleButton, deviceStates.autobot === "ON", "🤖Auto", "👆Manual");
     
     // Set initial visibility of control buttons
     toggleControlButtonsVisibility(deviceStates.autobot === "ON");
@@ -1656,7 +1657,7 @@ async function toggleAutobot() {
   try {
     await updateDeviceStateOnServer('autobot', newState);
     deviceStates.autobot = newState;
-    updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Man");
+    updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Manual");
     
     // Toggle control buttons visibility
     toggleControlButtonsVisibility(newState === "ON");
@@ -2021,7 +2022,7 @@ pumpToggleButton.addEventListener("click", function() {
 
 // Sound toggle
 const soundToggleButton = document.getElementById("soundToggleButton");
-let isSoundOn = true;
+let isSoundOn = false;
 soundToggleButton.addEventListener("click", () => {
   playButtonSound();
 
@@ -2451,7 +2452,7 @@ enterButton.addEventListener("click", () => {
             }, 500);
         },
     });
-    video.muted = false;
+    video.muted = true;
     video.volume = 0.2;
     video.play();
 });
