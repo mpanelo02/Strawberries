@@ -752,10 +752,10 @@ setTimeout(() => {
         opacity: 1,
         duration: 1,
         delay: 0.3
-      },5000);
+      });
     }
   });
-});
+},8000);
 
 // Update the manager.onLoad function
 manager.onLoad = function () {
@@ -2452,7 +2452,7 @@ enterButton.addEventListener("click", () => {
             }, 500);
         },
     });
-    video.muted = true;
+    video.muted = false;
     video.load();
     video.play();
 });
