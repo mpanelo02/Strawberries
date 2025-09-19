@@ -752,10 +752,10 @@ setTimeout(() => {
         opacity: 1,
         duration: 1,
         delay: 0.3
-      });
+      },5000);
     }
   });
-}, 8000);
+});
 
 // Update the manager.onLoad function
 manager.onLoad = function () {
@@ -818,7 +818,7 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
   video.autoplay = true;
   video.muted = true;
   video.volume = 0.2;
-  video.load();
+  // video.load();
 
   const videoTexture = new THREE.VideoTexture(video);
   videoTexture.flipY = false;
@@ -2022,7 +2022,7 @@ pumpToggleButton.addEventListener("click", function() {
 
 // Sound toggle
 const soundToggleButton = document.getElementById("soundToggleButton");
-let isSoundOn = false;
+let isSoundOn = true;
 soundToggleButton.addEventListener("click", () => {
   playButtonSound();
 
@@ -2453,7 +2453,7 @@ enterButton.addEventListener("click", () => {
         },
     });
     video.muted = true;
-    video.volume = 0.2;
+    video.load();
     video.play();
 });
 
