@@ -322,9 +322,9 @@ async function getData() {
     }
 }
 
-// Call immediately and then every 60 seconds
+// Call immediately and then every 30 seconds
 getData();
-setInterval(getData, 60000); // 60000 ms = 60 seconds data fetch interval
+setInterval(getData, 30000); // 30000 ms = 30 seconds data fetch interval
 
 async function fetchWarningThresholds() {
     try {
@@ -755,7 +755,7 @@ setTimeout(() => {
       });
     }
   });
-},8000);
+}, 8000);
 
 // Update the manager.onLoad function
 manager.onLoad = function () {
@@ -940,9 +940,9 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
       child.receiveShadow = true;
     }
 
-    if (intersectObjectsNames.includes(child.name)) {
-        intersectObjects.push(child);
-    }
+    // if (intersectObjectsNames.includes(child.name)) {
+    //     intersectObjects.push(child);
+    // }
 
     // HIDE specific objects
     if (["ColdWind1", "ColdWind2", "WaterDrop01", "WaterDrop02"].includes(child.name)) {
@@ -984,10 +984,10 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
         clockHandLong.scale.set(0, 0, 0); // Start scaled down
     }
 
-    if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-    }
+    // if (child.isMesh) {
+    //     child.castShadow = true;
+    //     child.receiveShadow = true;
+    // }
   });
   scene.add( glb.scene );
 
@@ -1134,8 +1134,8 @@ rectLight7.intensity = 0;
 rectLight7.visible = false;
 scene.add(rectLight7);
 
-const rectLightHelper7 = new RectAreaLightHelper(rectLight7);
-rectLight7.add(rectLightHelper7);
+// const rectLightHelper7 = new RectAreaLightHelper(rectLight7);
+// rectLight7.add(rectLightHelper7);
 
 const rectLight8 = new THREE.RectAreaLight(0xffffff, intensity2, width2, height2);
 rectLight8.position.set(-3.65, 2.57, 5.2);
@@ -1145,8 +1145,8 @@ rectLight8.intensity = 0;
 rectLight8.visible = false;
 scene.add(rectLight8);
 
-const rectLightHelper8 = new RectAreaLightHelper(rectLight8);
-rectLight8.add(rectLightHelper8);
+// const rectLightHelper8 = new RectAreaLightHelper(rectLight8);
+// rectLight8.add(rectLightHelper8);
 
 const sun = new THREE.DirectionalLight( 0xFFFFFF );
 sun.castShadow = true;
@@ -1637,9 +1637,11 @@ function toggleControlButtonsVisibility(hideButtons) {
         if (hideButtons) {
             pumpToggleButton.style.display = 'none';
             plantLightToggleButton.style.display = 'none';
+            fanToggleButton.style.display = 'none';
         } else {
             pumpToggleButton.style.display = '';
             plantLightToggleButton.style.display = '';
+            fanToggleButton.style.display = '';
         }
     }
 }
@@ -1681,7 +1683,7 @@ async function toggleAutobot() {
 function startLightScheduleCheck() {
   // Check immediately and then every minute
   checkLightSchedule();
-  lightScheduleInterval = setInterval(checkLightSchedule, 60000); // Check every minute
+  lightScheduleInterval = setInterval(checkLightSchedule, 30000); // Check every 30 seconds
 }
 
 function stopLightScheduleCheck() {
@@ -2078,6 +2080,30 @@ rectLight8.intensity = isBright ? 0 : 1;
 rectLight7.visible = !isBright;
 rectLight8.visible = !isBright;
 
+// // Other Projects
+// const otherProjectsButton = document.getElementById("otherProjectsButton");
+const otherProjectsDropdown = document.getElementById("otherProjectsDropdown");
+
+// // Toggle dropdown visibility
+// otherProjectsButton.addEventListener("click", () => {
+//     playButtonSound();
+//     otherProjectsDropdown.classList.toggle("hidden");
+// });
+
+// // Other Projects dropdown functionality
+otherProjectsDropdown.addEventListener("change", (event) => {
+    playButtonSound();
+    const selectedValue = event.target.value;
+    if (selectedValue) {
+        // Open the selected link in a new tab
+        window.open(selectedValue, '_blank');
+        // Close the dropdown
+        // otherProjectsDropdown.classList.add("hidden");
+        // Reset the dropdown to the default option
+        otherProjectsDropdown.value = "";
+    }
+});
+
 // Chart functionality
 const graphDataButton = document.getElementById("graphDataButton");
 const graphDataDropdown = document.getElementById("graphDataDropdown");
@@ -2225,8 +2251,8 @@ downloadDataDropdown.addEventListener("change", (event) => {
 });
 
 function downloadSelectedData(dataType) {
-    downloadToggleButton.classList.add('saving');
-    downloadToggleButton.textContent = 'Saving...';
+    // downloadToggleButton.classList.add('saving');
+    // downloadToggleButton.textContent = 'Saving...';
 
     const now = new Date();
     const timestamp = now.toISOString().replace(/[:.]/g, "-").split('.')[0] + 'Z';
@@ -2237,8 +2263,8 @@ function downloadSelectedData(dataType) {
     
     if (!selectedData || selectedData.length === 0) {
         alert('No data available for download');
-        downloadToggleButton.classList.remove('saving');
-        downloadToggleButton.textContent = '💾 History';
+        // downloadToggleButton.classList.remove('saving');
+        downloadToggleButton.textContent = '💾';
         return;
     }
 
@@ -2263,8 +2289,8 @@ function downloadSelectedData(dataType) {
     XLSX.writeFile(wb, filename);
 
     setTimeout(() => {
-        downloadToggleButton.classList.remove('saving');
-        downloadToggleButton.textContent = '💾 History';
+        // downloadToggleButton.classList.remove('saving');
+        downloadToggleButton.textContent = '💾';
     }, 2000);
 }
 
@@ -2453,7 +2479,7 @@ enterButton.addEventListener("click", () => {
         },
     });
     video.muted = false;
-    video.load();
+    // video.load();
     video.play();
 });
 

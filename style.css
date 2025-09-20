@@ -254,21 +254,10 @@
   cursor: pointer;
 }
 
-/* For Plate01 */
-.plate01-style {
+/* For Display */
+.plate01-style, .plate02-style, .pump-style {
     max-width: 600px;
 }
-
-/* For Plate02 */
-.plate02-style {
-    max-width: 600px;
-}
-
-/* For Pump */
-.pump-style {
-    max-width: 600px;
-}
-
 
 /* Warning Modal */
 .warning-modal {
@@ -457,43 +446,38 @@
   font-size: 16px;
 }
 
-
 /* Text Display */
 
-.datePin {
+.topWhite {
     position: fixed;
-    top: 20px;
-    left: 30px;
+    top: 0px;
+    width: 100%;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 9999;
+}
+
+.datePin, .timePin, .tempPin, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin {
+    position: fixed;
+    left: 20px;
     font-size: 20px;
     color: black;
     font-weight: bold;
     z-index: 9999;
     font-family: Arial, sans-serif;
     text-align: right;
+}
+
+.datePin {
+    top: 60px;
 }
 
 .timePin {
-    position: fixed;
-    top: 50px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 90px;
 }
 
 .tempPin {
-    position: fixed;
-    top: 95px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 135px;
 }
 .heat-warning {
     background: none;
@@ -522,15 +506,7 @@
 }
 
 .humidPin {
-    position: fixed;
-    top: 145px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 185px;
 }
 .humid-warning {
     background: none;
@@ -559,15 +535,7 @@
 }
 
 .co2Pin {
-    position: fixed;
-    top: 195px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 235px;
 }
 .co2-warning {
     background: none;
@@ -596,27 +564,11 @@
 }
 
 .pressurePin {
-    position: fixed;
-    top: 245px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 285px;
 }
 
 .moistPin {
-    position: fixed;
-    top: 295px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 335px;
 }
 .moisture-warning {
     background: none;
@@ -645,127 +597,93 @@
 }
 
 .soilECPin {
-    position: fixed;
-    top: 345px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-    text-align: right;
+    top: 385px;
 }
 
 .poreECPin {
+    top: 435px;
+}
+
+.otherProjects-container { /* Drop Down display*/
     position: fixed;
-    top: 395px;
-    left: 30px;
-    font-size: 20px;
-    color: black;
-    font-weight: bold;
+    top: 3px;
+    left: 43%;
     z-index: 9999;
     font-family: Arial, sans-serif;
-    text-align: right;
+}
+
+#otherProjectsDropdown {
+    margin-top: 0px;
+    padding: 8px;
+    width: 190px;
+    font-size: 20px;
+    /* font-weight: bold; */
+    color: black;
+    background-color: transparent;
+    border: 2px solid transparent;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.hidden {
+    display: none;
 }
 
 /* Control Buttons */
 
+.soundPin, .sunPin, .settingsPin, .graphPin, .downloadPin {
+    position: fixed;
+    top: 0px;
+    font-size: 20px;
+    background-color: transparent;
+    border: 2px solid transparent;
+    padding: 3px 5px;
+    border-radius: 10px;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right; 
+}
+
 .soundPin {
-    position: fixed;
-    top: 20px;
-    right: 120px;
-    font-size: 20px;
-    color: black;
-    background-color: #be98e4;
-    border: 2px solid #a869e6;
-    padding: 5px 5px;
-    border-radius: 10px;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
+    right: 206px;
 }
-
-.soundPin:hover {
-    background-color: #a869e6;
-    color: white;
-}
-
 .sunPin {
-    position: fixed;
-    top: 20px;
-    right: 75px;
-    font-size: 20px;
-    color: black;
-    background-color: #be98e4;
-    border: 2px solid #a869e6;
-    padding: 5px 5px;
-    border-radius: 10px;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
+    right: 159px;
 }
-
-.sunPin:hover {
-    background-color: #a869e6;
-    color: white;
-}
-
-.settingsPin {
-    position: fixed;
-    top: 20px;
-    right: 30px;
-    font-size: 20px;
-    color: black;
-    background-color: #be98e4;
-    border: 2px solid #a869e6;
-    padding: 5px 5px;
-    border-radius: 10px;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.settingsPin:hover {
-    background-color: #a869e6;
-    color: white;
-}
-
-
-
 .graphPin {
-    position: fixed;
-    top: 80px;
-    right: 30px;
-    font-size: 15px;
-    font-weight: bold;
-    color: black;
-    background-color: #be98e4; /* Light purple background */
-    border: 2px solid #a869e6;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
+    right: 112px;
+}
+.downloadPin {
+    right: 65px;
+}
+.settingsPin {
+    right: 20px;
 }
 
-.graphPin:hover {
+.sunPin:hover, .soundPin:hover, .settingsPin:hover, #otherProjectsDropdown:hover{
+    background-color: #be98e4;
+    color: white;
+}
+
+
+.graphPin:hover, .downloadPin:hover, .pumpPin:hover, .bulbLedPin:hover, .fanPin:hover, .autobotPin:hover, .cameraPin:hover {
     background-color: #a869e6;
     color: white;
 }
 
 .graph-container { /* Drop Down display*/
     position: fixed;
-    top: 75px;
-    right: 135px;
+    top: 40px;
+    right: 20px;
     z-index: 9999;
     font-family: Arial, sans-serif;
 }
-
 
 #graphDataDropdown {
     margin-top: 5px;
@@ -832,28 +750,7 @@
     color: #ccc;
 }
 
-.downloadPin {
-    position: fixed;
-    top: 135px;
-    right: 30px;
-    font-size: 15px;
-    font-weight: bold;
-    color: black;
-    background-color: #be98e4; /* Light purple background */
-    border: 2px solid #a869e6;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.downloadPin:hover {
-    background-color: #a869e6;
-    color: white;
-}
+/* Download Dropdown */
 
 .downloadPin:active {
     transform: scale(0.95);
@@ -868,12 +765,11 @@
 
 .download-container { /* Drop Down display*/
     position: fixed;
-    top: 130px;
-    right: 135px;
+    top: 40px;
+    right: 20px;
     z-index: 9999;
     font-family: Arial, sans-serif;
 }
-
 
 #downloadDataDropdown {
     margin-top: 5px;
@@ -897,10 +793,11 @@
     display: none;
 }
 
-.fanPin {
+/* Control / Actuators */
+
+.fanPin, .bulbLedPin, .pumpPin, .autobotPin {
     position: fixed;
-    top: 190px;
-    right: 30px;
+    right: 20px;
     font-size: 20px;
     font-weight: bold;
     color: black;
@@ -913,62 +810,19 @@
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: right;
-}
-
-.fanPin:hover {
-    background-color: #a869e6;
-    color: white;
-}
-
-.bulbLedPin {
-    position: fixed;
-    top: 250px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #be98e4; /* Light purple background */
-    border: 2px solid #a869e6;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-.bulbLedPin:hover {
-    background-color: #a869e6;
-    color: white;
 }
 
 .pumpPin {
-    position: fixed;
-    top: 310px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #be98e4; /* Light purple background */
-    border: 2px solid #a869e6;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
+    top: 485px;
 }
-
-.pumpPin:hover {
-    background-color: #a869e6;
-    color: white;
+.bulbLedPin {
+    top: 540px;
 }
-
-.cameraPin:hover {
-    background-color: #a869e6;
-    color: white;
+.fanPin {
+    top: 595px;
+}
+.autobotPin {
+    top: 650px;
 }
 
 /* Add to your style.css */
@@ -1010,28 +864,6 @@
     cursor: wait;
 }
 
-.autobotPin {
-    position: fixed;
-    top: 650px;
-    right: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: #be98e4; /* Light purple background */
-    border: 2px solid #a869e6;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-.autobotPin:hover {
-    background-color: #a869e6;
-    color: white;
-}
-
 /* For Mobile Devices */
 
 @media (max-width: 600px) {
@@ -1040,115 +872,94 @@
     .enter-button {
         font-size: 25px;
     }
+
     .modal {
         max-width: 300px;
         font-size: 12px;
     }
-    .modal-header{
+    .modal-header, .datePin, .timePin, .tempPin, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin,
+    .soundPin, .sunPin, .settingsPin, .graphPin, .downloadPin, .pumpPin, .bulbLedPin, .fanPin, .setTimePin, .autobotPin, .cameraPin {
         font-size: 16px; 
+    }
+
+    .datePin, .timePin, .tempPin, .otherProjects-container, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin {
+        left: 10px;
     }
 
     .modal-exit-button {
         padding: 2px 4px;
     }
 
-    /* .hide-showPin {
-        display: inline-block !important;
+    .otherProjects-container { /* Drop Down display*/
         position: fixed;
-        top: 10px;
-        left: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        color: black;
-        background-color: #be98e4;
-        border: 2px solid #a869e6;
-        padding: 2px 10px;
-        border-radius: 10px;
-        font-family: Arial, sans-serif;
+        top: 2px;
+        /* right: 43%; */
         z-index: 9999;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: right;
-    } */
+        font-family: Arial, sans-serif;
 
-    /* .hide-showPin:hover {
-        background-color: #a869e6;
-        color: white;
-    } */
+    }
+
     .datePin {
-        font-size: 16px;
-        top: 10px;
-        left: 10px;
+        top: 50px;
     }
     .timePin {
-        font-size: 16px;
-        top: 35px;
-        left: 10px;
+        top: 75px;
     }
+
     .tempPin {
-        font-size: 16px;
         top: 475px;
-        left: 10px;
     }
     .humidPin {
-        font-size: 16px;
         top: 500px;
-        left: 10px;
     }
     .co2Pin {
-        font-size: 16px;
         top: 525px;
-        left: 10px;
     }
     .pressurePin {
-        font-size: 16px;
         top: 550px;
-        left: 10px;
     }
     .moistPin {
-        font-size: 16px;
         top: 575px;
-        left: 10px;
     }
     .soilECPin {
-        font-size: 16px;
         top: 600px;
-        left: 10px;
     }
     .poreECPin {
-        font-size: 16px;
         top: 625px;
-        left: 10px;
+    }
+
+    .settingsPin, .pumpPin, .bulbLedPin, .fanPin, .autobotPin, .cameraPin, .graph-container, .download-container {
+        right: 10px;
     }
 
     .soundPin {
-        font-size: 16px;
         padding: 2px 2px;
-        top: 10px;
-        right: 80px;
+        top: 0px;
+        right: 150px;
     }
     .sunPin {
-        font-size: 16px;
         padding: 2px 2px;
-        top: 10px;
+        top: 0px;
+        right: 115px;
+    }
+    .graphPin {
+        padding: 2px 2px;
+        top: 0px;
+        right: 80px;
+    }
+    .downloadPin {
+        padding: 2px 2px;
+        top: 0px;
         right: 45px;
     }
     .settingsPin {
-        font-size: 16px;
         padding: 2px 2px;
-        top: 10px;
-        right: 10px;
+        top: 0px;
     }
-    .graphPin {
-        font-size: 16px;
-        padding: 2px 8px;
-        top: 50px;
-        right: 10px;
-    }
+
     .graph-container { /* Drop Down display*/
         position: fixed;
-        top: 45px;
-        right: 110px;
+        top: 40px;
         z-index: 9999;
     }
     .chart-container {
@@ -1159,56 +970,38 @@
         width: 90%;
         height: 300px;
     }
-    .downloadPin {
-        font-size: 16px;
-        padding: 2px 8px;
-        top: 90px;
-        right: 10px;
-    }
     .download-container { /* Drop Down display*/
         position: fixed;
-        top: 85px;
-        right: 110px;
+        top:40px;
         z-index: 9999;
         font-family: Arial, sans-serif;
     }
     
     .pumpPin {
-        font-size: 16px;
         padding: 2px 8px;
         top: 470px;
-        right: 10px;
     }
     .bulbLedPin {
-        font-size: 16px;
         padding: 2px 8px;
         top: 507px;
-        right: 10px;
     }
     .fanPin {
-        font-size: 16px;
         padding: 2px 8px;
         top: 544px;
-        right: 10px;
     }
     .setTimePin {
-        font-size: 16px;
         padding: 2px 2px;
         top: 581px;
         right: 90px;
     }
     .autobotPin {
-        font-size: 16px;
         padding: 2px 8px;
         top: 581px;
-        right: 10px;
     }
 
     .cameraPin {
         position: fixed;
         top: 618px;
-        right: 10px;
-        font-size: 16px;
         font-weight: bold;
         color: black;
         background-color: #be98e4; /* Light purple background */
