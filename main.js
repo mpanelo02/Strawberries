@@ -724,20 +724,9 @@ const intersectObjectsNames = [
     "StrawBerries3",
 ];
 
-// Loading screen and loading manager
-// const loadingScreen = document.getElementById("loadingScreen");
 
 const manager = new THREE.LoadingManager();
 
-// manager.onLoad = function () {
-//   const t1 = gsap.timeline();
-
-//   t1.to(enterButton, {
-//     opacity: 1,
-//     duration: 0,
-//   });
-//   animateObjectsGrowth();
-// };
 
 // Hide loading text after 2 seconds and show welcome button
 setTimeout(() => {
@@ -815,10 +804,10 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
   video.crossOrigin = 'anonymous';
   video.loop = true;
   video.playsInline = true;
-  video.autoplay = true;
+  video.autoplay = false;
   video.muted = true;
   video.volume = 0.2;
-  // video.load();
+  video.load();
 
   const videoTexture = new THREE.VideoTexture(video);
   videoTexture.flipY = false;
@@ -928,7 +917,7 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
     if (child.name === "Screen") {
       child.material = new THREE.MeshBasicMaterial({ map: videoTexture });
       videoMesh = child;
-      video.play();
+      // video.play();
     }
 
     if (intersectObjectsNames.includes(child.name)) {
@@ -939,10 +928,6 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
       child.castShadow = true;
       child.receiveShadow = true;
     }
-
-    // if (intersectObjectsNames.includes(child.name)) {
-    //     intersectObjects.push(child);
-    // }
 
     // HIDE specific objects
     if (["ColdWind1", "ColdWind2", "WaterDrop01", "WaterDrop02"].includes(child.name)) {
@@ -984,10 +969,6 @@ loader.load( './FarmLab_WhiteRoom07a.glb', function ( glb ) {
         clockHandLong.scale.set(0, 0, 0); // Start scaled down
     }
 
-    // if (child.isMesh) {
-    //     child.castShadow = true;
-    //     child.receiveShadow = true;
-    // }
   });
   scene.add( glb.scene );
 
@@ -1431,10 +1412,6 @@ function onClick() {
 
 
 function onPointerMove(event) {
-    // if (isModalOpen) {
-    //     document.body.style.cursor = 'default';
-    //     return;
-    // }
 
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -1548,26 +1525,6 @@ function animate() {
 
 renderer.setAnimationLoop( animate );
 
-// Codes for Display of Time and Date
-function updateDateTime() {
-    const now = new Date();
-    const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = now.toLocaleDateString(undefined, optionsDate);
-
-    const formattedTime = now.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-
-    document.getElementById('vantaa-date').textContent = formattedDate;
-    document.getElementById('vantaa-clock').textContent = formattedTime;
-}
-
-updateDateTime();
-setInterval(updateDateTime, 1000);
-
-// Device control variables and functions
 let isFanOn = false;
 let isPumpOn = false;
 let isPlantLightOn = false;
@@ -1652,9 +1609,54 @@ let autobotInterval = null;
 let lightScheduleInterval = null;
 let isPumpRunning = false;
 
+// async function toggleAutobot() {
+//   const isAutobotOn = deviceStates.autobot === "ON";
+//   const newState = isAutobotOn ? "OFF" : "ON";
+  
+//   try {
+//     await updateDeviceStateOnServer('autobot', newState);
+//     deviceStates.autobot = newState;
+//     updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Manual");
+    
+//     // Toggle control buttons visibility
+//     toggleControlButtonsVisibility(newState === "ON");
+    
+//     if (newState === "ON") {
+//       startAutobotInterval();
+//       startLightScheduleCheck();
+      
+//       console.log("Autobot activated");
+//     } else {
+//       stopAutobotInterval();
+//       stopLightScheduleCheck();
+      
+//       console.log("Autobot deactivated");
+//     }
+//   } catch (err) {
+//     console.error("Error updating autobot state:", err);
+//   }
+// }
 async function toggleAutobot() {
   const isAutobotOn = deviceStates.autobot === "ON";
   const newState = isAutobotOn ? "OFF" : "ON";
+  
+  // Check if autobot is being turned ON and show warning if settings haven't been configured
+  if (newState === "ON") {
+    // Check if default settings are still in place (indicating they haven't been configured)
+    const isDefaultSettings = 
+      lightSchedule.startTime.hours === 8 && 
+      lightSchedule.startTime.minutes === 10 &&
+      lightSchedule.endTime.hours === 23 && 
+      lightSchedule.endTime.minutes === 50;
+    
+    if (isDefaultSettings) {
+      showWarning(
+        "⚠️ Configuration Required", 
+        "Please reconfigure the settings first before enabling Auto mode."
+      );
+      return; // Don't proceed with turning on autobot
+    }
+  }
   
   try {
     await updateDeviceStateOnServer('autobot', newState);
@@ -1667,18 +1669,17 @@ async function toggleAutobot() {
     if (newState === "ON") {
       startAutobotInterval();
       startLightScheduleCheck();
-      
       console.log("Autobot activated");
     } else {
       stopAutobotInterval();
       stopLightScheduleCheck();
-      
       console.log("Autobot deactivated");
     }
   } catch (err) {
     console.error("Error updating autobot state:", err);
   }
 }
+
 
 function startLightScheduleCheck() {
   // Check immediately and then every minute
@@ -1800,15 +1801,15 @@ async function checkPumpSchedule() {
   }
 }
 
-function formatTimeForLog(date) {
-  return date.toLocaleTimeString('en-US', {
-    hour12: true,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZone: 'Europe/Helsinki' // Adjust to your timezone if needed
-  });
-}
+// function formatTimeForLog(date) {
+//   return date.toLocaleTimeString('en-US', {
+//     hour12: true,
+//     hour: '2-digit',
+//     minute: '2-digit',
+//     second: '2-digit',
+//     timeZone: 'Europe/Helsinki' // Adjust to your timezone if needed
+//   });
+// }
 
 async function runPumpForDuration(durationSeconds) {
   if (isPumpRunning) return;
@@ -2083,12 +2084,6 @@ rectLight8.visible = !isBright;
 // // Other Projects
 // const otherProjectsButton = document.getElementById("otherProjectsButton");
 const otherProjectsDropdown = document.getElementById("otherProjectsDropdown");
-
-// // Toggle dropdown visibility
-// otherProjectsButton.addEventListener("click", () => {
-//     playButtonSound();
-//     otherProjectsDropdown.classList.toggle("hidden");
-// });
 
 // // Other Projects dropdown functionality
 otherProjectsDropdown.addEventListener("change", (event) => {
@@ -2414,52 +2409,6 @@ cameraModal.querySelector('.modal-exit-button').addEventListener('click', () => 
   cameraModal.classList.add('hidden');
 });
 
-// const hideShowToggleButton = document.getElementById("hide-showToggleButton");
-// let isUIVisible = true;
-
-// hideShowToggleButton.addEventListener("click", () => {
-//     isUIVisible = !isUIVisible;
-    
-//     // Update button text
-//     hideShowToggleButton.textContent = isUIVisible ? '🙈 Hide' : '👀 Show';
-
-//     // Toggle all UI elements
-//     const allUIElements = [
-//         ...dataContainers,
-//         ...controlButtons
-//     ].filter(element => element !== null);
-
-//     allUIElements.forEach(element => {
-//         element.style.display = isUIVisible ? '' : 'none';
-//     });
-// });
-
-
-// const dataContainers = [
-//     document.getElementById('vantaa-date-container'),
-//     document.getElementById('vantaa-time-container'),
-//     document.getElementById('temperature-container'),
-//     document.getElementById('humidity-container'),
-//     document.getElementById('co2-container'),
-//     document.getElementById('atmosphericPress-container'),
-//     document.getElementById('moisture-container'),
-//     document.getElementById('soilElectroConductivity-container'),
-//     document.getElementById('poreElectroConductivity-container')
-// ].filter(Boolean); // This removes any null elements
-
-// const controlButtons = [
-//     document.getElementById("fanToggleButton"),
-//     document.getElementById("pumpToggleButton"),
-//     document.getElementById("plantLightToggleButton"),
-//     document.getElementById("soundToggleButton"),
-//     document.getElementById("sunToggleButton"),
-//     document.getElementById("cameraToggleButton"),
-//     document.getElementById("graphDataButton"),
-//     document.getElementById("downloadToggleButton"),
-//     document.getElementById("settingsButton"),
-//     document.getElementById("autobotToggleButton")
-// ].filter(Boolean); // This removes any null elements
-
 
 enterButton.addEventListener("click", () => {
     playButtonSound();
@@ -2646,3 +2595,6 @@ function showWarning(title, message) {
         warningModal.classList.add('hidden');
     }, { once: true }); // The event listener will be removed after first click
 }
+
+// doglas
+// 

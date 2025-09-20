@@ -457,7 +457,7 @@
     z-index: 9999;
 }
 
-.datePin, .timePin, .tempPin, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin {
+.tempPin, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin {
     position: fixed;
     left: 20px;
     font-size: 20px;
@@ -468,16 +468,8 @@
     text-align: right;
 }
 
-.datePin {
-    top: 60px;
-}
-
-.timePin {
-    top: 90px;
-}
-
 .tempPin {
-    top: 135px;
+    top: 60px;
 }
 .heat-warning {
     background: none;
@@ -506,7 +498,7 @@
 }
 
 .humidPin {
-    top: 185px;
+    top: 130px;
 }
 .humid-warning {
     background: none;
@@ -535,7 +527,7 @@
 }
 
 .co2Pin {
-    top: 235px;
+    top: 200px;
 }
 .co2-warning {
     background: none;
@@ -564,11 +556,11 @@
 }
 
 .pressurePin {
-    top: 285px;
+    top: 270px;
 }
 
 .moistPin {
-    top: 335px;
+    top: 340px;
 }
 .moisture-warning {
     background: none;
@@ -597,11 +589,11 @@
 }
 
 .soilECPin {
-    top: 385px;
+    top: 410px;
 }
 
 .poreECPin {
-    top: 435px;
+    top: 480px;
 }
 
 .otherProjects-container { /* Drop Down display*/
@@ -877,12 +869,12 @@
         max-width: 300px;
         font-size: 12px;
     }
-    .modal-header, .datePin, .timePin, .tempPin, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin,
+    .modal-header, .tempPin, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin,
     .soundPin, .sunPin, .settingsPin, .graphPin, .downloadPin, .pumpPin, .bulbLedPin, .fanPin, .setTimePin, .autobotPin, .cameraPin {
         font-size: 16px; 
     }
 
-    .datePin, .timePin, .tempPin, .otherProjects-container, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin {
+    .tempPin, .otherProjects-container, .humidPin, .co2Pin, .pressurePin, .moistPin, .soilECPin, .poreECPin {
         left: 10px;
     }
 
@@ -897,13 +889,6 @@
         z-index: 9999;
         font-family: Arial, sans-serif;
 
-    }
-
-    .datePin {
-        top: 50px;
-    }
-    .timePin {
-        top: 75px;
     }
 
     .tempPin {
