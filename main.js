@@ -705,7 +705,7 @@ settingsButton.addEventListener("click", function() {
     // Check if autobot is ON
     if (deviceStates.autobot === "ON") {
         showWarning(
-            "🔒 Settings Locked", 
+            "⚠️ Settings Locked", 
             "Switch to Manual mode first to reconfigure settings."
         );
         return; // Exit the function without opening settings
