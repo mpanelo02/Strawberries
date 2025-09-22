@@ -693,8 +693,25 @@ async function saveSettings() {
 }
 
 // Event listeners
+// settingsButton.addEventListener("click", function() {
+//     playButtonSound();
+//     openSettingsModal();
+// });
+
+// Replace the existing settingsButton event listener with this:
 settingsButton.addEventListener("click", function() {
     playButtonSound();
+    
+    // Check if autobot is ON
+    if (deviceStates.autobot === "ON") {
+        showWarning(
+            "🔒 Settings Locked", 
+            "Switch to Manual mode first to reconfigure settings."
+        );
+        return; // Exit the function without opening settings
+    }
+    
+    // If autobot is OFF, proceed to open settings
     openSettingsModal();
 });
 // settingsCloseButton.addEventListener("click", closeSettingsModal);

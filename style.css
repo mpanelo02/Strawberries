@@ -663,6 +663,17 @@
     color: white;
 }
 
+.settingsPin:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settingsPin:disabled:hover {
+    background-color: transparent;
+    color: black;
+    border: 2px solid transparent;
+}
+
 
 .graphPin:hover, .downloadPin:hover, .pumpPin:hover, .bulbLedPin:hover, .fanPin:hover, .autobotPin:hover, .cameraPin:hover {
     background-color: #a869e6;
