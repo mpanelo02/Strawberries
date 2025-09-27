@@ -51,8 +51,8 @@ const instructions = document.querySelector(".instructions");
 
 // Hardcoded credentials (for demo only - in production use secure authentication)
 const validCredentials = {
-  username: 'Admin',
-  password: 'farmlab123'
+  username: '123456',
+  password: '123456'
 };
 
 loginForm.addEventListener('submit', (e) => {
@@ -691,12 +691,6 @@ async function saveSettings() {
         );
     }
 }
-
-// Event listeners
-// settingsButton.addEventListener("click", function() {
-//     playButtonSound();
-//     openSettingsModal();
-// });
 
 // Replace the existing settingsButton event listener with this:
 settingsButton.addEventListener("click", function() {
@@ -1626,33 +1620,6 @@ let autobotInterval = null;
 let lightScheduleInterval = null;
 let isPumpRunning = false;
 
-// async function toggleAutobot() {
-//   const isAutobotOn = deviceStates.autobot === "ON";
-//   const newState = isAutobotOn ? "OFF" : "ON";
-  
-//   try {
-//     await updateDeviceStateOnServer('autobot', newState);
-//     deviceStates.autobot = newState;
-//     updateButtonState(autobotToggleButton, !isAutobotOn, "🤖Auto", "👆Manual");
-    
-//     // Toggle control buttons visibility
-//     toggleControlButtonsVisibility(newState === "ON");
-    
-//     if (newState === "ON") {
-//       startAutobotInterval();
-//       startLightScheduleCheck();
-      
-//       console.log("Autobot activated");
-//     } else {
-//       stopAutobotInterval();
-//       stopLightScheduleCheck();
-      
-//       console.log("Autobot deactivated");
-//     }
-//   } catch (err) {
-//     console.error("Error updating autobot state:", err);
-//   }
-// }
 async function toggleAutobot() {
   const isAutobotOn = deviceStates.autobot === "ON";
   const newState = isAutobotOn ? "OFF" : "ON";
@@ -1817,16 +1784,6 @@ async function checkPumpSchedule() {
     console.error(`${LOG_PREFIX} Error checking pump schedule:`, err);
   }
 }
-
-// function formatTimeForLog(date) {
-//   return date.toLocaleTimeString('en-US', {
-//     hour12: true,
-//     hour: '2-digit',
-//     minute: '2-digit',
-//     second: '2-digit',
-//     timeZone: 'Europe/Helsinki' // Adjust to your timezone if needed
-//   });
-// }
 
 async function runPumpForDuration(durationSeconds) {
   if (isPumpRunning) return;
@@ -2073,8 +2030,11 @@ sunToggleButton.addEventListener('click', () => {
   renderer.setClearColor(isBright ? 0xeeeeee : 0x111111, 1);
 
   const containers = [
-    document.getElementById('vantaa-date-container'),
-    document.getElementById('vantaa-time-container'),
+    document.getElementById('location'),
+    document.getElementById('outer-temperature'),
+    document.getElementById('outer-humidity'),
+    document.getElementById('outer-wind-speed'),
+    document.getElementById('outer-feels-like'),
     document.getElementById('temperature-container'),
     document.getElementById('humidity-container'),
     document.getElementById('co2-container'),
@@ -2613,5 +2573,87 @@ function showWarning(title, message) {
     }, { once: true }); // The event listener will be removed after first click
 }
 
-// doglas
-// 
+// Codes for Display of Date and Weather
+const api_url = "http://api.weatherapi.com/v1/current.json?key=2fe366fe021e418288f204115252509&q=Vantaa&aqi=no";
+    
+const headers = {
+    'Content-Type': 'application/json',
+    'ApiKey': '2fe366fe021e418288f204115252509'
+};
+
+// Format the current date
+function formatDate() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return now.toLocaleDateString('en-US', options);
+}
+
+// Update the date display
+document.getElementById('current-date').textContent = formatDate();
+
+async function getWeather() {
+    try {
+        const response = await fetch(api_url, {
+            method: 'GET',
+            headers: headers
+        });
+            
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+                
+        const data = await response.json();
+        displayWeather(data);
+                
+     } catch (error) {
+        console.error('Fetch error:', error);
+        displayError(error.message);
+    }
+}
+
+function displayWeather(data) {
+    const weatherContent = document.getElementById('weather-content');
+            
+    // Extract the relevant data from the response
+    const condition = data.current.condition.text;
+    const iconUrl = "https:" + data.current.condition.icon; // Add https: to make it a valid URL
+    const temperature = Math.round(data.current.temp_c); // Temperature in Celsius
+    const humidity = data.current.humidity;
+    const windSpeed = data.current.wind_kph;
+    const feelsLike = Math.round(data.current.feelslike_c);
+            
+    // Create the weather display HTML
+    weatherContent.innerHTML = `
+        <img src="${iconUrl}" alt="${condition}" class="weather-icon">
+        <div id="outer-temperature" class="temperature">${temperature}°C</div>
+        <div class="condition">${condition}</div>
+        <div class="details">
+            <div class="detail-item">
+                <div class="detail-label">Humidity</div>
+                <div id="outer-humidity" class="detail-value">${humidity}%</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Wind</div>
+                <div id="outer-wind-speed" class="detail-value">${windSpeed} km/h</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Feels Like</div>
+                <div id="outer-feels-like" class="detail-value">${feelsLike}°C</div>
+            </div>
+        </div>
+    `;
+}
+
+function displayError(message) {
+    const weatherContent = document.getElementById('weather-content');
+    weatherContent.innerHTML = `
+        <div class="error">
+            <p>Failed to load weather data</p>
+            
+            <p>Try again later.</p>
+        </div>
+    `;
+}
+
+// Fetch weather data when page loads
+getWeather();
