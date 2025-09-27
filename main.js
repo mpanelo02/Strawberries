@@ -2572,11 +2572,7 @@ function showWarning(title, message) {
         warningModal.classList.add('hidden');
     }, { once: true }); // The event listener will be removed after first click
 }
-
-// Codes for Display of Date and Weather
-// const api_url = "http://api.weatherapi.com/v1/current.json?key=2fe366fe021e418288f204115252509&q=Vantaa&aqi=no";
-// const weather_api_url = `http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=Vantaa&aqi=no`;
-    
+  
 const weatherHeaders = {
     'Content-Type': 'application/json'
 };
@@ -2591,45 +2587,10 @@ function formatDate() {
 // Update the date display
 document.getElementById('current-date').textContent = formatDate();
 
-// async function getWeather() {
-//     try {
-//         const response = await fetch(api_url, {
-//             method: 'GET',
-//             headers: headers
-//         });
-            
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-                
-//         const data = await response.json();
-//         displayWeather(data);
-                
-//      } catch (error) {
-//         console.error('Fetch error:', error);
-//         displayError(error.message);
-//     }
-// }
-
-// async function getWeather() {
-//     try {
-//         const response = await fetch("/api/weather"); // Call your backend endpoint
-        
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-        
-//         const data = await response.json();
-//         displayWeather(data);
-//     } catch (error) {
-//         console.error('Fetch error:', error);
-//         displayError(error.message);
-//     }
-// }
-
 async function getWeather() {
     try {
-        const response = await fetch("/api/weather"); // Call your backend endpoint
+        // Use the full backend URL instead of relative path
+        const response = await fetch("https://valk-huone-1.onrender.com/api/weather");
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -2638,8 +2599,8 @@ async function getWeather() {
         const data = await response.json();
         displayWeather(data);
     } catch (error) {
-        console.error('Fetch error:', error);
-        displayError(error.message);
+        console.error('Weather fetch error:', error);
+        displayError('Failed to load weather data. Please try again later.');
     }
 }
 
