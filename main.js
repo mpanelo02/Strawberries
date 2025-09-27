@@ -51,8 +51,8 @@ const instructions = document.querySelector(".instructions");
 
 // Hardcoded credentials (for demo only - in production use secure authentication)
 const validCredentials = {
-  username: '123456',
-  password: '123456'
+  username: 'Admin',
+  password: 'farmlab123'
 };
 
 loginForm.addEventListener('submit', (e) => {
@@ -2576,9 +2576,8 @@ function showWarning(title, message) {
 // Codes for Display of Date and Weather
 const api_url = "http://api.weatherapi.com/v1/current.json?key=2fe366fe021e418288f204115252509&q=Vantaa&aqi=no";
     
-const headers = {
-    'Content-Type': 'application/json',
-    'ApiKey': '2fe366fe021e418288f204115252509'
+const weatherHeaders = {
+    'Content-Type': 'application/json'
 };
 
 // Format the current date
@@ -2591,21 +2590,37 @@ function formatDate() {
 // Update the date display
 document.getElementById('current-date').textContent = formatDate();
 
+// async function getWeather() {
+//     try {
+//         const response = await fetch(api_url, {
+//             method: 'GET',
+//             headers: headers
+//         });
+            
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+                
+//         const data = await response.json();
+//         displayWeather(data);
+                
+//      } catch (error) {
+//         console.error('Fetch error:', error);
+//         displayError(error.message);
+//     }
+// }
+
 async function getWeather() {
     try {
-        const response = await fetch(api_url, {
-            method: 'GET',
-            headers: headers
-        });
-            
+        const response = await fetch("/api/weather"); // Call your backend endpoint
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-                
+        
         const data = await response.json();
         displayWeather(data);
-                
-     } catch (error) {
+    } catch (error) {
         console.error('Fetch error:', error);
         displayError(error.message);
     }
