@@ -2574,7 +2574,8 @@ function showWarning(title, message) {
 }
 
 // Codes for Display of Date and Weather
-const api_url = "http://api.weatherapi.com/v1/current.json?key=2fe366fe021e418288f204115252509&q=Vantaa&aqi=no";
+// const api_url = "http://api.weatherapi.com/v1/current.json?key=2fe366fe021e418288f204115252509&q=Vantaa&aqi=no";
+// const weather_api_url = `http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=Vantaa&aqi=no`;
     
 const weatherHeaders = {
     'Content-Type': 'application/json'
@@ -2605,6 +2606,22 @@ document.getElementById('current-date').textContent = formatDate();
 //         displayWeather(data);
                 
 //      } catch (error) {
+//         console.error('Fetch error:', error);
+//         displayError(error.message);
+//     }
+// }
+
+// async function getWeather() {
+//     try {
+//         const response = await fetch("/api/weather"); // Call your backend endpoint
+        
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+        
+//         const data = await response.json();
+//         displayWeather(data);
+//     } catch (error) {
 //         console.error('Fetch error:', error);
 //         displayError(error.message);
 //     }
